@@ -2421,20 +2421,17 @@ function parse (
 
   var stack = [];
   var preserveWhitespace = options.preserveWhitespace !== false;
+
   var root = {
     type: 1,
     tag: 'Program',
     attrsList: [],
     attrsMap: makeAttrsMap([]),
     parent: void 0,
-    children: []
+    children:[]
   };
-  // type: 1;
-  // tag: string;
-  // attrsList: Array<{ name: string; value: string }>;
-  // attrsMap: { [key: string]: string | null };
-  // parent: ASTElement | void;
-  // children: Array<ASTNode>;
+
+var currRoot = root;
   var currentParent;
   var inVPre = false;
   var inPre = false;
@@ -2534,38 +2531,21 @@ function parse (
         processAttrs(element);
       }
 
-      function checkRootConstraints (el) {
-        if (process.env.NODE_ENV !== 'production') {
-          if (el.tag === 'slot' || el.tag === 'template') {
-            warnOnce(
-              "Cannot use <" + (el.tag) + "> as component root element because it may " +
-                'contain multiple nodes.'
-            );
-          }
-          if (el.attrsMap.hasOwnProperty('v-for')) {
-            warnOnce(
-              'Cannot use v-for on stateful component root element because ' +
-                'it renders multiple elements.'
-            );
-          }
-        }
-      }
-
-      // tree management
       if (!root.children.length) {
         root.children.push(element);
-        checkRootConstraints(element);
+        currRoot = element;
+        // checkRootConstraints(element)
       } else if (!stack.length) {
         // allow root elements with v-if, v-else-if and v-else
-        var currRoot = root.children[root.children.length - 1];
         if (currRoot.if && (element.elseif || element.else)) {
-          checkRootConstraints(element);
+          // checkRootConstraints(element)
           addIfCondition(currRoot, {
             exp: element.elseif,
             block: element
           });
         } else {
           root.children.push(element);
+          currRoot = element;
         }
         // if (process.env.NODE_ENV !== 'production') {
         //   warnOnce(
@@ -2908,18 +2888,19 @@ function processAttrs (el) {
       }
     } else {
       // literal attribute
-      if (process.env.NODE_ENV !== 'production') {
+      // if (process.env.NODE_ENV !== 'production') {
         var expression = parseText(value, delimiters);
-        if (expression) {
-          warn$2(
-            name + "=\"" + value + "\": " +
-              'Interpolation inside attributes has been removed. ' +
-              'Use v-bind or the colon shorthand instead. For example, ' +
-              'instead of <div id="{{ val }}">, use <div :id="val">.'
-          );
-        }
-      }
-      addAttr(el, name, JSON.stringify(value));
+        console.log(expression);
+        // if (expression) {
+        //   warn(
+        //     `${name}="${value}": ` +
+        //       'Interpolation inside attributes has been removed. ' +
+        //       'Use v-bind or the colon shorthand instead. For example, ' +
+        //       'instead of <div id="{{ val }}">, use <div :id="val">.'
+        //   )
+        // }
+      // }
+      addAttr(el, name, expression || JSON.stringify(value));
     }
   }
 }

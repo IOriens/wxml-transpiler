@@ -62,20 +62,17 @@ export function parse (
 
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
-  let root: ASTElement = {
+
+  let root:ASTElement = {
     type: 1,
     tag: 'Program',
     attrsList: [],
     attrsMap: makeAttrsMap([]),
     parent: void 0,
-    children: []
+    children:[]
   }
-  // type: 1;
-  // tag: string;
-  // attrsList: Array<{ name: string; value: string }>;
-  // attrsMap: { [key: string]: string | null };
-  // parent: ASTElement | void;
-  // children: Array<ASTNode>;
+
+let currRoot = root
   let currentParent
   let inVPre = false
   let inPre = false
@@ -195,18 +192,19 @@ export function parse (
       // tree management
       if (!root.children.length) {
         root.children.push(element)
-        checkRootConstraints(element)
+        currRoot = element
+        // checkRootConstraints(element)
       } else if (!stack.length) {
         // allow root elements with v-if, v-else-if and v-else
-        let currRoot = root.children[root.children.length - 1]
         if (currRoot.if && (element.elseif || element.else)) {
-          checkRootConstraints(element)
+          // checkRootConstraints(element)
           addIfCondition(currRoot, {
             exp: element.elseif,
             block: element
           })
         } else {
           root.children.push(element)
+          currRoot = element
         }
         // if (process.env.NODE_ENV !== 'production') {
         //   warnOnce(
@@ -550,18 +548,19 @@ function processAttrs (el) {
       }
     } else {
       // literal attribute
-      if (process.env.NODE_ENV !== 'production') {
+      // if (process.env.NODE_ENV !== 'production') {
         const expression = parseText(value, delimiters)
-        if (expression) {
-          warn(
-            `${name}="${value}": ` +
-              'Interpolation inside attributes has been removed. ' +
-              'Use v-bind or the colon shorthand instead. For example, ' +
-              'instead of <div id="{{ val }}">, use <div :id="val">.'
-          )
-        }
-      }
-      addAttr(el, name, JSON.stringify(value))
+        console.log(expression)
+        // if (expression) {
+        //   warn(
+        //     `${name}="${value}": ` +
+        //       'Interpolation inside attributes has been removed. ' +
+        //       'Use v-bind or the colon shorthand instead. For example, ' +
+        //       'instead of <div id="{{ val }}">, use <div :id="val">.'
+        //   )
+        // }
+      // }
+      addAttr(el, name, expression || JSON.stringify(value))
     }
   }
 }
