@@ -39,7 +39,7 @@ export const isReservedTag = (tag: string): ?boolean => {
 
 export function getTagNamespace (tag: string): ?string {
   if (isSVG(tag)) {
-    return 'svg'
+    // return 'svg'
   }
   // basic support for MathML
   // note it doesn't support other MathML elements being component roots

@@ -1,0 +1,33 @@
+   <!-- <z> -->
+    <!-- <import src="../../../common/head.wxml" />
+
+
+<view class="container">
+   <template is="head" data="{{title: 'get/set/clearStorage'}}" />
+  <text>fff{{text}}\{{'ffff{{fff2}}'}}</text> -->
+  <view wx:for="{{array}}">
+    {{index}}: {{item.message}}
+  </view>
+  <!-- <view wx:if="{{length > 5}}"> 1 </view>
+  <view wx:elif="{{length > 2}}"> 2 </view>
+  <view wx:else> 3 </view>
+  <block wx:if="{{true}}">
+    <view> view1 </view>
+    <view> view2 </view>
+  </block> -->
+  <!-- <view class="page-body">
+    <view class="page-section">
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__bd">
+            <input class="weui-input" type="text" placeholder="请输入key" name="key" value="{{key}}" bindinput="keyChange"></input>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <modal title="{{dialog.title}}" hidden="{{dialog.hidden}}" bindconfirm="confirm">{{dialog.content}}</modal>
+   <include src="../../../common/foot.wxml" />
+</view> -->
+  <!-- </z> -->

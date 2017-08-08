@@ -61,7 +61,20 @@ export function parse (
 
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
-  let root
+  let root : ASTElement = {
+    type: 1,
+    tag: 'Program',
+    attrsList: [],
+    attrsMap: makeAttrsMap([]),
+    parent: void 0,
+    children: []
+  }
+  // type: 1;
+  // tag: string;
+  // attrsList: Array<{ name: string; value: string }>;
+  // attrsMap: { [key: string]: string | null };
+  // parent: ASTElement | void;
+  // children: Array<ASTNode>;
   let currentParent
   let inVPre = false
   let inPre = false
@@ -176,24 +189,28 @@ export function parse (
       }
 
       // tree management
-      if (!root) {
-        root = element
-        checkRootConstraints(root)
+      if (!root.children.length) {
+        root.children.push( element)
+        checkRootConstraints(element)
       } else if (!stack.length) {
         // allow root elements with v-if, v-else-if and v-else
-        if (root.if && (element.elseif || element.else)) {
-          checkRootConstraints(element)
-          addIfCondition(root, {
-            exp: element.elseif,
-            block: element
-          })
-        } else if (process.env.NODE_ENV !== 'production') {
-          warnOnce(
-            `Component template should contain exactly one root element. ` +
-            `If you are using v-if on multiple elements, ` +
-            `use v-else-if to chain them instead.`
-          )
-        }
+        // let currRoot = root.children[root.children.length - 1]
+        // if (currRoot.if && (element.elseif || element.else)) {
+        //   checkRootConstraints(element)
+        //   addIfCondition(currRoot, {
+        //     exp: element.elseif,
+        //     block: element
+        //   })
+        // } else {
+          root.children.push(element)
+        // }
+        // if (process.env.NODE_ENV !== 'production') {
+        //   warnOnce(
+        //     `Component template should contain exactly one root element. ` +
+        //     `If you are using v-if on multiple elements, ` +
+        //     `use v-else-if to chain them instead.`
+        //   )
+        // }
       }
       if (currentParent && !element.forbidden) {
         if (element.elseif || element.else) {
@@ -329,11 +346,11 @@ function processRef (el) {
 
 function processFor (el) {
   let exp
-  if ((exp = getAndRemoveAttr(el, 'v-for'))) {
+  if ((exp = getAndRemoveAttr(el, 'wx:for'))) {
     const inMatch = exp.match(forAliasRE)
     if (!inMatch) {
       process.env.NODE_ENV !== 'production' && warn(
-        `Invalid v-for expression: ${exp}`
+        `Invalid wx:for expression: ${exp}`
       )
       return
     }

@@ -4,7 +4,7 @@ import { makeMap } from 'shared/util'
 
 export const isUnaryTag = makeMap(
   'area,base,br,col,embed,frame,hr,img,input,isindex,keygen,' +
-  'link,meta,param,source,track,wbr'
+  'link,meta,param,source,track,wbr,import'
 )
 
 // Elements that you can, intentionally, leave open

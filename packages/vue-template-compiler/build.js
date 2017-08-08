@@ -6,6 +6,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var deindent = _interopDefault(require('de-indent'));
 var he = _interopDefault(require('he'));
+var circularJson = require('circular-json');
 
 /*  */
 
@@ -136,6 +137,9 @@ var camelize = cached(function (str) {
  */
 
 
+/**
+ * Hyphenate a camelCase string.
+ */
 
 
 /**
@@ -205,7 +209,7 @@ function genStaticKeys (modules) {
 
 var isUnaryTag = makeMap(
   'area,base,br,col,embed,frame,hr,img,input,isindex,keygen,' +
-  'link,meta,param,source,track,wbr'
+  'link,meta,param,source,track,wbr,import'
 );
 
 // Elements that you can, intentionally, leave open
@@ -235,7 +239,6 @@ var isNonPhrasingTag = makeMap(
  * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
  */
 
-// Regular Expressions for parsing tags and attributes
 var singleAttrIdentifier = /([^\s"'<>/=]+)/;
 var singleAttrAssign = /(?:=)/;
 var singleAttrValues = [
@@ -681,6 +684,10 @@ function def (obj, key, val, enumerable) {
   });
 }
 
+/**
+ * Parse simple path.
+ */
+
 var ASSET_TYPES = [
   'component',
   'directive',
@@ -904,7 +911,6 @@ function handleError (err, vm, info) {
 /*  */
 /* globals MutationObserver */
 
-// can we use __proto__?
 var hasProto = '__proto__' in {};
 
 // Browser environment sniffing
@@ -1110,9 +1116,6 @@ Dep.prototype.notify = function notify () {
   }
 };
 
-// the current target watcher being evaluated.
-// this is globally unique because there could be only one
-// watcher being evaluated at any time.
 Dep.target = null;
 
 /*
@@ -1376,11 +1379,6 @@ function dependArray (value) {
 
 /*  */
 
-/**
- * Option overwriting strategies are functions that handle
- * how to merge a parent option value and a child option
- * value into the final value.
- */
 var strats = config.optionMergeStrategies;
 
 /**
@@ -1576,8 +1574,7 @@ var defaultStrat = function (parentVal, childVal) {
 };
 
 /**
- * Merge two option objects into a new one.
- * Core utility used in both instantiation and inheritance.
+ * Validate component names
  */
 
 
@@ -1589,12 +1586,16 @@ var defaultStrat = function (parentVal, childVal) {
 
 /*  */
 
-/*  */
+
+
+/**
+ * Get the default value of a prop.
+ */
 
 /*  */
 
-// these are reserved for web because they are directly compiled away
-// during template compilation
+/*  */
+
 var isReservedAttr = makeMap('style,class');
 
 // attributes that should be using props for binding
@@ -1656,7 +1657,7 @@ var isReservedTag = function (tag) {
 
 function getTagNamespace (tag) {
   if (isSVG(tag)) {
-    return 'svg'
+    // return 'svg'
   }
   // basic support for MathML
   // note it doesn't support other MathML elements being component roots
@@ -1666,10 +1667,6 @@ function getTagNamespace (tag) {
 }
 
 /*  */
-
-/**
- * Query an element selector if it's not an element already.
- */
 
 /*  */
 
@@ -1983,7 +1980,7 @@ var parseStyleText = cached(function (cssText) {
   return res
 });
 
-// normalize possible array / string values into Object
+// merge static and dynamic style data on the same vnode
 
 
 /**
@@ -2423,7 +2420,20 @@ function parse (
 
   var stack = [];
   var preserveWhitespace = options.preserveWhitespace !== false;
-  var root;
+  var root  = {
+    type: 1,
+    tag: 'Program',
+    attrsList: [],
+    attrsMap: makeAttrsMap([]),
+    parent: void 0,
+    children: []
+  };
+  // type: 1;
+  // tag: string;
+  // attrsList: Array<{ name: string; value: string }>;
+  // attrsMap: { [key: string]: string | null };
+  // parent: ASTElement | void;
+  // children: Array<ASTNode>;
   var currentParent;
   var inVPre = false;
   var inPre = false;
@@ -2538,24 +2548,28 @@ function parse (
       }
 
       // tree management
-      if (!root) {
-        root = element;
-        checkRootConstraints(root);
+      if (!root.children.length) {
+        root.children.push( element);
+        checkRootConstraints(element);
       } else if (!stack.length) {
         // allow root elements with v-if, v-else-if and v-else
-        if (root.if && (element.elseif || element.else)) {
-          checkRootConstraints(element);
-          addIfCondition(root, {
-            exp: element.elseif,
-            block: element
-          });
-        } else if (process.env.NODE_ENV !== 'production') {
-          warnOnce(
-            "Component template should contain exactly one root element. " +
-            "If you are using v-if on multiple elements, " +
-            "use v-else-if to chain them instead."
-          );
-        }
+        // let currRoot = root.children[root.children.length - 1]
+        // if (currRoot.if && (element.elseif || element.else)) {
+        //   checkRootConstraints(element)
+        //   addIfCondition(currRoot, {
+        //     exp: element.elseif,
+        //     block: element
+        //   })
+        // } else {
+          root.children.push(element);
+        // }
+        // if (process.env.NODE_ENV !== 'production') {
+        //   warnOnce(
+        //     `Component template should contain exactly one root element. ` +
+        //     `If you are using v-if on multiple elements, ` +
+        //     `use v-else-if to chain them instead.`
+        //   )
+        // }
       }
       if (currentParent && !element.forbidden) {
         if (element.elseif || element.else) {
@@ -2690,11 +2704,11 @@ function processRef (el) {
 
 function processFor (el) {
   var exp;
-  if ((exp = getAndRemoveAttr(el, 'v-for'))) {
+  if ((exp = getAndRemoveAttr(el, 'wx:for'))) {
     var inMatch = exp.match(forAliasRE);
     if (!inMatch) {
       process.env.NODE_ENV !== 'production' && warn$2(
-        ("Invalid v-for expression: " + exp)
+        ("Invalid wx:for expression: " + exp)
       );
       return
     }
@@ -3680,8 +3694,6 @@ function transformSpecialNewlines (text) {
 
 /*  */
 
-// these keywords should not appear inside expressions, but operators like
-// typeof, instanceof and in are allowed
 var prohibitedKeywordRE = new RegExp('\\b' + (
   'do,if,for,let,new,try,var,case,else,with,await,break,catch,class,const,' +
   'super,throw,while,yield,delete,export,import,return,switch,default,' +
@@ -3924,6 +3936,7 @@ function createCompilerCreator (baseCompile) {
 
 /*  */
 
+// //$flow-disable-line
 // `createCompilerCreator` allows creating compilers that use alternative
 // parser/optimizer/codegen, e.g the SSR optimizing compiler.
 // Here we just export a default compiler using the default parts.
@@ -3932,7 +3945,10 @@ var createCompiler = createCompilerCreator(function baseCompile (
   options
 ) {
   var ast = parse(template.trim(), options);
+  console.log(ast);
+  console.log(circularJson.stringify(ast));
   optimize(ast, options);
+  console.log(circularJson.stringify(ast));
   var code = generate(ast, options);
   return {
     ast: ast,
@@ -4096,7 +4112,6 @@ function genStyleSegments (
  * components/slots/custom directives.
  */
 
-// optimizability constants
 var optimizability = {
   FALSE: 0,    // whole sub tree un-optimizable
   FULL: 1,     // whole sub tree optimizable
@@ -4217,7 +4232,6 @@ function hasCustomDirective (node) {
 // SSR-optimizable nodes and turn them into string render fns. In cases where
 // a node is not optimizable it simply falls back to the default codegen.
 
-// segment types
 var RAW = 0;
 var INTERPOLATION = 1;
 var EXPRESSION = 2;
