@@ -21,6 +21,7 @@ import {
 
 export const onRE = /^@|^v-on:/
 export const dirRE = /^v-|^@|^:/
+export const tplBracket = /(?:{{\s*(.+)\s*}}|(.+))/
 export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
 export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
 
@@ -347,24 +348,23 @@ function processRef (el) {
 function processFor (el) {
   let exp
   if ((exp = getAndRemoveAttr(el, 'wx:for'))) {
-    const inMatch = exp.match(forAliasRE)
+    const inMatch = exp.match(tplBracket)
     if (!inMatch) {
       process.env.NODE_ENV !== 'production' && warn(
         `Invalid wx:for expression: ${exp}`
       )
       return
     }
-    el.for = inMatch[2].trim()
-    const alias = inMatch[1].trim()
-    const iteratorMatch = alias.match(forIteratorRE)
-    if (iteratorMatch) {
-      el.alias = iteratorMatch[1].trim()
-      el.iterator1 = iteratorMatch[2].trim()
-      if (iteratorMatch[3]) {
-        el.iterator2 = iteratorMatch[3].trim()
-      }
+    el.for = inMatch[1].trim()||inMatch[2].trim()
+    if ((exp = getAndRemoveAttr(el, 'wx:for-item'))) {
+      el.alias = exp
+    } else{
+      el.alias = 'item'
+    }
+    if ((exp = getAndRemoveAttr(el, 'wx:for-index'))) {
+      el.iterator1 = exp
     } else {
-      el.alias = alias
+      el.iterator1 = 'index'
     }
   }
 }

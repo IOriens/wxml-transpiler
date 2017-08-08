@@ -5,7 +5,7 @@ import { optimize } from './optimizer'
 import { generate } from './codegen/index'
 import { createCompilerCreator } from './create-compiler'
 
-// //$flow-disable-line
+// $flow-disable-line
 import { stringify } from 'circular-json'
 
 // `createCompilerCreator` allows creating compilers that use alternative
@@ -16,7 +16,6 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   options: CompilerOptions
 ): CompiledResult {
   const ast = parse(template.trim(), options)
-  console.log(ast)
   console.log(stringify(ast))
   optimize(ast, options)
   console.log(stringify(ast))

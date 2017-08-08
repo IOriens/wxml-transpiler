@@ -2380,8 +2380,9 @@ var baseOptions = {
 
 var onRE = /^@|^v-on:/;
 var dirRE = /^v-|^@|^:/;
-var forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/;
-var forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/;
+var tplBracket = /(?:{{\s*(.+)\s*}}|(.+))/;
+
+
 
 var argRE = /:(.*)$/;
 var bindRE = /^:|^v-bind:/;
@@ -2705,24 +2706,23 @@ function processRef (el) {
 function processFor (el) {
   var exp;
   if ((exp = getAndRemoveAttr(el, 'wx:for'))) {
-    var inMatch = exp.match(forAliasRE);
+    var inMatch = exp.match(tplBracket);
     if (!inMatch) {
       process.env.NODE_ENV !== 'production' && warn$2(
         ("Invalid wx:for expression: " + exp)
       );
       return
     }
-    el.for = inMatch[2].trim();
-    var alias = inMatch[1].trim();
-    var iteratorMatch = alias.match(forIteratorRE);
-    if (iteratorMatch) {
-      el.alias = iteratorMatch[1].trim();
-      el.iterator1 = iteratorMatch[2].trim();
-      if (iteratorMatch[3]) {
-        el.iterator2 = iteratorMatch[3].trim();
-      }
+    el.for = inMatch[1].trim()||inMatch[2].trim();
+    if ((exp = getAndRemoveAttr(el, 'wx:for-item'))) {
+      el.alias = exp;
+    } else{
+      el.alias = 'item';
+    }
+    if ((exp = getAndRemoveAttr(el, 'wx:for-index'))) {
+      el.iterator1 = exp;
     } else {
-      el.alias = alias;
+      el.iterator1 = 'index';
     }
   }
 }
@@ -3936,16 +3936,11 @@ function createCompilerCreator (baseCompile) {
 
 /*  */
 
-// //$flow-disable-line
-// `createCompilerCreator` allows creating compilers that use alternative
-// parser/optimizer/codegen, e.g the SSR optimizing compiler.
-// Here we just export a default compiler using the default parts.
 var createCompiler = createCompilerCreator(function baseCompile (
   template,
   options
 ) {
   var ast = parse(template.trim(), options);
-  console.log(ast);
   console.log(circularJson.stringify(ast));
   optimize(ast, options);
   console.log(circularJson.stringify(ast));
