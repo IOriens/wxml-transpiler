@@ -2421,7 +2421,7 @@ function parse (
 
   var stack = [];
   var preserveWhitespace = options.preserveWhitespace !== false;
-  var root  = {
+  var root = {
     type: 1,
     tag: 'Program',
     attrsList: [],
@@ -2467,7 +2467,8 @@ function parse (
     start: function start (tag, attrs, unary) {
       // check namespace.
       // inherit parent ns if there is one
-      var ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag);
+      var ns =
+        (currentParent && currentParent.ns) || platformGetTagNamespace(tag);
 
       // handle IE svg bug
       /* istanbul ignore if */
@@ -2489,11 +2490,13 @@ function parse (
 
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true;
-        process.env.NODE_ENV !== 'production' && warn$2(
-          'Templates should only be responsible for mapping the state to the ' +
-          'UI. Avoid placing tags with side-effects in your templates, such as ' +
-          "<" + tag + ">" + ', as they will not be parsed.'
-        );
+        process.env.NODE_ENV !== 'production' &&
+          warn$2(
+            'Templates should only be responsible for mapping the state to the ' +
+              'UI. Avoid placing tags with side-effects in your templates, such as ' +
+              "<" + tag + ">" +
+              ', as they will not be parsed.'
+          );
       }
 
       // apply pre-transforms
@@ -2536,13 +2539,13 @@ function parse (
           if (el.tag === 'slot' || el.tag === 'template') {
             warnOnce(
               "Cannot use <" + (el.tag) + "> as component root element because it may " +
-              'contain multiple nodes.'
+                'contain multiple nodes.'
             );
           }
           if (el.attrsMap.hasOwnProperty('v-for')) {
             warnOnce(
               'Cannot use v-for on stateful component root element because ' +
-              'it renders multiple elements.'
+                'it renders multiple elements.'
             );
           }
         }
@@ -2550,20 +2553,20 @@ function parse (
 
       // tree management
       if (!root.children.length) {
-        root.children.push( element);
+        root.children.push(element);
         checkRootConstraints(element);
       } else if (!stack.length) {
         // allow root elements with v-if, v-else-if and v-else
-        // let currRoot = root.children[root.children.length - 1]
-        // if (currRoot.if && (element.elseif || element.else)) {
-        //   checkRootConstraints(element)
-        //   addIfCondition(currRoot, {
-        //     exp: element.elseif,
-        //     block: element
-        //   })
-        // } else {
+        var currRoot = root.children[root.children.length - 1];
+        if (currRoot.if && (element.elseif || element.else)) {
+          checkRootConstraints(element);
+          addIfCondition(currRoot, {
+            exp: element.elseif,
+            block: element
+          });
+        } else {
           root.children.push(element);
-        // }
+        }
         // if (process.env.NODE_ENV !== 'production') {
         //   warnOnce(
         //     `Component template should contain exactly one root element. ` +
@@ -2575,9 +2578,12 @@ function parse (
       if (currentParent && !element.forbidden) {
         if (element.elseif || element.else) {
           processIfConditions(element, currentParent);
-        } else if (element.slotScope) { // scoped slot
+        } else if (element.slotScope) {
+          // scoped slot
           currentParent.plain = false;
-          var name = element.slotTarget || '"default"';(currentParent.scopedSlots || (currentParent.scopedSlots = {}))[name] = element;
+          var name = element.slotTarget || '"default"';(currentParent.scopedSlots || (currentParent.scopedSlots = {}))[
+            name
+          ] = element;
         } else {
           currentParent.children.push(element);
           element.parent = currentParent;
@@ -2616,16 +2622,15 @@ function parse (
               'Component template requires a root element, rather than just text.'
             );
           } else if ((text = text.trim())) {
-            warnOnce(
-              ("text \"" + text + "\" outside root element will be ignored.")
-            );
+            warnOnce(("text \"" + text + "\" outside root element will be ignored."));
           }
         }
         return
       }
       // IE textarea placeholder bug
       /* istanbul ignore if */
-      if (isIE &&
+      if (
+        isIE &&
         currentParent.tag === 'textarea' &&
         currentParent.attrsMap.placeholder === text
       ) {
@@ -2634,17 +2639,25 @@ function parse (
       var children = currentParent.children;
       text = inPre || text.trim()
         ? isTextTag(currentParent) ? text : decodeHTMLCached(text)
-        // only preserve whitespace if its not right after a starting tag
-        : preserveWhitespace && children.length ? ' ' : '';
+        : // only preserve whitespace if its not right after a starting tag
+          preserveWhitespace && children.length ? ' ' : '';
       if (text) {
         var expression;
-        if (!inVPre && text !== ' ' && (expression = parseText(text, delimiters))) {
+        if (
+          !inVPre &&
+          text !== ' ' &&
+          (expression = parseText(text, delimiters))
+        ) {
           children.push({
             type: 2,
             expression: expression,
             text: text
           });
-        } else if (text !== ' ' || !children.length || children[children.length - 1].text !== ' ') {
+        } else if (
+          text !== ' ' ||
+          !children.length ||
+          children[children.length - 1].text !== ' '
+        ) {
           children.push({
             type: 3,
             text: text
@@ -2672,7 +2685,7 @@ function processPre (el) {
 function processRawAttrs (el) {
   var l = el.attrsList.length;
   if (l) {
-    var attrs = el.attrs = new Array(l);
+    var attrs = (el.attrs = new Array(l));
     for (var i = 0; i < l; i++) {
       attrs[i] = {
         name: el.attrsList[i].name,
@@ -2689,7 +2702,9 @@ function processKey (el) {
   var exp = getBindingAttr(el, 'key');
   if (exp) {
     if (process.env.NODE_ENV !== 'production' && el.tag === 'template') {
-      warn$2("<template> cannot be keyed. Place the key on real elements instead.");
+      warn$2(
+        "<template> cannot be keyed. Place the key on real elements instead."
+      );
     }
     el.key = exp;
   }
@@ -2708,15 +2723,14 @@ function processFor (el) {
   if ((exp = getAndRemoveAttr(el, 'wx:for'))) {
     var inMatch = exp.match(tplBracket);
     if (!inMatch) {
-      process.env.NODE_ENV !== 'production' && warn$2(
-        ("Invalid wx:for expression: " + exp)
-      );
+      process.env.NODE_ENV !== 'production' &&
+        warn$2(("Invalid wx:for expression: " + exp));
       return
     }
-    el.for = inMatch[1].trim()||inMatch[2].trim();
+    el.for = inMatch[1].trim() || inMatch[2].trim();
     if ((exp = getAndRemoveAttr(el, 'wx:for-item'))) {
       el.alias = exp;
-    } else{
+    } else {
       el.alias = 'item';
     }
     if ((exp = getAndRemoveAttr(el, 'wx:for-index'))) {
@@ -2728,18 +2742,25 @@ function processFor (el) {
 }
 
 function processIf (el) {
-  var exp = getAndRemoveAttr(el, 'v-if');
+  var exp = getAndRemoveAttr(el, 'wx:if');
   if (exp) {
-    el.if = exp;
+    var inMatch = exp.match(tplBracket);
+    if (!inMatch) {
+      process.env.NODE_ENV !== 'production' &&
+        warn$2(("Invalid wx:if expression: " + exp));
+      return
+    }
+    var ifExp =inMatch[1].trim();
+    el.if = ifExp;
     addIfCondition(el, {
-      exp: exp,
+      exp: ifExp,
       block: el
     });
   } else {
-    if (getAndRemoveAttr(el, 'v-else') != null) {
+    if (getAndRemoveAttr(el, 'wx:else') != null) {
       el.else = true;
     }
-    var elseif = getAndRemoveAttr(el, 'v-else-if');
+    var elseif = getAndRemoveAttr(el, 'wx:elif');
     if (elseif) {
       el.elseif = elseif;
     }
@@ -2755,8 +2776,8 @@ function processIfConditions (el, parent) {
     });
   } else if (process.env.NODE_ENV !== 'production') {
     warn$2(
-      "v-" + (el.elseif ? ('else-if="' + el.elseif + '"') : 'else') + " " +
-      "used on element <" + (el.tag) + "> without corresponding v-if."
+      "v-" + (el.elseif ? 'else-if="' + el.elseif + '"' : 'else') + " " +
+        "used on element <" + (el.tag) + "> without corresponding v-if."
     );
   }
 }
@@ -2770,7 +2791,7 @@ function findPrevElement (children) {
       if (process.env.NODE_ENV !== 'production' && children[i].text !== ' ') {
         warn$2(
           "text \"" + (children[i].text.trim()) + "\" between v-if and v-else(-if) " +
-          "will be ignored."
+            "will be ignored."
         );
       }
       children.pop();
@@ -2798,8 +2819,8 @@ function processSlot (el) {
     if (process.env.NODE_ENV !== 'production' && el.key) {
       warn$2(
         "`key` does not work on <slot> because slots are abstract outlets " +
-        "and can possibly expand into multiple elements. " +
-        "Use the key on a wrapping element instead."
+          "and can possibly expand into multiple elements. " +
+          "Use the key on a wrapping element instead."
       );
     }
   } else {
@@ -2826,7 +2847,7 @@ function processComponent (el) {
 function processAttrs (el) {
   var list = el.attrsList;
   var i, l, name, rawName, value, modifiers, isProp;
-  for (i = 0, l = list.length; i < l; i++) {
+  for ((i = 0), (l = list.length); i < l; i++) {
     name = rawName = list[i].name;
     value = list[i].value;
     if (dirRE.test(name)) {
@@ -2837,7 +2858,8 @@ function processAttrs (el) {
       if (modifiers) {
         name = name.replace(modifierRE, '');
       }
-      if (bindRE.test(name)) { // v-bind
+      if (bindRE.test(name)) {
+        // v-bind
         name = name.replace(bindRE, '');
         value = parseFilters(value);
         isProp = false;
@@ -2858,17 +2880,20 @@ function processAttrs (el) {
             );
           }
         }
-        if (isProp || (
-          !el.component && platformMustUseProp(el.tag, el.attrsMap.type, name)
-        )) {
+        if (
+          isProp ||
+          (!el.component && platformMustUseProp(el.tag, el.attrsMap.type, name))
+        ) {
           addProp(el, name, value);
         } else {
           addAttr(el, name, value);
         }
-      } else if (onRE.test(name)) { // v-on
+      } else if (onRE.test(name)) {
+        // v-on
         name = name.replace(onRE, '');
         addHandler(el, name, value, modifiers, false, warn$2);
-      } else { // normal directives
+      } else {
+        // normal directives
         name = name.replace(dirRE, '');
         // parse arg
         var argMatch = name.match(argRE);
@@ -2888,9 +2913,9 @@ function processAttrs (el) {
         if (expression) {
           warn$2(
             name + "=\"" + value + "\": " +
-            'Interpolation inside attributes has been removed. ' +
-            'Use v-bind or the colon shorthand instead. For example, ' +
-            'instead of <div id="{{ val }}">, use <div :id="val">.'
+              'Interpolation inside attributes has been removed. ' +
+              'Use v-bind or the colon shorthand instead. For example, ' +
+              'instead of <div id="{{ val }}">, use <div :id="val">.'
           );
         }
       }
@@ -2914,7 +2939,9 @@ function parseModifiers (name) {
   var match = name.match(modifierRE);
   if (match) {
     var ret = {};
-    match.forEach(function (m) { ret[m.slice(1)] = true; });
+    match.forEach(function (m) {
+      ret[m.slice(1)] = true;
+    });
     return ret
   }
 }
@@ -2924,7 +2951,9 @@ function makeAttrsMap (attrs) {
   for (var i = 0, l = attrs.length; i < l; i++) {
     if (
       process.env.NODE_ENV !== 'production' &&
-      map[attrs[i].name] && !isIE && !isEdge
+      map[attrs[i].name] &&
+      !isIE &&
+      !isEdge
     ) {
       warn$2('duplicate attribute: ' + attrs[i].name);
     }
@@ -2941,10 +2970,8 @@ function isTextTag (el) {
 function isForbiddenTag (el) {
   return (
     el.tag === 'style' ||
-    (el.tag === 'script' && (
-      !el.attrsMap.type ||
-      el.attrsMap.type === 'text/javascript'
-    ))
+    (el.tag === 'script' &&
+      (!el.attrsMap.type || el.attrsMap.type === 'text/javascript'))
   )
 }
 
@@ -2970,10 +2997,10 @@ function checkForAliasModel (el, value) {
     if (_el.for && _el.alias === value) {
       warn$2(
         "<" + (el.tag) + " v-model=\"" + value + "\">: " +
-        "You are binding v-model directly to a v-for iteration alias. " +
-        "This will not be able to modify the v-for source array because " +
-        "writing to the alias is like modifying a function local variable. " +
-        "Consider using an array of objects and use v-model on an object property instead."
+          "You are binding v-model directly to a v-for iteration alias. " +
+          "This will not be able to modify the v-for source array because " +
+          "writing to the alias is like modifying a function local variable. " +
+          "Consider using an array of objects and use v-model on an object property instead."
       );
     }
     _el = _el.parent;
