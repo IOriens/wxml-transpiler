@@ -4,6 +4,7 @@ import { genHandlers } from './events'
 import baseDirectives from '../directives/index'
 import { camelize, no, extend } from 'shared/util'
 import { baseWarn, pluckModuleFunction } from '../helpers'
+import { genTemplate } from './template'
 
 type TransformFunction = (el: ASTElement, code: string) => string;
 type DataGenFunction = (el: ASTElement) => string;
@@ -44,7 +45,7 @@ export function generate (
   const state = new CodegenState(options)
   const code = ast ? genElement(ast, state) : '_c("div")'
   return {
-    render: `with(this){return ${code}}`,
+    render: genTemplate(code),
     staticRenderFns: state.staticRenderFns
   }
 }

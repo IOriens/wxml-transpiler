@@ -17,10 +17,8 @@ const formatRule = {
 var file = fs.readFileSync(srcFile, 'utf8')
 
 const res = compiler.compile(file)
-
-const code = res.render.substring(18, res.render.length - 1)
-
-fs.writeFileSync(vueDist, prettier.format(code, formatRule), 'utf8')
+fs.writeFileSync(vueDist, res.render, 'utf8')
+fs.writeFileSync(vueDist, prettier.format(res.render, formatRule), 'utf8')
 
 exec(`${path.resolve(__dirname, 'wcc')} -b ${srcFile}`, (err, res) => {
   fs.writeFileSync(wccDist, prettier.format(res, formatRule), 'utf8')

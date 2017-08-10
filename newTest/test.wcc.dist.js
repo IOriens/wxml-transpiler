@@ -781,20 +781,9 @@ $gwx = function(path, global) {
     function Z(ops) {
       z.push(ops)
     }
-    Z([[2, '==='], [[7], [3, 'type']], [1, 'A']])
-    Z([3, 'A'])
   })(z)
   d_['/Users/IOriens/tut/vue/vue/newTest/test.wxml'] = {}
   var m0 = function(e, s, r, gg) {
-    var oB = _v()
-    _(r, oB)
-    if (_o(0, e, s, gg)) {
-      oB.wxVkey = 1
-      var xC = _n('div')
-      var oD = _o(1, e, s, gg)
-      _(xC, oD)
-      _(oB, xC)
-    }
     return r
   }
   e_['/Users/IOriens/tut/vue/vue/newTest/test.wxml'] = {

@@ -1,5 +1,5 @@
 <!-- if elif else -->
-<div wx:if="{{type === 'A'}}">A</div>
+ <!-- <div wx:if="{{type === 'A'}}">A</div> -->
 <!-- <div wx:elif="{{type === 'B'}}">B</div>
 <div wx:elif="{{type === 'C'}}">C</div>
 <div wx:else>
