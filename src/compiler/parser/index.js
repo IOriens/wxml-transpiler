@@ -390,7 +390,7 @@ function processIf (el) {
         warn(`Invalid wx:if expression: ${exp}`)
       return
     }
-    const ifExp =inMatch[1].trim()
+    const ifExp = inMatch[1].trim()
     el.if = ifExp
     addIfCondition(el, {
       exp: ifExp,
@@ -402,7 +402,14 @@ function processIf (el) {
     }
     const elseif = getAndRemoveAttr(el, 'wx:elif')
     if (elseif) {
-      el.elseif = elseif
+      const inMatch = elseif.match(tplBracket)
+      if (!inMatch) {
+        process.env.NODE_ENV !== 'production' &&
+          warn(`Invalid wx:if expression: ${elseif}`)
+        return
+      }
+      const elifExp = inMatch[1].trim()
+      el.elseif = elifExp
     }
   }
 }

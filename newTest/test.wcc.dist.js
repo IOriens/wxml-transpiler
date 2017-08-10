@@ -1,16 +1,17 @@
-/* v0.6vv_20170214_fbi */
+/*v0.6vv_20170214_fbi*/
 window.__wcc_version__ = 'v0.6vv_20170214_fbi'
 var $gwxc
 var $gaic = {}
-$gwx = function (path, global) {
-  function _ (a, b) {
+$gwx = function(path, global) {
+  function _(a, b) {
     b && a.children.push(b)
   }
-  function _v (k) {
-    if (typeof k !== 'undefined') { return { tag: 'virtual', wxKey: k, children: [] } }
+  function _v(k) {
+    if (typeof k != 'undefined')
+      return { tag: 'virtual', wxKey: k, children: [] }
     return { tag: 'virtual', children: [] }
   }
-  function _n (tag) {
+  function _n(tag) {
     $gwxc++
     if ($gwxc >= 16000) {
       throw "Dom limit exceeded, please check if there's any mistake you've made."
@@ -22,13 +23,13 @@ $gwx = function (path, global) {
       n: []
     }
   }
-  function _p (a, b) {
+  function _p(a, b) {
     b && a.properities.push(b)
   }
-  function _s (scope, env, key) {
-    return typeof scope[key] !== 'undefined' ? scope[key] : env[key]
+  function _s(scope, env, key) {
+    return typeof scope[key] != 'undefined' ? scope[key] : env[key]
   }
-  function _wl (tname, prefix) {
+  function _wl(tname, prefix) {
     console.warn(
       'WXMLRT:' +
         prefix +
@@ -39,11 +40,11 @@ $gwx = function (path, global) {
   }
   $gwn = console.warn
   $gwl = console.log
-  function $gwh () {
-    function x () {}
+  function $gwh() {
+    function x() {}
     x.prototype = {
-      hn: function (obj) {
-        if (typeof obj === 'object') {
+      hn: function(obj) {
+        if (typeof obj == 'object') {
           var cnt = 0
           var any = false
           for (var x in obj) {
@@ -55,18 +56,18 @@ $gwx = function (path, global) {
         }
         return 'n'
       },
-      nh: function (obj, special) {
-        return { __value__: obj, __wxspec__: special || true }
+      nh: function(obj, special) {
+        return { __value__: obj, __wxspec__: special ? special : true }
       },
-      rv: function (obj) {
+      rv: function(obj) {
         return this.hn(obj) === 'n' ? obj : this.rv(obj.__value__)
       }
     }
     return new x()
   }
   wh = $gwh()
-  function $gwrt (should_pass_type_info) {
-    function ArithmeticEv (ops, e, s, g, o) {
+  function $gwrt(should_pass_type_info) {
+    function ArithmeticEv(ops, e, s, g, o) {
       var rop = ops[0][1]
       var _a, _b, _c, _d, _aa, _bb
       switch (rop) {
@@ -170,9 +171,8 @@ $gwx = function (path, global) {
           break
         case '-':
           _a = ops.length === 3 ? rev(ops[1], e, s, g, o) : 0
-          _b = ops.length === 3
-            ? rev(ops[2], e, s, g, o)
-            : rev(ops[1], e, s, g, o)
+          _b =
+            ops.length === 3 ? rev(ops[2], e, s, g, o) : rev(ops[1], e, s, g, o)
           _c = should_pass_type_info && (wh.hn(_a) === 'h' || wh.hn(_b) === 'h')
           _d = _c ? wh.rv(_a) - wh.rv(_b) : _a - _b
           return _c ? wh.nh(_d, 'c') : _d
@@ -191,7 +191,7 @@ $gwx = function (path, global) {
           $gwn('unrecognized op' + rop)
       }
     }
-    function rev (ops, e, s, g, o) {
+    function rev(ops, e, s, g, o) {
       var op = ops[0]
       if (typeof op === 'object') {
         var vop = op[0]
@@ -243,7 +243,7 @@ $gwx = function (path, global) {
               _d = _aa[_bb]
               _td = wh.hn(_d) === 'h'
               o.is_affected |= _td
-              return _ta || _tb ? _td ? _d : wh.nh(_d, 'e') : _d
+              return _ta || _tb ? (_td ? _d : wh.nh(_d, 'e')) : _d
             } else {
               if (_aa === null || typeof _aa === 'undefined') {
                 return undefined
@@ -269,9 +269,10 @@ $gwx = function (path, global) {
                 _s = wh.rv(s)
                 _e = wh.rv(e)
                 _b = ops[1][1]
-                _a = _s && _s.hasOwnProperty(_b)
-                  ? s
-                  : _e && (_e.hasOwnProperty(_b) ? e : undefined)
+                _a =
+                  _s && _s.hasOwnProperty(_b)
+                    ? s
+                    : _e && (_e.hasOwnProperty(_b) ? e : undefined)
                 if (should_pass_type_info) {
                   if (_a) {
                     _ta = wh.hn(_a) === 'h'
@@ -303,7 +304,7 @@ $gwx = function (path, global) {
           case 9:
             _a = rev(ops[1], e, s, g, o)
             _b = rev(ops[2], e, s, g, o)
-            function merge (_a, _b, _ow) {
+            function merge(_a, _b, _ow) {
               _ta = wh.hn(_a) === 'h'
               _tb = wh.hn(_b) === 'h'
               _aa = wh.rv(_a)
@@ -311,7 +312,8 @@ $gwx = function (path, global) {
               if (should_pass_type_info) {
                 if (_tb) {
                   for (var k in _bb) {
-                    if (_ow || !_aa.hasOwnProperty(k)) { _aa[k] = wh.nh(_bb[k], 'e') }
+                    if (_ow || !_aa.hasOwnProperty(k))
+                      _aa[k] = wh.nh(_bb[k], 'e')
                   }
                 } else {
                   for (var k in _bb) {
@@ -358,7 +360,7 @@ $gwx = function (path, global) {
   }
   gra = $gwrt(true)
   grb = $gwrt(false)
-  function TestTest (expr, ops, e, s, g, expect_a, expect_b, expect_affected) {
+  function TestTest(expr, ops, e, s, g, expect_a, expect_b, expect_affected) {
     {
       var o = { is_affected: false }
       var a = gra(ops, e, s, g, o)
@@ -405,7 +407,7 @@ $gwx = function (path, global) {
     }
   }
 
-  function wfor (
+  function wfor(
     to_iter,
     func,
     env,
@@ -433,8 +435,8 @@ $gwx = function (path, global) {
           scope[indexname] = wh.nh(i, 'h')
           _y = keyname
             ? keyname === '*this'
-                ? _v(wh.rv(to_iter[i]))
-                : _v(wh.rv(wh.rv(to_iter[i])[keyname]))
+              ? _v(wh.rv(to_iter[i]))
+              : _v(wh.rv(wh.rv(to_iter[i])[keyname]))
             : _v()
           _(father, _y)
           func(env, scope, _y, global)
@@ -445,8 +447,8 @@ $gwx = function (path, global) {
           scope[indexname] = wh.nh(k, 'h')
           _y = keyname
             ? keyname === '*this'
-                ? _v(wh.rv(to_iter[k]))
-                : _v(wh.rv(wh.rv(to_iter[k])[keyname]))
+              ? _v(wh.rv(to_iter[k]))
+              : _v(wh.rv(wh.rv(to_iter[k])[keyname]))
             : _v()
           _(father, _y)
           func(env, scope, _y, global)
@@ -475,16 +477,15 @@ $gwx = function (path, global) {
       if (type === 'A') {
         for (var i = 0; i < r_to_iter.length; i++) {
           iter_item = r_to_iter[i]
-          iter_item = wh.hn(iter_item) === 'n'
-            ? wh.nh(iter_item, 'h')
-            : iter_item
+          iter_item =
+            wh.hn(iter_item) === 'n' ? wh.nh(iter_item, 'h') : iter_item
           r_iter_item = wh.rv(iter_item)
           scope[itemname] = iter_item
           scope[indexname] = wh.nh(i, 'h')
           _y = keyname
             ? keyname === '*this'
-                ? _v(r_iter_item)
-                : _v(wh.rv(r_iter_item[keyname]))
+              ? _v(r_iter_item)
+              : _v(wh.rv(r_iter_item[keyname]))
             : _v()
           _(father, _y)
           func(env, scope, _y, global)
@@ -492,16 +493,15 @@ $gwx = function (path, global) {
       } else if (type === 'O') {
         for (var k in r_to_iter) {
           iter_item = r_to_iter[k]
-          iter_item = wh.hn(iter_item) === 'n'
-            ? wh.nh(iter_item, 'h')
-            : iter_item
+          iter_item =
+            wh.hn(iter_item) === 'n' ? wh.nh(iter_item, 'h') : iter_item
           r_iter_item = wh.rv(iter_item)
           scope[itemname] = iter_item
           scope[indexname] = wh.nh(k, 'h')
           _y = keyname
             ? keyname === '*this'
-                ? _v(r_iter_item)
-                : _v(wh.rv(r_iter_item[keyname]))
+              ? _v(r_iter_item)
+              : _v(wh.rv(r_iter_item[keyname]))
             : _v()
           _(father, _y)
           func(env, scope, _y, global)
@@ -537,21 +537,21 @@ $gwx = function (path, global) {
     }
   }
 
-  function _r (node, attrname, opindex, env, scope, global) {
+  function _r(node, attrname, opindex, env, scope, global) {
     var o = {}
     var a = grb(z[opindex], env, scope, global, o)
     node.attr[attrname] = a
     if (o.is_affected) node.n.push(attrname)
   }
-  function _o (opindex, env, scope, global) {
+  function _o(opindex, env, scope, global) {
     var nothing = {}
     return grb(z[opindex], env, scope, global, nothing)
   }
-  function _1 (opindex, env, scope, global) {
+  function _1(opindex, env, scope, global) {
     var nothing = {}
     return gra(z[opindex], env, scope, global, nothing)
   }
-  function _2 (
+  function _2(
     opindex,
     func,
     env,
@@ -584,12 +584,12 @@ $gwx = function (path, global) {
       keyname
     )
   }
-  function _gv () {
-    if (typeof window.__webview_engine_version__ === 'undefined') return 0.0
+  function _gv() {
+    if (typeof window.__webview_engine_version__ == 'undefined') return 0.0
     return window.__webview_engine_version__
   }
 
-  function _m (tag, attrs, env, scope, global) {
+  function _m(tag, attrs, env, scope, global) {
     var tmp = _n(tag)
     var base = 0
     for (var i = 0; i < attrs.length; i += 2) {
@@ -603,7 +603,7 @@ $gwx = function (path, global) {
     return tmp
   }
 
-  function _ai (i, p, e, me, r, c) {
+  function _ai(i, p, e, me, r, c) {
     var x = _grp(p, e, me)
     if (x) i.push(x)
     else {
@@ -623,7 +623,7 @@ $gwx = function (path, global) {
       )
     }
   }
-  function _grp (p, e, me) {
+  function _grp(p, e, me) {
     if (p[0] != '/') {
       var mepart = me.split('/')
       mepart.pop()
@@ -639,7 +639,7 @@ $gwx = function (path, global) {
     if (e[p]) return p
     if (e[p + '.wxml']) return p + '.wxml'
   }
-  function _gd (p, c, e, d) {
+  function _gd(p, c, e, d) {
     if (!c) return
     if (d[p][c]) return d[p][c]
     for (var x = e[p].i.length - 1; x >= 0; x--) {
@@ -653,7 +653,7 @@ $gwx = function (path, global) {
     for (var x = 0; x < ii.length; x++) {
       if (ii[x] && d[ii[x]][c]) return d[ii[x]][c]
     }
-    for (var k = e[p].j.length - 1; k >= 0; k--) {
+    for (var k = e[p].j.length - 1; k >= 0; k--)
       if (e[p].j[k]) {
         for (var q = e[e[p].j[k]].ti.length - 1; q >= 0; q--) {
           var pp = _grp(e[e[p].j[k]].ti[q], e, p)
@@ -662,14 +662,18 @@ $gwx = function (path, global) {
           }
         }
       }
-    }
   }
-  function _gapi (e, p) {
+  function _gapi(e, p) {
     if (!p) return []
     if ($gaic[p]) {
       return $gaic[p]
     }
-    var ret = [], q = [], h = 0, t = 0, put = {}, visited = {}
+    var ret = [],
+      q = [],
+      h = 0,
+      t = 0,
+      put = {},
+      visited = {}
     q.push(p)
     visited[p] = true
     t++
@@ -697,7 +701,7 @@ $gwx = function (path, global) {
     return ret
   }
   var $ixc = {}
-  function _ic (p, ent, me, e, s, r, gg) {
+  function _ic(p, ent, me, e, s, r, gg) {
     var x = _grp(p, ent, me)
     ent[me].j.push(x)
     if (x) {
@@ -726,7 +730,7 @@ $gwx = function (path, global) {
       )
     }
   }
-  function _w (tn, f, line, c) {
+  function _w(tn, f, line, c) {
     console.warn(
       'WXMLRT:' +
         f +
@@ -739,7 +743,7 @@ $gwx = function (path, global) {
         '` not found.'
     )
   }
-  function _ev (dom) {
+  function _ev(dom) {
     var changed = false
     delete dom.properities
     delete dom.n
@@ -767,64 +771,48 @@ $gwx = function (path, global) {
     return dom
   }
   var e_ = {}
-  if (global && typeof global.entrys === 'object') e_ = global.entrys
+  if (global && typeof global.entrys == 'object') e_ = global.entrys
   var d_ = {}
-  if (global && typeof global.defines === 'object') d_ = global.defines
+  if (global && typeof global.defines == 'object') d_ = global.defines
   var p_ = {}
-  var cs
   var z = []
-  ;(function (z) {
+  ;(function(z) {
     var a = 11
-    function Z (ops) {
+    function Z(ops) {
       z.push(ops)
     }
-    Z([
-      a,
-      [
-        [2, '?:'],
-        [
-          [2, '>'],
-          [
-            [2, '+'],
-            [
-              [2, '-'],
-              [[2, '+'], [1, 1], [1, 2]],
-              [
-                [2, '*'],
-                [[2, '*'], [1, 5], [1, 7]],
-                [[2, '+'], [1, 7], [1, 8]]
-              ]
-            ],
-            [1, 9]
-          ],
-          [1, 33]
-        ],
-        [1, 4],
-        [[2, '+'], [1, 6], [[2, '!'], [[7], [3, 'jjjj']]]]
-      ]
-    ])
+    Z([[2, '==='], [[7], [3, 'type']], [1, 'A']])
+    Z([3, 'A'])
   })(z)
-  d_['tab.wxml'] = {}
-  var m0 = function (e, s, r, gg) {
-    cs.push('tab.wxml:text:1:1')
-    var oB = _n('text')
-    var xC = _o(0, e, s, gg)
-    _(oB, xC)
-    cs.pop()
+  d_['/Users/IOriens/tut/vue/vue/newTest/test.wxml'] = {}
+  var m0 = function(e, s, r, gg) {
+    var oB = _v()
     _(r, oB)
+    if (_o(0, e, s, gg)) {
+      oB.wxVkey = 1
+      var xC = _n('div')
+      var oD = _o(1, e, s, gg)
+      _(xC, oD)
+      _(oB, xC)
+    }
     return r
   }
-  e_['tab.wxml'] = { f: m0, j: [], i: [], ti: [], ic: [] }
+  e_['/Users/IOriens/tut/vue/vue/newTest/test.wxml'] = {
+    f: m0,
+    j: [],
+    i: [],
+    ti: [],
+    ic: []
+  }
   if (path && e_[path]) {
     window.__wxml_comp_version__ = 0.02
-    return function (env, dd, global) {
+    return function(env, dd, global) {
       $gwxc = 0
       var root = { tag: 'wx-page' }
       root.children = []
       var main = e_[path].f
-      cs = []
       if (
-        typeof window.__webview_engine_version__ !== 'undefined' &&
+        typeof window.__webview_engine_version__ != 'undefined' &&
         window.__webview_engine_version__ + 1e-6 >= 0.02 + 1e-6 &&
         window.__mergeData__
       ) {
@@ -833,15 +821,13 @@ $gwx = function (path, global) {
       try {
         main(env, {}, root, global)
         if (
-          typeof window.__webview_engine_version__ === 'undefined' ||
+          typeof window.__webview_engine_version__ == 'undefined' ||
           window.__webview_engine_version__ + 1e-6 < 0.01 + 1e-6
         ) {
           return _ev(root)
         }
       } catch (err) {
-        console.log(cs, env)
         console.log(err)
-        throw err
       }
       return root
     }

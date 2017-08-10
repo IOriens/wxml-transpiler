@@ -11,7 +11,7 @@ Use  compiler built in Vue.js to transpile wxml.
 ```sh
 yarn
 yarn run dev:compiler
-node test.js
+node newTest/test
 ```
 
 ## License

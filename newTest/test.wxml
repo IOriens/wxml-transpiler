@@ -1,0 +1,11 @@
+<!-- if elif else -->
+<div wx:if="{{type === 'A'}}">A</div>
+<!-- <div wx:elif="{{type === 'B'}}">B</div>
+<div wx:elif="{{type === 'C'}}">C</div>
+<div wx:else>
+  not a/b/c
+  <div wx:if="{{type === 'a'}}">a</div>
+  <div wx:elif="{{type === 'b'}}">b</div>
+  <div wx:elif="{{type === 'c'}}">c</div>
+  <div wx:else>not a/b/c</div>
+</div> -->

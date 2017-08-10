@@ -2749,7 +2749,7 @@ function processIf (el) {
         warn$2(("Invalid wx:if expression: " + exp));
       return
     }
-    var ifExp =inMatch[1].trim();
+    var ifExp = inMatch[1].trim();
     el.if = ifExp;
     addIfCondition(el, {
       exp: ifExp,
@@ -2761,7 +2761,14 @@ function processIf (el) {
     }
     var elseif = getAndRemoveAttr(el, 'wx:elif');
     if (elseif) {
-      el.elseif = elseif;
+      var inMatch$1 = elseif.match(tplBracket);
+      if (!inMatch$1) {
+        process.env.NODE_ENV !== 'production' &&
+          warn$2(("Invalid wx:if expression: " + elseif));
+        return
+      }
+      var elifExp = inMatch$1[1].trim();
+      el.elseif = elifExp;
     }
   }
 }

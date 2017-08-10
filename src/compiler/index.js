@@ -5,7 +5,6 @@ import { optimize } from './optimizer'
 import { generate } from './codegen/index'
 import { createCompilerCreator } from './create-compiler'
 
-// $flow-disable-line
 // import { stringify } from 'circular-json'
 
 // `createCompilerCreator` allows creating compilers that use alternative
