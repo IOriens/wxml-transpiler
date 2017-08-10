@@ -1,4 +1,5 @@
 var fs = require('fs')
+const prettier = require("prettier");
 // var babylon = require('./babylon/')
 // var babel = require('./babel/packages/babel-core');
 // var generate = require('babel-generator').default
@@ -23,7 +24,6 @@ var file = fs
 //     // "flow"
 //   ]
 // })
-// debugger
 // console.log(JSON.stringify(ast))
 // var code = generate(ast, {}, file)
 
@@ -33,7 +33,10 @@ var file = fs
 // const out = babel.transform(file, {
 //   presets: [require('./babel/packages/babel-preset-react')]
 // });
-const ast = compiler.compile(file)
+const res = compiler.compile(file)
 
+const code = res.render.substring(18, res.render.length - 1)
 
-console.log(ast)
+fs.writeFileSync('test.vue.dist.js', prettier.format(code, {tabWidth: 2, useTabs: false, semi: false, singleQuote: true}), 'utf8')
+
+console.log('See Result in test.vue.dist.js')

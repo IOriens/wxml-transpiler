@@ -5,8 +5,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var deindent = _interopDefault(require('de-indent'));
+var acorn = require('acorn');
 var he = _interopDefault(require('he'));
-var circularJson = require('circular-json');
 
 /*  */
 
@@ -1768,7 +1768,7 @@ function wrapFilter (exp, filter) {
 
 /*  */
 
-var defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g;
+var bracketInBracketTagRE =/\{\{((['"][^'"]+['"]|[^{}]+)+)\}\}/g;
 var regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g;
 
 var buildRegex = cached(function (delimiters) {
@@ -1781,7 +1781,8 @@ function parseText (
   text,
   delimiters
 ) {
-  var tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE;
+  // const tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE
+  var tagRE = delimiters ? buildRegex(delimiters) : bracketInBracketTagRE;
   if (!tagRE.test(text)) {
     return
   }
@@ -1789,13 +1790,14 @@ function parseText (
   var lastIndex = tagRE.lastIndex = 0;
   var match, index;
   while ((match = tagRE.exec(text))) {
+// console.log(match)
     index = match.index;
     // push text token
     if (index > lastIndex) {
       tokens.push(JSON.stringify(text.slice(lastIndex, index)));
     }
     // tag token
-    var exp = parseFilters(match[1].trim());
+    var exp = parseExp(match[1].trim())|| '';
     tokens.push(("_s(" + exp + ")"));
     lastIndex = index + match[0].length;
   }
@@ -1803,6 +1805,23 @@ function parseText (
     tokens.push(JSON.stringify(text.slice(lastIndex)));
   }
   return tokens.join('+')
+}
+
+function parseExp (
+  text
+) {
+  var ast;
+  try {
+    ast = acorn.parse(text);
+  } catch(e) {
+    try {
+      ast = acorn.parse(("x={" + text + "}"));
+    } catch (e) {
+      throw new Error((text + " contains syntax errs"))
+    }
+  } finally{
+    return JSON.stringify(ast)
+  }
 }
 
 /*  */
@@ -2403,7 +2422,7 @@ var platformGetTagNamespace;
 /**
  * Convert HTML string to AST.
  */
-function parse (
+function parse$1 (
   template,
   options
 ) {
@@ -2890,7 +2909,7 @@ function processAttrs (el) {
       // literal attribute
       // if (process.env.NODE_ENV !== 'production') {
         var expression = parseText(value, delimiters);
-        console.log(expression);
+        // console.log(expression)
         // if (expression) {
         //   warn(
         //     `${name}="${value}": ` +
@@ -3948,10 +3967,8 @@ var createCompiler = createCompilerCreator(function baseCompile (
   template,
   options
 ) {
-  var ast = parse(template.trim(), options);
-  console.log(circularJson.stringify(ast));
+  var ast = parse$1(template.trim(), options);
   optimize(ast, options);
-  console.log(circularJson.stringify(ast));
   var code = generate(ast, options);
   return {
     ast: ast,
@@ -4458,7 +4475,7 @@ var createCompiler$1 = createCompilerCreator(function baseCompile (
   template,
   options
 ) {
-  var ast = parse(template.trim(), options);
+  var ast = parse$1(template.trim(), options);
   optimize$1(ast, options);
   var code = generate$1(ast, options);
   return {

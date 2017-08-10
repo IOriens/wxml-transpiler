@@ -778,13 +778,38 @@ $gwx = function (path, global) {
     function Z (ops) {
       z.push(ops)
     }
-    Z([a, [3, 'item-'], [[7], [3, 'id']]])
+    Z([
+      a,
+      [
+        [2, '?:'],
+        [
+          [2, '>'],
+          [
+            [2, '+'],
+            [
+              [2, '-'],
+              [[2, '+'], [1, 1], [1, 2]],
+              [
+                [2, '*'],
+                [[2, '*'], [1, 5], [1, 7]],
+                [[2, '+'], [1, 7], [1, 8]]
+              ]
+            ],
+            [1, 9]
+          ],
+          [1, 33]
+        ],
+        [1, 4],
+        [[2, '+'], [1, 6], [[2, '!'], [[7], [3, 'jjjj']]]]
+      ]
+    ])
   })(z)
   d_['tab.wxml'] = {}
   var m0 = function (e, s, r, gg) {
-    cs.push('tab.wxml:view:1:1')
-    var oB = _n('view')
-    _r(oB, 'id', 0, e, s, gg)
+    cs.push('tab.wxml:text:1:1')
+    var oB = _n('text')
+    var xC = _o(0, e, s, gg)
+    _(oB, xC)
     cs.pop()
     _(r, oB)
     return r

@@ -129,5 +129,9 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "acorn": "^5.1.1",
+    "prettier": "^1.5.3"
   }
 }

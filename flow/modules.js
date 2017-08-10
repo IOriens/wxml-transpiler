@@ -42,3 +42,7 @@ declare module 'lodash.template' {
     (input: string, options: { interpolate: RegExp, escape: RegExp }): Function
   }
 }
+
+declare module 'acorn' {
+  declare function parse(input: string,options?:Object): Node;
+}
