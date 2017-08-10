@@ -3984,11 +3984,16 @@ function createCompilerCreator (baseCompile) {
 
 /*  */
 
+// import { stringify } from 'circular-json'
+
+// `createCompilerCreator` allows creating compilers that use alternative
+// parser/optimizer/codegen, e.g the SSR optimizing compiler.
+// Here we just export a default compiler using the default parts.
 var createCompiler = createCompilerCreator(function baseCompile (
-  template,
+  templates,
   options
 ) {
-  var ast = parse$1(template.trim(), options);
+  var ast = parse$1(templates, options);
   optimize(ast, options);
   var code = generate(ast, options);
   return {
