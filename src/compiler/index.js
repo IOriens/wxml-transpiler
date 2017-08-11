@@ -3,6 +3,7 @@
 import { parse } from './parser/index'
 import { optimize } from './optimizer'
 import { generate } from './codegen/index'
+import { genTemplate } from './codegen/template'
 import { createCompilerCreator } from './create-compiler'
 
 // import { stringify } from 'circular-json'
@@ -25,7 +26,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   const code = asts.map(ast => generate(ast.ast, options).render).join('\n')
   return {
     asts,
-    render: code
+    render: genTemplate(code)
     // staticRenderFns: code.staticRenderFns
   }
 })

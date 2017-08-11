@@ -21,7 +21,7 @@ var files = srcFiles.map(path => ({
   path,
   template: fs.readFileSync(path, 'utf-8')
 }))
-console.log(files)
+
 const res = compiler.compile(files)
 fs.writeFileSync(vueDist, res.render, 'utf8')
 fs.writeFileSync(vueDist, prettier.format(res.render, formatRule), 'utf8')
@@ -29,6 +29,7 @@ fs.writeFileSync(vueDist, prettier.format(res.render, formatRule), 'utf8')
 exec(`${resolve(__dirname, 'wcc')} -b ${srcFiles.reduce((p, c) => `${p} ${c}`, '')}`, (err, res) => {
   fs.writeFileSync(wccDist, prettier.format(res, formatRule), 'utf8')
   exec(`diff -rp ${vueDist} ${wccDist}`, (err, res) => {
+    console.log(res)
     fs.writeFileSync(diffDist, res, 'utf8')
   })
 })
