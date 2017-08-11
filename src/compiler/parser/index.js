@@ -40,14 +40,15 @@ let postTransforms
 let platformIsPreTag
 let platformMustUseProp
 let platformGetTagNamespace
-
+let store
 /**
  * Convert HTML string to AST.
  */
 export function parse (
   template: string,
+  globStore: Object,
   options: CompilerOptions
-): ASTElement | void {
+): ASTElement {
   warn = options.warn || baseWarn
 
   platformIsPreTag = options.isPreTag || no
@@ -59,6 +60,7 @@ export function parse (
   postTransforms = pluckModuleFunction(options.modules, 'postTransformNode')
 
   delimiters = options.delimiters
+  store = globStore
 
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
@@ -390,8 +392,14 @@ function processIf (el) {
         warn(`Invalid wx:if expression: ${exp}`)
       return
     }
+
     const ifExp = inMatch[1].trim()
     el.if = ifExp
+    if (!store.map[ifExp]) {
+      store.map[ifExp] = store.props.length
+      store.props.push(parseText(inMatch[0]))
+    }
+
     addIfCondition(el, {
       exp: ifExp,
       block: el

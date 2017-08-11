@@ -12,18 +12,35 @@ import { createCompilerCreator } from './create-compiler'
 // parser/optimizer/codegen, e.g the SSR optimizing compiler.
 // Here we just export a default compiler using the default parts.
 export const createCompiler = createCompilerCreator(function baseCompile (
-  templates: Array<Object>,
+  templates: Array<{ path: string, template: string }>,
   options: CompilerOptions
 ): CompiledResult | any {
-  const asts: Array<{
-    ast: any,
-    path: string,
-  }> = templates.map(template => ({
-    path: template.path,
-    ast: parse(template.template, options)
-  }))
-  asts.map(ast => optimize(ast.ast, options))
-  const code = asts.map(ast => generate(ast.ast, options).render).join('\n')
+  const initStore = {
+    map: Object.create(null),
+    props: []
+  }
+
+  const asts: {
+    asts: Array<{ path: string, ast: ASTElement }>,
+    store: { map: Object, props: Array<mixed> },
+  } = templates.reduce(
+    (p, c) => ({
+      asts: p.asts.concat({
+        ast: parse(c.template, p.store, options),
+        path: c.path
+      }),
+      store: p.store
+    }),
+    {
+      store: initStore,
+      asts: []
+    }
+  )
+
+  console.log(asts.store)
+
+  asts.asts.map(ast => optimize(ast.ast, options))
+  const code = asts.asts.map(ast => generate(ast.ast, options).render).join('\n')
   return {
     asts,
     render: genTemplate(code)

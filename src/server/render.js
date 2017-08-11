@@ -9,7 +9,7 @@ import {
 import { escape } from 'web/server/util'
 import { SSR_ATTR } from 'shared/constants'
 import { RenderContext } from './render-context'
-import { ssrCompileToFunctions } from 'web/server/compiler'
+// import { ssrCompileToFunctions } from 'web/server/compiler'
 import { installSSRHelpers } from './optimizing-compiler/runtime-helpers'
 
 import {
@@ -29,9 +29,9 @@ const normalizeRender = vm => {
   const { render, template, _scopeId } = vm.$options
   if (isUndef(render)) {
     if (template) {
-      Object.assign(vm.$options, ssrCompileToFunctions(template, {
-        scopeId: _scopeId
-      }))
+      // Object.assign(vm.$options, ssrCompileToFunctions(template, {
+      //   scopeId: _scopeId
+      // }))
     } else {
       throw new Error(
         `render function or template not defined in component: ${

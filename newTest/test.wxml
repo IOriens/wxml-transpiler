@@ -1,7 +1,14 @@
 <!-- if elif else -->
+<div wx:if="{{type === 'A' && 4 > 3 && !c}}" propww="{{dd}}" idd="dd" id='dd'  prop="{{ccc}}">A</div>
+<!-- <div wx:elif="{{type === 'B'}}">B
+
   <div wx:if="{{type === 'A'}}">A</div>
-<!-- <div wx:elif="{{type === 'B'}}">B</div>
-<div wx:elif="{{type === 'C'}}">C</div>
+  <div wx:elif="{{type === 'B'}}">B</div>
+</div>
+<div wx:if="{{type === 'A'}}">A</div>
+<div wx:elif="{{type === 'B'}}">B</div>
+<div wx:else>not a/b/c</div> -->
+<!--<div wx:elif="{{type === 'C'}}">C</div>
 <div wx:else>
   not a/b/c
   <div wx:if="{{type === 'a'}}">a</div>

@@ -44,5 +44,5 @@ declare module 'lodash.template' {
 }
 
 declare module 'acorn' {
-  declare function parse(input: string,options?:Object): Node;
+  declare function parse(input: string,options?:Object): AcornNode;
 }

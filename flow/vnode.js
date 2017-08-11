@@ -76,3 +76,14 @@ declare type VNodeDirective = {
 };
 
 declare type ScopedSlotsData = Array<{ key: string, fn: Function } | ScopedSlotsData>;
+
+declare type AcornNode = {
+  type: string;
+  operator?: string;
+  left?: AcornNode;
+  right?: AcornNode;
+  name?: string;
+  argument?: AcornNode;
+  raw?: string;
+}
+
