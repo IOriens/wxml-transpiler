@@ -35,7 +35,7 @@ export function parseText (
     }
     // tag token
     const exp = parseExp(match[1].trim()) || ''
-    tokens.push(`_s(${exp})`)
+    tokens.push(exp)
     lastIndex = index + match[0].length
   }
   if (lastIndex < text.length) {
@@ -47,7 +47,6 @@ export function parseText (
 export function walk (node: AcornNode | void): string {
   let res = ''
   if (node) {
-    console.log(node.type)
     switch (node.type) {
       case 'LogicalExpression':
         if (node.operator && node.left) {

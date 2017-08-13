@@ -564,6 +564,7 @@ function processAttrs (el) {
     } else {
       // literal attribute
       // if (process.env.NODE_ENV !== 'production') {
+
         const expression = parseText(value, delimiters)
         // console.log(expression)
         // if (expression) {

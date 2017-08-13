@@ -1,5 +1,5 @@
 
-<!-- <div wx:if="{{type === 'A'}}">A</div> -->
+<div wx:if="{{type === 'B'}}">A</div>
 <!-- wx: for -->
 <!-- <view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="i">
   <view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="j">

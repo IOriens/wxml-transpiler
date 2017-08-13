@@ -9,17 +9,19 @@ Use  compiler built in Vue.js to transpile wxml.
 ## Give it a Try
 
 ```sh
-# install deps
+# Start
+## install deps
 yarn
-
-# start dev dep
+## build dep
 yarn run dev:compiler
-
-# run
+## run
 node newTest/test
 
-# dev
-nodemon newTest/test -w packages/vue-template-compiler -w newTest/test.js
+# Dev
+## autorestart test script
+nodemon newTest/test --ignore 'newTest/*dist.js'
+## autorestart type check
+watch -t flow
 ```
 
 ## License
