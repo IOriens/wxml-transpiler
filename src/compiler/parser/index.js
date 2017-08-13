@@ -290,6 +290,12 @@ let currRoot = root
           text !== ' ' &&
           (expression = parseText(text, delimiters))
         ) {
+
+          if (!store.map[text]) {
+            store.map[text] = store.props.length
+            store.props.push(expression)
+          }
+
           children.push({
             type: 2,
             expression,
@@ -565,7 +571,14 @@ function processAttrs (el) {
       // literal attribute
       // if (process.env.NODE_ENV !== 'production') {
 
+
         const expression = parseText(value, delimiters)
+
+        if (!store.map[value]) {
+          store.map[value] = store.props.length
+          store.props.push(expression)
+        }
+
         // console.log(expression)
         // if (expression) {
         //   warn(

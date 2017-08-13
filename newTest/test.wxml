@@ -1,5 +1,5 @@
 <!-- if elif else -->
-<div wx:if="{{type === 'A' && 4 > 3 && !c}}" propww="{{dd}}" idd="dd" id='dd'  prop="{{ccc}}">A</div>
+<div wx:if="{{type === 'A' && 4 > 3 && !c}}" propww="{{dd1}}" idd="dd" id='dd'  prop="{{ccc}}">A</div>
 <!-- <div wx:elif="{{type === 'B'}}">B
 
   <div wx:if="{{type === 'A'}}">A</div>

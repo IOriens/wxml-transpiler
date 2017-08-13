@@ -18,10 +18,11 @@ export function parseText (
   text: string,
   delimiters?: [string, string]
 ): string | void {
+  console.log(text)
   // const tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE
   const tagRE = delimiters ? buildRegex(delimiters) : bracketInBracketTagRE
   if (!tagRE.test(text)) {
-    return
+    return `[3, ${JSON.stringify(text)}]`
   }
   const tokens = []
   let lastIndex = (tagRE.lastIndex = 0)
@@ -31,7 +32,7 @@ export function parseText (
     index = match.index
     // push text token
     if (index > lastIndex) {
-      tokens.push(JSON.stringify(text.slice(lastIndex, index)))
+      tokens.push(`[3, ${JSON.stringify(text.slice(lastIndex, index))}]`)
     }
     // tag token
     const exp = parseExp(match[1].trim()) || ''
@@ -41,6 +42,7 @@ export function parseText (
   if (lastIndex < text.length) {
     tokens.push(JSON.stringify(text.slice(lastIndex)))
   }
+  console.log(tokens)
   return tokens.join('+')
 }
 

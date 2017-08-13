@@ -17,9 +17,7 @@ yarn run dev:compiler
 ## run
 node newTest/test
 
-# Dev
-## autorestart test script
-nodemon newTest/test --ignore 'newTest/*dist.js'
+# Dev 
 ## autorestart type check
 watch -t flow
 ```
