@@ -74,7 +74,6 @@ export function genElement (el: ASTElement, state: CodegenState): string {
       code = genComponent(el.component, el, state)
     } else {
       const data = el.plain ? undefined : genData(el, state)
-      console.log('O_O', data)
       if(el.tag == 'Program') el.newName = 'r'
       const children = el.inlineTemplate ? null : genChildren(el, state, true)
 
@@ -149,29 +148,55 @@ export function genIf (
   altEmpty?: string
 ): string {
   el.ifProcessed = true // avoid recursion
-  return genIfConditions(el.ifConditions.slice(), state, altGen, altEmpty)
+  return genIfConditions(el.ifConditions.slice(), state, altGen, altEmpty, el.newName)
 }
 
 function genIfConditions (
   conditions: ASTIfConditions,
   state: CodegenState,
   altGen?: Function,
-  altEmpty?: string
+  altEmpty?: string,
+  newName?: string,
+  vkey?: number
 ): string {
   if (!conditions.length) {
-    return altEmpty || '_e()'
+    return altEmpty || ' '
   }
-
   const condition = conditions.shift()
-  if (condition.exp) {
-    return `(${condition.exp})?${
-      genTernaryExp(condition.block)
-    }:${
-      genIfConditions(conditions, state, altGen, altEmpty)
-    }`
-  } else {
-    return `${genTernaryExp(condition.block)}`
-  }
+  console.log(666,propStore.map, condition.exp)
+  // if (condition.exp) {
+    const childNewName = generateId()
+    condition.block.newName = childNewName
+
+    if(condition.block.if) {
+      return `
+      var ${newName || '' } = _v()
+      if (_o(${propStore.map[condition.exp]}, e, s, gg)) {
+        ${newName || '' }.wxVkey = ${vkey = 1}${genTernaryExp(condition.block)}
+        _(${newName || '' }, ${childNewName})
+      }
+      ${genIfConditions(conditions, state, altGen, altEmpty, newName, vkey + 1)}
+      `
+    } else if(condition.block.elseif){
+      return `
+      else if (_o(${propStore.map[condition.exp]}, e, s, gg)) {
+        ${newName || '' }.wxVkey = ${vkey ? vkey : 2}${genTernaryExp(condition.block)}
+        _(${newName || '' }, ${childNewName})
+      }
+      ${genIfConditions(conditions, state, altGen,altEmpty,newName, vkey + 1)}
+      `
+    } else {
+      return `
+      else {
+        ${newName || '' }.wxVkey = ${vkey ? vkey : 2}${genTernaryExp(condition.block)}
+        _(${newName || '' }, ${childNewName})
+      }
+      `
+    }
+
+  // } else {
+  //   return `${genTernaryExp(condition.block)}`
+  // }
 
   // v-if with v-once should generate code like (a)?_m(0):_m(1)
   function genTernaryExp (el) {

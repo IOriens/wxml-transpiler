@@ -422,8 +422,13 @@ function processIf (el) {
           warn(`Invalid wx:if expression: ${elseif}`)
         return
       }
+
       const elifExp = inMatch[1].trim()
       el.elseif = elifExp
+      if(!store.map[elifExp]) {
+        store.map[elifExp] = store.props.length
+        store.props.push(parseText(elifExp))
+      }
     }
   }
 }
