@@ -50,8 +50,14 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   `
 
   asts.asts.map(ast => optimize(ast.ast, options))
+
   const code = asts.asts
-    .map(ast => generate(ast.ast, options).render)
+    .map((ast, idx) => `d_["${ast.path}"] = {}
+      var m${idx}=function(e,s,r,gg){
+        ${generate(ast.ast, options).render}
+        return r
+      }
+      e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[],ic:[]}`)
     .join('\n')
   return {
     asts,

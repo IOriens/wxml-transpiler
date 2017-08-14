@@ -506,7 +506,8 @@ function processComponent (el) {
 }
 
 function processAttrs (el) {
-  const list = el.attrsList
+  const list = el.attrsList.sort((a, b) => a.name > b.name ? 1 : -1)
+  console.log(list)
   let i, l, name, rawName, value, modifiers, isProp
   for ((i = 0), (l = list.length); i < l; i++) {
     name = rawName = list[i].name

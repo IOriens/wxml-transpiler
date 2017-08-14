@@ -18,7 +18,6 @@ export function parseText (
   text: string,
   delimiters?: [string, string]
 ): string | void {
-  console.log(text)
   // const tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE
   const tagRE = delimiters ? buildRegex(delimiters) : bracketInBracketTagRE
   if (!tagRE.test(text)) {
@@ -28,7 +27,6 @@ export function parseText (
   let lastIndex = (tagRE.lastIndex = 0)
   let match, index
   while ((match = tagRE.exec(text))) {
-    // console.log(match)
     index = match.index
     // push text token
     if (index > lastIndex) {
@@ -36,14 +34,19 @@ export function parseText (
     }
     // tag token
     const exp = parseExp(match[1].trim()) || ''
+    console.log(match)
     tokens.push(exp)
     lastIndex = index + match[0].length
   }
   if (lastIndex < text.length) {
-    tokens.push(JSON.stringify(text.slice(lastIndex)))
+    tokens.push(`[3, ${JSON.stringify(text.slice(lastIndex))}]`)
   }
-  console.log(tokens)
-  return tokens.join('+')
+
+  if(tokens.length > 1) {
+    return `[a, ${tokens.join(',')}]`
+  } else {
+    return tokens.join('')
+  }
 }
 
 export function walk (node: AcornNode | void): string {
