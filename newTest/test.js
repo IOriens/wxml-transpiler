@@ -3,8 +3,8 @@ const resolve = require('path').resolve
 const exec = require('child_process').exec
 const prettier = require('prettier')
 const compiler = require('../packages/vue-template-compiler/build.js')
-
-const fileList = ['test.wxml', 'test.full.wxml']
+// 'test.full.wxml'
+const fileList = ['test.wxml']
 
 const srcFiles = fileList.reverse().map(file => resolve(__dirname, file))
 const vueDist = resolve(__dirname, 'test.vue.dist.js')

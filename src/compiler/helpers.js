@@ -6,6 +6,23 @@ export function baseWarn (msg: string) {
   console.error(`[Vue compiler]: ${msg}`)
 }
 
+export const generateId = (function () {
+  var id = 0
+  var ALPHABET =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_';
+  var len = ALPHABET.length
+  return function() {
+    var res = 'o'
+    id ++
+    var curr = id
+    while(curr)  {
+      res += ALPHABET[parseInt(curr%len)]
+      curr= parseInt(curr/len)
+    }
+    return res
+  }
+})()
+
 export function pluckModuleFunction<F: Function> (
   modules: ?Array<Object>,
   key: string

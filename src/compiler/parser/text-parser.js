@@ -34,7 +34,6 @@ export function parseText (
     }
     // tag token
     const exp = parseExp(match[1].trim()) || ''
-    console.log(match)
     tokens.push(exp)
     lastIndex = index + match[0].length
   }

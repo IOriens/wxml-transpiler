@@ -3,7 +3,7 @@
 import { genHandlers } from './events'
 import baseDirectives from '../directives/index'
 import { camelize, no, extend } from 'shared/util'
-import { baseWarn, pluckModuleFunction } from '../helpers'
+import { baseWarn, pluckModuleFunction, generateId } from '../helpers'
 
 
 type TransformFunction = (el: ASTElement, code: string) => string;
@@ -38,12 +38,16 @@ export type CodegenResult = {
   staticRenderFns: Array<string>
 };
 
+let propStore:Store
+
 export function generate (
   ast: ASTElement | void,
+  gstore: Store,
   options: CompilerOptions
 ): CodegenResult {
+  propStore = gstore
   const state = new CodegenState(options)
-  const code = ast ? genElement(ast, state) : '_c("div")'
+  const code = ast ? genElement(ast, state) : '_m("div")'
   return {
     render: code,
     staticRenderFns: state.staticRenderFns
@@ -70,13 +74,31 @@ export function genElement (el: ASTElement, state: CodegenState): string {
       code = genComponent(el.component, el, state)
     } else {
       const data = el.plain ? undefined : genData(el, state)
-
+      console.log('O_O', data)
+      if(el.tag == 'Program') el.newName = 'r'
       const children = el.inlineTemplate ? null : genChildren(el, state, true)
-      code = `_c('${el.tag}'${
-        data ? `,${data}` : '' // data
-      }${
-        children ? `,${children}` : '' // children
-      })`
+
+      if(el.tag == 'Program') {
+        code = `${
+          children ? `${children}` : '' // children
+        }`
+      } else {
+      //   code = `_m('${el.tag}'${
+      //     data ? `,${data}` : '' // data
+      //   }${
+      //     children ? `,${children}` : '' // children
+      //   })`
+        const dataLen = el.attrsList.length
+        if(dataLen == 0) {
+          code = `\nvar ${el.newName || 'error'} = _n("${el.tag}")${children ? `${children}` : ''}`
+        } else if( dataLen == 1){
+          const attr = el.attrsList[0]
+          code = `\nvar ${el.newName || 'error'} = _n("${el.tag}")
+          _r( ${el.newName || 'error'}, '${attr.name}', ${propStore.map[attr.value]}, e, s, gg)${children ? `${children}` : ''}`
+        } else {
+          code = `\nvar ${el.newName || 'error'} = _m( "${el.tag}", ${data || 'error'}, e, s, gg)${children ? `${children}` : ''}`
+        }
+      }
     }
     // module transforms
     for (let i = 0; i < state.transforms.length; i++) {
@@ -194,7 +216,7 @@ export function genFor (
 }
 
 export function genData (el: ASTElement, state: CodegenState): string {
-  let data = '{'
+  let data = ''
 
   // directives first.
   // directives may mutate the el's other properties before they are generated.
@@ -226,7 +248,7 @@ export function genData (el: ASTElement, state: CodegenState): string {
   }
   // attributes
   if (el.attrs) {
-    data += `attrs:{${genProps(el.attrs)}},`
+    data += `${genProps(el.attrs)},`
   }
   // DOM props
   if (el.props) {
@@ -264,7 +286,7 @@ export function genData (el: ASTElement, state: CodegenState): string {
       data += `${inlineTemplate},`
     }
   }
-  data = data.replace(/,$/, '') + '}'
+  data = data.replace(/,$/, '') + ''
   // v-bind data wrap
   if (el.wrapData) {
     data = el.wrapData(data)
@@ -315,7 +337,7 @@ function genInlineTemplate (el: ASTElement, state: CodegenState): ?string {
     state.warn('Inline-template components must have exactly one child element.')
   }
   if (ast.type === 1) {
-    const inlineRenderFns = generate(ast, state.options)
+    const inlineRenderFns = generate(ast, propStore, state.options)
     return `inlineTemplate:{render:function(){${
       inlineRenderFns.render
     }},staticRenderFns:[${
@@ -373,24 +395,34 @@ export function genChildren (
   altGenElement?: Function,
   altGenNode?: Function
 ): string | void {
+  debugger
   const children = el.children
   if (children.length) {
-    const el: any = children[0]
+    const firstEl: any = children[0]
     // optimize single v-for
     if (children.length === 1 &&
-      el.for &&
-      el.tag !== 'template' &&
-      el.tag !== 'slot'
+      firstEl.for &&
+      firstEl.tag !== 'template' &&
+      firstEl.tag !== 'slot'
     ) {
-      return (altGenElement || genElement)(el, state)
+      return (altGenElement || genElement)(firstEl, state)
     }
     const normalizationType = checkSkip
       ? getNormalizationType(children, state.maybeComponent)
       : 0
     const gen = altGenNode || genNode
-    return `[${children.map(c => gen(c, state)).join(',')}]${
-      normalizationType ? `,${normalizationType}` : ''
-    }`
+
+    const res = children.map(c => {
+      const newName = generateId()
+      const ele = c
+      return `${gen(c, state, newName)}\n_(${el.newName || 'error'},${newName})`
+    }).join('')
+
+
+    // return `[${children.map(c => gen(c, state)).join(',')}]${
+    //   normalizationType ? `,${normalizationType}` : ''
+    // }`
+    return res
   }
 }
 
@@ -425,21 +457,25 @@ function needsNormalization (el: ASTElement): boolean {
   return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
 }
 
-function genNode (node: ASTNode, state: CodegenState): string {
+function genNode (node: ASTNode, state: CodegenState, parentName?: string): string {
   if (node.type === 1) {
+    node.newName = parentName
     return genElement(node, state)
   } if (node.type === 3 && node.isComment) {
     return genComment(node)
   } else {
-    return genText(node)
+    return genText(node, parentName)
   }
 }
 
-export function genText (text: ASTText | ASTExpression): string {
-  return `_v(${text.type === 2
-    ? text.expression // no need for () because already wrapped in _s()
-    : transformSpecialNewlines(JSON.stringify(text.text))
-  })`
+export function genText (text: ASTText | ASTExpression, parentName?: string): string {
+
+const newName = generateId()
+return  `\nvar ${parentName || 'error'} = _o(${propStore.map[text.text || 'error']}, e, s, gg)`
+  // return `_v(${text.type === 2
+  //   ? text.expression // no need for () because already wrapped in _s()
+  //   : transformSpecialNewlines(JSON.stringify(text.text))
+  // })`
 }
 
 export function genComment (comment: ASTText): string {
@@ -471,18 +507,24 @@ function genComponent (
   state: CodegenState
 ): string {
   const children = el.inlineTemplate ? null : genChildren(el, state, true)
-  return `_c(${componentName},${genData(el, state)}${
+  return `_m(${componentName},${genData(el, state)}${
     children ? `,${children}` : ''
   })`
 }
 
 function genProps (props: Array<{ name: string, value: string }>): string {
-  let res = ''
+  let res = '['
+  let initIdx
   for (let i = 0; i < props.length; i++) {
     const prop = props[i]
-    res += `"${prop.name}":${transformSpecialNewlines(prop.value)},`
+    if(!initIdx) {
+      initIdx = propStore.map[prop.value]
+      res += `"${prop.name}", ${initIdx},`
+    } else {
+      res += `"${prop.name}", ${propStore.map[prop.value] - initIdx},`
+    }
   }
-  return res.slice(0, -1)
+  return res.slice(0, -1) + ']'
 }
 
 // #3895, #4268

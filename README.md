@@ -17,9 +17,11 @@ yarn run dev:compiler
 ## run
 node newTest/test
 
-# Dev 
+# Dev
 ## autorestart type check
 watch -t flow
+## autorestart test
+nodemon newTest/test -w packages/vue-template-compiler -w newTest/test.js -w newTest/test.wxml -w newTest/test.full.wxml
 ```
 
 ## License

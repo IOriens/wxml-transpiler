@@ -20,9 +20,9 @@ export const createCompiler = createCompilerCreator(function baseCompile (
     props: []
   }
 
-  const asts: {
+  const program: {
     asts: Array<{ path: string, ast: ASTElement }>,
-    store: { map: Object, props: Array<string> },
+    store: Store,
   } = templates.reduce(
     (p, c) => ({
       asts: p.asts.concat({
@@ -37,30 +37,29 @@ export const createCompiler = createCompilerCreator(function baseCompile (
     }
   )
 
-  console.log(asts.store)
-
   const propsCode = `var z = [];
   (function(z){
     var a = 11;
     function Z(ops){z.push(ops)};
-    ${asts.store.props
+    ${program.store.props
     .map(prop => `Z(${prop});`)
     .join('\n')}
   })(z);
   `
 
-  asts.asts.map(ast => optimize(ast.ast, options))
+  program.asts.map(ast => optimize(ast.ast, options))
 
-  const code = asts.asts
+  const code = program.asts
     .map((ast, idx) => `d_["${ast.path}"] = {}
       var m${idx}=function(e,s,r,gg){
-        ${generate(ast.ast, options).render}
+        ${generate(ast.ast, program.store, options).render}
         return r
       }
       e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[],ic:[]}`)
     .join('\n')
+
   return {
-    asts,
+    program,
     render: genTemplate(propsCode + code)
     // staticRenderFns: code.staticRenderFns
   }

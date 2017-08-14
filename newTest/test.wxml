@@ -1,6 +1,14 @@
 <!-- if elif else -->
 <!-- <div wx:if="{{type === 'A' && 4 > 3 && !c}}" propww="{{dd1}}" idd="dd" id='dd'  prop="{{ccc}}">A</div> -->
-<div propww="fk{{dd1}}fk" idd="dd" id='dd'  prop="{{ccc}}">A</div>
+<A>
+  <!-- <B>
+    <C></C>
+  </B>
+  <B></B> -->
+AAA
+</A>
+<B props="fk" propss="fffff"></B>
+<!-- <div propww="fk{{dd1}}fk" idd="dd" id='dd' bindtap="tapName" prop="{{ccc}}">A  </div> -->
 <!-- <div wx:elif="{{type === 'B'}}">B
 
   <div wx:if="{{type === 'A'}}">A</div>

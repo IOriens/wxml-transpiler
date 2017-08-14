@@ -73,6 +73,7 @@ declare type ASTElement = {
   attrsMap: { [key: string]: string | null };
   parent: ASTElement | void;
   children: Array<ASTNode>;
+  newName?: string;
 
   static?: boolean;
   staticRoot?: boolean;
@@ -189,3 +190,7 @@ declare type SFCBlock = {
   scoped?: boolean;
   module?: string | boolean;
 };
+
+
+declare type Store = { map: Object, props: Array<string> }
+
