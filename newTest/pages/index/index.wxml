@@ -1,12 +1,7 @@
-<view>
-  <!-- 三元运算 -->
-  <!-- <view hidden="{{flag ? true : false}}"> Hidden </view> -->
-  <!-- 算数运算 -->
-  <!-- <view> {{a + b}} + {{c}} + d </view> -->
-  <!-- 逻辑判断 -->
-  <!-- <view wx:if="{{length > 5}}"> </view> -->
-  <!-- 字符串运算 -->
-  <!-- <view>{{"hello"}}</view> -->
-  <!-- 数据路径运算 -->
-  <view>{{object.key.aaa}} {{array[0]}}</view>
+ <!-- 组合 -->
+ <view>
+  <!-- 数组 -->
+  <!-- <view wx:for="{{[zero, 1, 2, 3, 4]}}"> {{item}} </view> -->
+  <!-- 对象 -->
+  <input class="weui-input" type="text" placeholder="请输入key" name="key" value="{{key}}" bindinput="keychange"></input>
 </view>

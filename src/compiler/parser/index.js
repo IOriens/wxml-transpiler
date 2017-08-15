@@ -172,8 +172,9 @@ let currRoot = root
         processRef(element)
         processSlot(element)
         processComponent(element)
+        debugger
         for (let i = 0; i < transforms.length; i++) {
-          transforms[i](element, options)
+          // transforms[i](element, options)
         }
         processAttrs(element)
       }

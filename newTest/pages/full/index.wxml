@@ -63,12 +63,6 @@
 <!-- bracket in bracket -->
 <text>fff{{text}}\{{'ffff{{fff2}}'}}</text>
 
-<!-- bind in attrs -->
-<view id="item-{{id}}"> </view>
-
-<!-- dynamic css -->
-<view class="item-{{id}}"></view>
-
 <!-- template, obj in attrs-->
 <template is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" />
 

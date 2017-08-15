@@ -63,7 +63,6 @@ export function walk (node: AcornNode | void, inMember?:boolean): string {
         }
         break
       case 'Identifier':
-        console.log(666 ,node)
         if (node.name) {
          if(inMember) {
            res = `[3, "${node.name}"]`
