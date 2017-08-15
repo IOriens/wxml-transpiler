@@ -176,24 +176,19 @@ function genIfConditions (
       if (_o(${propStore.map[condition.exp]}, ${env}, ${scope}, gg)) {
         ${newName || ''}.wxVkey = ${(vkey = 1)}${genTernaryExp(condition.block)}
         _(${newName || ''}, ${childNewName})
-      }
-      ${genIfConditions(conditions, state, altGen, altEmpty, newName, env, scope, vkey + 1)}
-      `
+      }${genIfConditions(conditions, state, altGen, altEmpty, newName, env, scope, vkey + 1)}`
   } else if (condition.block.elseif) {
     return `
       else if (_o(${propStore.map[condition.exp]}, ${env}, ${scope}, gg)) {
         ${newName || ''}.wxVkey = ${vkey || 2}${genTernaryExp(condition.block)}
         _(${newName || ''}, ${childNewName})
-      }
-      ${genIfConditions(conditions, state, altGen, altEmpty, newName, env, scope, vkey + 1)}
-      `
+      }${genIfConditions(conditions, state, altGen, altEmpty, newName, env, scope, vkey + 1)}`
   } else {
     return `
       else {
         ${newName || ''}.wxVkey = ${vkey || 2}${genTernaryExp(condition.block)}
         _(${newName || ''}, ${childNewName})
-      }
-      `
+      }`
   }
 
   // v-if with v-once should generate code like (a)?_m(0):_m(1)
@@ -241,7 +236,6 @@ export function genFor (
   let newScope = (el.scope = generateId())
   let oldEnv = el.env || 'e'
   let newEnv = (el.env = generateId())
-  debugger
   return `
     var ${parentNewName} = _v()
     var ${forFuncId} = function (${newEnv},${newScope},${returnNodeName},gg) {
@@ -433,7 +427,6 @@ export function genChildren (
   altGenElement?: Function,
   altGenNode?: Function
 ): string | void {
-  debugger
   const children = el.children
   if (children.length) {
     const firstEl: any = children[0]

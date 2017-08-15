@@ -307,10 +307,11 @@ let currRoot = root
           !children.length ||
           children[children.length - 1].text !== ' '
         ) {
-          children.push({
-            type: 3,
-            text
-          })
+          // pushProp(text)
+          // children.push({
+          //   type: 3,
+          //   text
+          // })
         }
       }
     },
