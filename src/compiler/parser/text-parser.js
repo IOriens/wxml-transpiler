@@ -41,14 +41,14 @@ export function parseText (
     tokens.push(`[3, ${JSON.stringify(text.slice(lastIndex))}]`)
   }
 
-  if(tokens.length > 1) {
+  if (tokens.length > 1) {
     return `[a, ${tokens.join(',')}]`
   } else {
     return tokens.join('')
   }
 }
 
-export function walk (node: AcornNode | void): string {
+export function walk (node: AcornNode | void, inMember?:boolean): string {
   let res = 'Unknown Type'
   if (node) {
     switch (node.type) {
@@ -63,7 +63,14 @@ export function walk (node: AcornNode | void): string {
         }
         break
       case 'Identifier':
-        if (node.name) res = `[[7],[3, "${node.name}"]]`
+        console.log(666 ,node)
+        if (node.name) {
+         if(inMember) {
+           res = `[3, "${node.name}"]`
+         } else {
+           res = `[[7],[3, "${node.name}"]]`
+         }
+        }
         break
       case 'UnaryExpression':
         if (node.operator) {
@@ -72,15 +79,20 @@ export function walk (node: AcornNode | void): string {
         break
       case 'Literal':
         if (node.raw) res = `[1, ${node.raw}]`
-          break
+        break
       case 'ArrayExpression':
-        if(node.elements) {
-          res = `[[4], ${node.elements.reduce((p, c) =>  `[[5], ${p} ${p && ','} ${walk(c)}]`,'')}]`
+        if (node.elements) {
+          res = `[[4], ${node.elements.reduce((p, c) => `[[5], ${p} ${p && ','} ${walk(c)}]`, '')}]`
         }
         break
-        case 'ConditionalExpression':
+      case 'ConditionalExpression':
         res = `[[2,'?:'],${walk(node.test)},${walk(node.consequent)},${walk(node.alternate)}]`
         break
+      case 'MemberExpression':
+        res = `[[6],${walk(node.object)},${walk(node.property, true)}]`
+        break
+      default:
+        console.log(`${res}: ${node.type}`)
     }
   }
   return res

@@ -1,6 +1,6 @@
 <view>
   <!-- 三元运算 -->
-  <view hidden="{{flag ? true : false}}"> Hidden </view>
+  <!-- <view hidden="{{flag ? true : false}}"> Hidden </view> -->
   <!-- 算数运算 -->
   <!-- <view> {{a + b}} + {{c}} + d </view> -->
   <!-- 逻辑判断 -->
@@ -8,5 +8,5 @@
   <!-- 字符串运算 -->
   <!-- <view>{{"hello"}}</view> -->
   <!-- 数据路径运算 -->
-  <!-- <view>{{object.key}} {{array[0]}}</view> -->
+  <view>{{object.key.aaa}} {{array[0]}}</view>
 </view>

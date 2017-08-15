@@ -79,15 +79,31 @@ declare type ScopedSlotsData = Array<{ key: string, fn: Function } | ScopedSlots
 
 declare type AcornNode = {
   type: string;
-  operator?: string;
+
+  // BinaryExpression|LogicalExpression
   left?: AcornNode;
   right?: AcornNode;
+
+  // Identifier
   name?: string;
+
+  // UnaryExpression
+  operator?: string;
   argument?: AcornNode;
+
+  // Literal
   raw?: string;
+
+  // ArrayExpression
   elements?: Array<AcornNode>;
+
+  // ConditionalExpression: test?cons:alt
   test?:AcornNode;
   consequent?: AcornNode;
   alternate?: AcornNode;
+
+  // MemberExpression
+  property?: AcornNode;
+  object?: AcornNode;
 }
 
