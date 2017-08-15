@@ -86,5 +86,8 @@ declare type AcornNode = {
   argument?: AcornNode;
   raw?: string;
   elements?: Array<AcornNode>;
+  test?:AcornNode;
+  consequent?: AcornNode;
+  alternate?: AcornNode;
 }
 

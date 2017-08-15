@@ -1,10 +1,12 @@
-<div wx:if="{{type === 'A'}}">A</div>
-<div wx:elif="{{type === 'B'}}">B</div>
-<div wx:elif="{{type === 'C'}}">C</div>
-<div wx:else>
-  not a/b/c
-  <div wx:if="{{type === 'a'}}">a</div>
-  <div wx:elif="{{type === 'b'}}">b</div>
-  <div wx:elif="{{type === 'c'}}">c</div>
-  <div wx:else>not a/b/c</div>
-</div>
+<view>
+  <!-- 三元运算 -->
+  <view hidden="{{flag ? true : false}}"> Hidden </view>
+  <!-- 算数运算 -->
+  <!-- <view> {{a + b}} + {{c}} + d </view> -->
+  <!-- 逻辑判断 -->
+  <!-- <view wx:if="{{length > 5}}"> </view> -->
+  <!-- 字符串运算 -->
+  <!-- <view>{{"hello"}}</view> -->
+  <!-- 数据路径运算 -->
+  <!-- <view>{{object.key}} {{array[0]}}</view> -->
+</view>

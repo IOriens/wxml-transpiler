@@ -49,7 +49,7 @@ export function parseText (
 }
 
 export function walk (node: AcornNode | void): string {
-  let res = 'error'
+  let res = 'Unknown Type'
   if (node) {
     switch (node.type) {
       case 'LogicalExpression':
@@ -78,8 +78,9 @@ export function walk (node: AcornNode | void): string {
           res = `[[4], ${node.elements.reduce((p, c) =>  `[[5], ${p} ${p && ','} ${walk(c)}]`,'')}]`
         }
         break
-      default:
-        res = 'error'
+        case 'ConditionalExpression':
+        res = `[[2,'?:'],${walk(node.test)},${walk(node.consequent)},${walk(node.alternate)}]`
+        break
     }
   }
   return res
