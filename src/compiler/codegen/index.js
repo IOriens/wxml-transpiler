@@ -60,7 +60,6 @@ export function genElement (el: ASTElement, state: CodegenState): string {
   } else if (el.once && !el.onceProcessed) {
     return genOnce(el, state)
   } else if (el.for && !el.forProcessed) {
-    // console.log(6662, el)
     return genFor(el, state)
   } else if (el.if && !el.ifProcessed) {
     return genIf(el, state)
@@ -149,7 +148,7 @@ export function genIf (
   altEmpty?: string
 ): string {
   el.ifProcessed = true // avoid recursion
-  return genIfConditions(el.ifConditions.slice(), state, altGen, altEmpty, el.newName)
+  return genIfConditions(el.ifConditions.slice(), state, altGen, altEmpty, el.newName,el.env,el.scope)
 }
 
 function genIfConditions (
@@ -158,55 +157,53 @@ function genIfConditions (
   altGen?: Function,
   altEmpty?: string,
   newName?: string,
+  env?: string,
+  scope?: string,
   vkey?: number
 ): string {
   if (!conditions.length) {
     return altEmpty || ' '
   }
   const condition = conditions.shift()
-  // if (condition.exp) {
-    const childNewName = generateId()
-    condition.block.newName = childNewName
+  const childNewName = generateId()
+  condition.block.newName = childNewName
 
-    if(condition.block.if) {
-      return `
-      var ${newName || '' } = _v()
-      if (_o(${propStore.map[condition.exp]}, e, s, gg)) {
-        ${newName || '' }.wxVkey = ${vkey = 1}${genTernaryExp(condition.block)}
-        _(${newName || '' }, ${childNewName})
+  env = env || 'e'
+  scope = scope || 's'
+  if (condition.block.if) {
+    return `
+      var ${newName || ''} = _v()
+      if (_o(${propStore.map[condition.exp]}, ${env}, ${scope}, gg)) {
+        ${newName || ''}.wxVkey = ${(vkey = 1)}${genTernaryExp(condition.block)}
+        _(${newName || ''}, ${childNewName})
       }
-      ${genIfConditions(conditions, state, altGen, altEmpty, newName, vkey + 1)}
+      ${genIfConditions(conditions, state, altGen, altEmpty, newName, env, scope, vkey + 1)}
       `
-    } else if(condition.block.elseif){
-      return `
-      else if (_o(${propStore.map[condition.exp]}, e, s, gg)) {
-        ${newName || '' }.wxVkey = ${vkey ? vkey : 2}${genTernaryExp(condition.block)}
-        _(${newName || '' }, ${childNewName})
+  } else if (condition.block.elseif) {
+    return `
+      else if (_o(${propStore.map[condition.exp]}, ${env}, ${scope}, gg)) {
+        ${newName || ''}.wxVkey = ${vkey || 2}${genTernaryExp(condition.block)}
+        _(${newName || ''}, ${childNewName})
       }
-      ${genIfConditions(conditions, state, altGen,altEmpty,newName, vkey + 1)}
+      ${genIfConditions(conditions, state, altGen, altEmpty, newName, env, scope, vkey + 1)}
       `
-    } else {
-      return `
+  } else {
+    return `
       else {
-        ${newName || '' }.wxVkey = ${vkey ? vkey : 2}${genTernaryExp(condition.block)}
-        _(${newName || '' }, ${childNewName})
+        ${newName || ''}.wxVkey = ${vkey || 2}${genTernaryExp(condition.block)}
+        _(${newName || ''}, ${childNewName})
       }
       `
-    }
-
-  // } else {
-  //   return `${genTernaryExp(condition.block)}`
-  // }
+  }
 
   // v-if with v-once should generate code like (a)?_m(0):_m(1)
   function genTernaryExp (el) {
     return altGen
       ? altGen(el, state)
-      : el.once
-        ? genOnce(el, state)
-        : genElement(el, state)
+      : el.once ? genOnce(el, state) : genElement(el, state)
   }
 }
+
 
 export function genFor (
   el: any,
@@ -219,33 +216,31 @@ export function genFor (
   const iterator1 = el.iterator1 ? `,${el.iterator1}` : ''
   const iterator2 = el.iterator2 ? `,${el.iterator2}` : ''
 
-  if (process.env.NODE_ENV !== 'production' &&
+  if (
+    process.env.NODE_ENV !== 'production' &&
     state.maybeComponent(el) &&
     el.tag !== 'slot' &&
     el.tag !== 'template' &&
     !el.key
   ) {
     state.warn(
-      `<${el.tag} v-for="${alias} in ${exp}">: component lists rendered with ` +
-      `v-for should have explicit keys. ` +
-      `See https://vuejs.org/guide/list.html#key for more info.`,
+      `<${el.tag} vx:for="${alias} in ${exp}">: component lists rendered with ` +
+        `v-for should have explicit keys. ` +
+        `See https://vuejs.org/guide/list.html#key for more info.`,
       true /* tip */
     )
   }
 
   el.forProcessed = true // avoid recursion
-  console.log(6661, el)
-  let parentNewName =el.newName
+  let parentNewName = el.newName
   let forFuncId = generateId()
   let childNewName = generateId()
   let returnNodeName = generateId()
-  // func(env, scope, _y, global)
   el.newName = childNewName
   let oldScope = el.scope || 's'
-  let newScope = el.scope = generateId()
+  let newScope = (el.scope = generateId())
   let oldEnv = el.env || 'e'
-  let newEnv = el.env  =  generateId()
-  console.log(6663, el)
+  let newEnv = (el.env = generateId())
   debugger
   return `
     var ${parentNewName} = _v()
@@ -255,13 +250,8 @@ export function genFor (
       return ${returnNodeName}
     }
     _2(${propStore.map[exp]}, ${forFuncId}, ${oldEnv}, ${oldScope}, gg, ${parentNewName}, "${el.alias}", "${el.iterator1}", '')`
-
-
-  // return `${altHelper || '_l'}((${propStore.map[exp]}),` +
-  //   `function(${alias}${iterator1}${iterator2}){` +
-  //     `return ${(altGen || genElement)(el, state)}` +
-  //   '})'
 }
+
 
 export function genData (el: ASTElement, state: CodegenState): string {
   let data = ''
@@ -448,12 +438,12 @@ export function genChildren (
   if (children.length) {
     const firstEl: any = children[0]
     // optimize single v-for
-    if (children.length === 1 &&
+    if (
+      children.length === 1 &&
       firstEl.for &&
       firstEl.tag !== 'template' &&
       firstEl.tag !== 'slot'
     ) {
-      console.log(6666666)
       // return (altGenElement || genElement)(firstEl, state)
     }
     const normalizationType = checkSkip
@@ -461,11 +451,12 @@ export function genChildren (
       : 0
     const gen = altGenNode || genNode
 
-    const res = children.map(c => {
-      const newName = generateId()
-      return `${gen(c, state, newName, el.env, el.scope)}\n_(${el.newName || 'error'},${newName})`
-    }).join('')
-
+    const res = children
+      .map(c => {
+        const newName = generateId()
+        return `${gen(c, state, newName, el.env, el.scope)}\n_(${el.newName || 'error'},${newName})`
+      })
+      .join('')
 
     // return `[${children.map(c => gen(c, state)).join(',')}]${
     //   normalizationType ? `,${normalizationType}` : ''
@@ -473,6 +464,7 @@ export function genChildren (
     return res
   }
 }
+
 
 // determine the normalization needed for the children array.
 // 0: no normalization needed

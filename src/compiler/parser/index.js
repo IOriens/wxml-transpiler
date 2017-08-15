@@ -378,7 +378,6 @@ function processFor (el) {
     }
 
     el.for = exp
-    // console.log(666, exp)
     pushProp(exp)
     if ((exp = getAndRemoveAttr(el, 'wx:for-item'))) {
       el.alias = exp
