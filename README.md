@@ -21,7 +21,7 @@ node newTest/test
 ## autorestart type check
 watch -t flow
 ## autorestart test
-nodemon newTest/test -w packages/vue-template-compiler -w newTest/test.js -w newTest/test.wxml -w newTest/test.full.wxml
+nodemon newTest/test -w packages/vue-template-compiler -w newTest/test.js -w newTest/pages -e js,wxml
 ```
 
 ## License

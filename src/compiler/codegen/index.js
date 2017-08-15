@@ -163,7 +163,6 @@ function genIfConditions (
     return altEmpty || ' '
   }
   const condition = conditions.shift()
-  console.log(666,propStore.map, condition.exp)
   // if (condition.exp) {
     const childNewName = generateId()
     condition.block.newName = childNewName

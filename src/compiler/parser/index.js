@@ -40,7 +40,7 @@ let postTransforms
 let platformIsPreTag
 let platformMustUseProp
 let platformGetTagNamespace
-let store
+let propStore
 /**
  * Convert HTML string to AST.
  */
@@ -60,7 +60,7 @@ export function parse (
   postTransforms = pluckModuleFunction(options.modules, 'postTransformNode')
 
   delimiters = options.delimiters
-  store = globStore
+  propStore = globStore
 
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
@@ -291,10 +291,7 @@ let currRoot = root
           (expression = parseText(text, delimiters))
         ) {
 
-          if (!store.map[text]) {
-            store.map[text] = store.props.length
-            store.props.push(expression)
-          }
+          pushProp(text)
 
           children.push({
             type: 2,
@@ -378,6 +375,7 @@ function processFor (el) {
     el.for = inMatch[1].trim() || inMatch[2].trim()
     if ((exp = getAndRemoveAttr(el, 'wx:for-item'))) {
       el.alias = exp
+      pushProp(exp)
     } else {
       el.alias = 'item'
     }
@@ -401,10 +399,7 @@ function processIf (el) {
 
     const ifExp = inMatch[1].trim()
     el.if = ifExp
-    if (!store.map[ifExp]) {
-      store.map[ifExp] = store.props.length
-      store.props.push(parseText(inMatch[0]))
-    }
+    pushProp(ifExp, inMatch[0])
 
     addIfCondition(el, {
       exp: ifExp,
@@ -422,13 +417,9 @@ function processIf (el) {
           warn(`Invalid wx:if expression: ${elseif}`)
         return
       }
-
       const elifExp = inMatch[1].trim()
       el.elseif = elifExp
-      if(!store.map[elifExp]) {
-        store.map[elifExp] = store.props.length
-        store.props.push(parseText(elifExp))
-      }
+      pushProp(elifExp, inMatch[0])
     }
   }
 }
@@ -578,11 +569,7 @@ function processAttrs (el) {
 
 
         const expression = parseText(value, delimiters)
-
-        if (!store.map[value]) {
-          store.map[value] = store.props.length
-          store.props.push(expression)
-        }
+        pushProp(value)
 
         // if (expression) {
         //   warn(
@@ -678,5 +665,13 @@ function checkForAliasModel (el, value) {
       )
     }
     _el = _el.parent
+  }
+}
+
+
+function pushProp(exp:string, optExp?: string){
+  if(!propStore.map[exp]) {
+    propStore.map[exp] = propStore.props.length
+    propStore.props.push(parseText(optExp || exp))
   }
 }

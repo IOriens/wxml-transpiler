@@ -3,10 +3,10 @@ const resolve = require('path').resolve
 const exec = require('child_process').exec
 const prettier = require('prettier')
 const compiler = require('../packages/vue-template-compiler/build.js')
-// 'test.full.wxml'
-const fileList = ['test.wxml', 'test.full.wxml']
 
-const srcFiles = fileList.reverse().map(file => resolve(__dirname, file))
+const fileList = ['./pages/index/index.wxml']
+
+const srcFiles = fileList.reverse()
 const vueDist = resolve(__dirname, 'test.vue.dist.js')
 const wccDist = resolve(__dirname, 'test.wcc.dist.js')
 const wccOriDist = resolve(__dirname, 'test.wcc.ori.dist.js')
@@ -20,13 +20,14 @@ const formatRule = {
 
 var files = srcFiles.map(path => ({
   path,
-  template: fs.readFileSync(path, 'utf-8')
+  template: fs.readFileSync(resolve(__dirname, path), 'utf-8')
 }))
 
 const vueRes = compiler.compile(files)
 fs.writeFileSync(vueDist, vueRes.render, 'utf8')
 
-exec(`${resolve(__dirname, 'wcc')} -b ${srcFiles.reduce((p, c) => `${p} ${c}`, '')}`, (err, wccRes) => {
+exec(`cd ${__dirname} && ${resolve(__dirname, 'wcc')} -b ${srcFiles.reduce((p, c) => `${p} ${c}`, '')}`, (err, wccRes) => {
+  console.log(`${resolve(__dirname, 'wcc')} -b ${srcFiles.reduce((p, c) => `${p} ${c}`, '')}`)
   if(err) throw err
   fs.writeFileSync(wccOriDist, wccRes, 'utf8')
   fs.writeFileSync(wccDist, prettier.format(wccRes, formatRule), 'utf8')
