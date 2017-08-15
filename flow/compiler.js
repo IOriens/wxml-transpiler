@@ -75,6 +75,9 @@ declare type ASTElement = {
   children: Array<ASTNode>;
   newName?: string;
 
+  env?:string;
+  scope?:string;
+
   static?: boolean;
   staticRoot?: boolean;
   staticInFor?: boolean;

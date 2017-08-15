@@ -49,6 +49,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
 
   program.asts.map(ast => optimize(ast.ast, options))
 
+  // console.log(666, program.store)
   const code = program.asts
     .map((ast, idx) => `d_["${ast.path}"] = {}
       var m${idx}=function(e,s,r,gg){

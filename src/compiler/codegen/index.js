@@ -60,6 +60,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
   } else if (el.once && !el.onceProcessed) {
     return genOnce(el, state)
   } else if (el.for && !el.forProcessed) {
+    // console.log(6662, el)
     return genFor(el, state)
   } else if (el.if && !el.ifProcessed) {
     return genIf(el, state)
@@ -89,13 +90,13 @@ export function genElement (el: ASTElement, state: CodegenState): string {
       //   })`
         const dataLen = el.attrsList.length
         if(dataLen == 0) {
-          code = `\nvar ${el.newName || 'error'} = _n("${el.tag}")${children ? `${children}` : ''}`
+          code = `\nvar ${el.newName || 'newName error'} = _n("${el.tag}")${children ? `${children}` : ''}`
         } else if( dataLen == 1){
           const attr = el.attrsList[0]
-          code = `\nvar ${el.newName || 'error'} = _n("${el.tag}")
-          _r( ${el.newName || 'error'}, '${attr.name}', ${propStore.map[attr.value]}, e, s, gg)${children ? `${children}` : ''}`
+          code = `\nvar ${el.newName || 'newName error2'} = _n("${el.tag}")
+          _r( ${el.newName || 'newName error3'}, '${attr.name}', ${propStore.map[attr.value]}, e, s, gg)${children ? `${children}` : ''}`
         } else {
-          code = `\nvar ${el.newName || 'error'} = _m( "${el.tag}", ${data || 'error'}, e, s, gg)${children ? `${children}` : ''}`
+          code = `\nvar ${el.newName || 'newName error4'} = _m( "${el.tag}", ${data || 'data error'}, e, s, gg)${children ? `${children}` : ''}`
         }
       }
     }
@@ -233,10 +234,33 @@ export function genFor (
   }
 
   el.forProcessed = true // avoid recursion
-  return `${altHelper || '_l'}((${exp}),` +
-    `function(${alias}${iterator1}${iterator2}){` +
-      `return ${(altGen || genElement)(el, state)}` +
-    '})'
+  console.log(6661, el)
+  let parentNewName =el.newName
+  let forFuncId = generateId()
+  let childNewName = generateId()
+  let returnNodeName = generateId()
+  // func(env, scope, _y, global)
+  el.newName = childNewName
+  let oldScope = el.scope || 's'
+  let newScope = el.scope = generateId()
+  let oldEnv = el.env || 'e'
+  let newEnv = el.env  =  generateId()
+  console.log(6663, el)
+  debugger
+  return `
+    var ${parentNewName} = _v()
+    var ${forFuncId} = function (${newEnv},${newScope},${returnNodeName},gg) {
+      ${(altGen || genElement)(el, state)}
+      _(${returnNodeName}, ${childNewName})
+      return ${returnNodeName}
+    }
+    _2(${propStore.map[exp]}, ${forFuncId}, ${oldEnv}, ${oldScope}, gg, ${parentNewName}, "${el.alias}", "${el.iterator1}", '')`
+
+
+  // return `${altHelper || '_l'}((${propStore.map[exp]}),` +
+  //   `function(${alias}${iterator1}${iterator2}){` +
+  //     `return ${(altGen || genElement)(el, state)}` +
+  //   '})'
 }
 
 export function genData (el: ASTElement, state: CodegenState): string {
@@ -429,7 +453,8 @@ export function genChildren (
       firstEl.tag !== 'template' &&
       firstEl.tag !== 'slot'
     ) {
-      return (altGenElement || genElement)(firstEl, state)
+      console.log(6666666)
+      // return (altGenElement || genElement)(firstEl, state)
     }
     const normalizationType = checkSkip
       ? getNormalizationType(children, state.maybeComponent)
@@ -438,8 +463,7 @@ export function genChildren (
 
     const res = children.map(c => {
       const newName = generateId()
-      const ele = c
-      return `${gen(c, state, newName)}\n_(${el.newName || 'error'},${newName})`
+      return `${gen(c, state, newName, el.env, el.scope)}\n_(${el.newName || 'error'},${newName})`
     }).join('')
 
 
@@ -481,21 +505,23 @@ function needsNormalization (el: ASTElement): boolean {
   return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
 }
 
-function genNode (node: ASTNode, state: CodegenState, parentName?: string): string {
+function genNode (node: ASTNode, state: CodegenState, parentName?: string, env?: string, scope?:string): string {
   if (node.type === 1) {
     node.newName = parentName
+    node.env = env
+    node.scope = scope
     return genElement(node, state)
   } if (node.type === 3 && node.isComment) {
     return genComment(node)
   } else {
-    return genText(node, parentName)
+    return genText(node, parentName, env, scope)
   }
 }
 
-export function genText (text: ASTText | ASTExpression, parentName?: string): string {
+export function genText (text: ASTText | ASTExpression, parentName?: string, env?: string, scope?:string): string {
 
 const newName = generateId()
-return  `\nvar ${parentName || 'error'} = _o(${propStore.map[text.text || 'error']}, e, s, gg)`
+return  `\nvar ${parentName || 'error'} = _o(${propStore.map[text.text || 'error']}, ${env || 'e'}, ${scope || 's'}, gg)`
   // return `_v(${text.type === 2
   //   ? text.expression // no need for () because already wrapped in _s()
   //   : transformSpecialNewlines(JSON.stringify(text.text))

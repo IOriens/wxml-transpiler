@@ -21,7 +21,11 @@ import {
 
 export const onRE = /^@|^v-on:/
 export const dirRE = /^v-|^@|^:/
+
+// https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/list.html
+// ({{object name|array|expression}})|string
 export const tplBracket = /(?:{{\s*(.+)\s*}}|(.+))/
+
 export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
 export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
 
@@ -372,7 +376,10 @@ function processFor (el) {
         warn(`Invalid wx:for expression: ${exp}`)
       return
     }
-    el.for = inMatch[1].trim() || inMatch[2].trim()
+
+    el.for = exp
+    // console.log(666, exp)
+    pushProp(exp)
     if ((exp = getAndRemoveAttr(el, 'wx:for-item'))) {
       el.alias = exp
       pushProp(exp)
@@ -381,6 +388,7 @@ function processFor (el) {
     }
     if ((exp = getAndRemoveAttr(el, 'wx:for-index'))) {
       el.iterator1 = exp
+      pushProp(exp)
     } else {
       el.iterator1 = 'index'
     }

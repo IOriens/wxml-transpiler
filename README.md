@@ -24,6 +24,11 @@ watch -t flow
 nodemon newTest/test -w packages/vue-template-compiler -w newTest/test.js -w newTest/pages -e js,wxml
 ```
 
+## Todo
+
+- `propStore` should better not be global
+- push props in parseText to reuse pushed props
+
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
