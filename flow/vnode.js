@@ -105,5 +105,12 @@ declare type AcornNode = {
   // MemberExpression
   property?: AcornNode;
   object?: AcornNode;
-}
+
+  // Object
+  properties?: Array<AcornNode>;
+
+  // Property
+  key?: AcornNode;
+  value?: AcornNode;
+};
 

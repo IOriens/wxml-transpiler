@@ -1,5 +1,3 @@
- <import src="../../../common/head.wxml" />
-
 <!-- if elif else -->
 <div wx:if="{{type === 'A'}}">A</div>
 <div wx:elif="{{type === 'B'}}">B</div>
@@ -60,17 +58,31 @@
 
 </view>
 
+<!-- class -->
+<input class="weui-input a b c" bindinput="keychange"></input>
+
 <!-- bracket in bracket -->
 <text>fff{{text}}\{{'ffff{{fff2}}'}}</text>
 
-<!-- template, obj in attrs-->
-<template is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" />
-
-<!-- include -->
-<include src="../../../common/foot.wxml" />
-
-<!-- attrs -->
-<input class="weui-input" type="text" placeholder="请输入key" name="key" value="{{key}}" bindinput="keychange"></input>
-
 <!-- children -->
 <modal title="{{dialog.title}}" hidden="{{dialog.hidden}}" bindconfirm="confirm">{{dialog.content}}</modal>
+
+<!-- include -->
+<view>
+  <!-- include in if else -->
+  <view wx:if="{{a = 1}}">
+    <include src="../../../common/foot4.wxml" />
+  </view>
+
+  <!-- normal include -->
+  <include src="../../../common/foot4.wxml" />
+
+  <!-- include with if else -->
+  <include wx:if="{{a == 1 }}" src="../../../common/foot5.wxml" />
+  <include wx:elif="{{a == 2 }}" src="../../../common/foot6.wxml" />
+  <include wx:else src="../../../common/foot7.wxml" />
+</view>
+
+<!-- template, obj in attrs-->
+<import src="../../../common/head.wxml" />
+<template is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" />

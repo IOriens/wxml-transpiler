@@ -48,7 +48,7 @@ export function parseText (
   }
 }
 
-export function walk (node: AcornNode | void, inMember?:boolean): string {
+export function walk (node: AcornNode | void, inMember?: boolean): string {
   let res = 'Unknown Type'
   if (node) {
     switch (node.type) {
@@ -64,11 +64,11 @@ export function walk (node: AcornNode | void, inMember?:boolean): string {
         break
       case 'Identifier':
         if (node.name) {
-         if(inMember) {
-           res = `[3, "${node.name}"]`
-         } else {
-           res = `[[7],[3, "${node.name}"]]`
-         }
+          if (inMember) {
+            res = `[3, "${node.name}"]`
+          } else {
+            res = `[[7],[3, "${node.name}"]]`
+          }
         }
         break
       case 'UnaryExpression':
@@ -90,6 +90,14 @@ export function walk (node: AcornNode | void, inMember?:boolean): string {
       case 'MemberExpression':
         res = `[[6],${walk(node.object)},${walk(node.property, true)}]`
         break
+      case 'ObjectExpression':
+        if (node.properties) { res = `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]` }
+        break
+      case 'Property':
+        if(node.key) {
+          res = `[[8], "${node.key.name || 'no name error'}", ${walk(node.value)}]`
+        }
+        break
       default:
         console.log(`${res}: ${node.type}`)
     }
@@ -101,6 +109,7 @@ export function walkExp (ast: Object, type: number): string {
   if (type === 0) {
     return walk(ast.body[0].expression)
   } else if (type === 1) {
+    return walk(ast.body[0].expression.right)
   }
 
   return JSON.stringify(ast)

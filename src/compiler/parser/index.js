@@ -171,6 +171,7 @@ let currRoot = root
 
         processRef(element)
         processSlot(element)
+        processInclude(element)
         processComponent(element)
         debugger
         for (let i = 0; i < transforms.length; i++) {
@@ -500,6 +501,17 @@ function processSlot (el) {
   }
 }
 
+function processInclude (el) {
+  if (el.tag == 'include') {
+    const src = getAndRemoveAttr(el, 'src')
+    if (src) {
+      el.include = src
+    } else {
+      throw new Error('must have src attribute in include tag')
+    }
+  }
+}
+
 function processComponent (el) {
   let binding
   if ((binding = getBindingAttr(el, 'is'))) {
@@ -679,7 +691,7 @@ function checkForAliasModel (el, value) {
 
 
 function pushProp(exp:string, optExp?: string){
-  if(!propStore.map[exp]) {
+  if(propStore.map[exp] == null) {
     propStore.map[exp] = propStore.props.length
     propStore.props.push(parseText(optExp || exp))
   }

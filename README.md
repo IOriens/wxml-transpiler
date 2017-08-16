@@ -4,29 +4,32 @@
 
 ## Intro
 
-Use  compiler built in Vue.js to transpile wxml.
+Use compiler carried with Vue.js to transpile wxml.
 
 ## Give it a Try
 
-```sh
-# Start
-## install deps
-yarn
-## build dep
-yarn run dev:compiler
-## run
-node newTest/test
+> Get Started
 
-# Dev
-## autorestart type check
+```sh
+# install deps
+yarn
+# build dep
+yarn run dev:compiler
+# run
+node newTest/test
+```
+
+> Dev Opts
+
+```sh
+# autorestart type check
 watch -t flow
-## autorestart test
+# autorestart test
 nodemon newTest/test -w packages/vue-template-compiler -w newTest/test.js -w newTest/pages -e js,wxml
 ```
 
 ## Todo
 
-- wx:for="str"
 - `propStore` should better not be global
 - push props in parseText to reuse pushed props
 

@@ -133,6 +133,10 @@ declare type ASTElement = {
 
   directives?: Array<ASTDirective>;
 
+  include?: string;
+
+  rootName?: string;
+
   forbidden?: true;
   once?: true;
   onceProcessed?: boolean;
@@ -172,7 +176,7 @@ declare type SFCDescriptor = {
   script: ?SFCBlock;
   styles: Array<SFCBlock>;
   customBlocks: Array<SFCCustomBlock>;
-}
+};
 
 declare type SFCCustomBlock = {
   type: string;
@@ -195,5 +199,11 @@ declare type SFCBlock = {
 };
 
 
-declare type Store = { map: Object, props: Array<string> }
+declare type Store = { tmplMap:Array<TemplateInfo>; map: Object; props: Array<string>; };
+
+declare type TemplateInfo = {
+  path: string;
+  ti: Array<string>;
+  ic: Array<string>;
+}
 
