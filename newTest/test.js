@@ -26,15 +26,22 @@ var files = srcFiles.map(path => ({
 const vueRes = compiler.compile(files)
 fs.writeFileSync(vueDist, vueRes.render, 'utf8')
 
-exec(`cd ${__dirname} && ${resolve(__dirname, 'wcc')} -b ${srcFiles.join(' ')}`, (err, wccRes) => {
-  if(err) throw err
-  fs.writeFileSync(wccOriDist, wccRes, 'utf8')
-  fs.writeFileSync(wccDist, prettier.format(wccRes, formatRule), 'utf8')
-  fs.writeFileSync(vueDist, prettier.format(vueRes.render, formatRule), 'utf8')
-  exec(`diff -rp ${vueDist} ${wccDist}`, (err, diffRes) => {
-    // console.log(res)
-    fs.writeFileSync(diffDist, diffRes, 'utf8')
-  })
-})
+exec(
+  `cd ${__dirname} && ${resolve(__dirname, 'wcc')} -b ${srcFiles.join(' ')}`,
+  (err, wccRes) => {
+    if (err) throw err
+    fs.writeFileSync(wccOriDist, wccRes, 'utf8')
+    fs.writeFileSync(wccDist, prettier.format(wccRes, formatRule), 'utf8')
+    fs.writeFileSync(
+      vueDist,
+      prettier.format(vueRes.render, formatRule),
+      'utf8'
+    )
+    exec(`diff -rp ${vueDist} ${wccDist}`, (err, diffRes) => {
+      // console.log(res)
+      fs.writeFileSync(diffDist, diffRes, 'utf8')
+    })
+  }
+)
 
 console.log('See Result in test.vue.dist.js && test.wcc.dist.js')

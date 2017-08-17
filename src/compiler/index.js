@@ -63,13 +63,11 @@ export const createCompiler = createCompilerCreator(function baseCompile (
         ${generate(ast.ast, program.store, options).render}
         return r
       };
-      e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[${program.store.tmplMap[
-        idx
-      ].ti
-        .map(ti => `"${ti}"`)
-        .join(',')}],ic:[${program.store.tmplMap[
-          idx
-        ].ic
+      e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[${program.store.tmplMap[idx].ti
+          .map(ti => `"${ti}"`)
+          .join(
+            ','
+          )}],ic:[${program.store.tmplMap[idx].ic
           .map(ic => `"${ic}"`)
           .join(',')}]}`
     )

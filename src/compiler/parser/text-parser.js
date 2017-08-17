@@ -91,10 +91,12 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
         res = `[[6],${walk(node.object)},${walk(node.property, true)}]`
         break
       case 'ObjectExpression':
-        if (node.properties) { res = `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]` }
+        if (node.properties) {
+          res = `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]`
+        }
         break
       case 'Property':
-        if(node.key) {
+        if (node.key) {
           res = `[[8], "${node.key.name || 'no name error'}", ${walk(node.value)}]`
         }
         break

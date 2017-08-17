@@ -69,16 +69,16 @@ export function parse (
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
 
-  let root:ASTElement = {
+  let root: ASTElement = {
     type: 1,
     tag: 'Program',
     attrsList: [],
     attrsMap: makeAttrsMap([]),
     parent: void 0,
-    children:[]
+    children: []
   }
 
-let currRoot = root
+  let currRoot = root
   let currentParent
   let inVPre = false
   let inPre = false
@@ -297,7 +297,6 @@ let currRoot = root
           text !== ' ' &&
           (expression = parseText(text, delimiters))
         ) {
-
           pushProp(text)
 
           children.push({
@@ -535,7 +534,7 @@ function processComponent (el) {
 }
 
 function processAttrs (el) {
-  const list = el.attrsList.sort((a, b) => a.name > b.name ? 1 : -1)
+  const list = el.attrsList.sort((a, b) => (a.name > b.name ? 1 : -1))
   let i, l, name, rawName, value, modifiers, isProp
   for ((i = 0), (l = list.length); i < l; i++) {
     name = rawName = list[i].name
@@ -600,20 +599,19 @@ function processAttrs (el) {
       // literal attribute
       // if (process.env.NODE_ENV !== 'production') {
 
+      const expression = parseText(value, delimiters)
+      pushProp(value)
 
-        const expression = parseText(value, delimiters)
-        pushProp(value)
-
-        // if (expression) {
-        //   warn(
-        //     `${name}="${value}": ` +
-        //       'Interpolation inside attributes has been removed. ' +
-        //       'Use v-bind or the colon shorthand instead. For example, ' +
-        //       'instead of <div id="{{ val }}">, use <div :id="val">.'
-        //   )
-        // }
+      // if (expression) {
+      //   warn(
+      //     `${name}="${value}": ` +
+      //       'Interpolation inside attributes has been removed. ' +
+      //       'Use v-bind or the colon shorthand instead. For example, ' +
+      //       'instead of <div id="{{ val }}">, use <div :id="val">.'
+      //   )
       // }
-      addAttr(el, name,  value)
+      // }
+      addAttr(el, name, value)
     }
   }
 }
@@ -701,9 +699,8 @@ function checkForAliasModel (el, value) {
   }
 }
 
-
-function pushProp(exp:string, optExp?: string){
-  if(propStore.map[exp] == null) {
+function pushProp (exp: string, optExp?: string) {
+  if (propStore.map[exp] == null) {
     propStore.map[exp] = propStore.props.length
     propStore.props.push(parseText(optExp || exp))
   }
