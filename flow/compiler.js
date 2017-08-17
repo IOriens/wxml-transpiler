@@ -135,7 +135,11 @@ declare type ASTElement = {
 
   include?: string;
 
+  import?: string;
+
   rootName?: string;
+
+  tiName?: string;
 
   forbidden?: true;
   once?: true;

@@ -172,6 +172,7 @@ let currRoot = root
         processRef(element)
         processSlot(element)
         processInclude(element)
+        processImport(element)
         processComponent(element)
         debugger
         for (let i = 0; i < transforms.length; i++) {
@@ -506,6 +507,17 @@ function processInclude (el) {
     const src = getAndRemoveAttr(el, 'src')
     if (src) {
       el.include = src
+    } else {
+      throw new Error('must have src attribute in include tag')
+    }
+  }
+}
+
+function processImport (el) {
+  if (el.tag == 'import') {
+    const src = getAndRemoveAttr(el, 'src')
+    if (src) {
+      el.import = src
     } else {
       throw new Error('must have src attribute in include tag')
     }

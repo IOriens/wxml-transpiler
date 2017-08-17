@@ -4,7 +4,7 @@
 
 ## Intro
 
-Use compiler carried with Vue.js to transpile wxml.
+Use compiler carried with Vue.js to transpile wxml ([Grammers to Support](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/)).
 
 ## Give it a Try
 
@@ -30,6 +30,14 @@ nodemon newTest/test -w packages/vue-template-compiler -w newTest/test.js -w new
 
 ## Todo
 
+### must
+
+- template
+- dataset & event binding
+
+### perf & ux
+
+- error position feedback
 - `propStore` should better not be global
 - push props in parseText to reuse pushed props
 

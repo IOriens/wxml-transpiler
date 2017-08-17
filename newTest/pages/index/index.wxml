@@ -1,12 +1,28 @@
-<!-- include in if else -->
-<view wx:if="{{a == 1}}">
-  <include src="../../../common/foot4.wxml" />
-</view>
+<!-- normal import -->
+<import src="../../../common/head1.wxml" />
 
-<!-- normal include -->
-<include src="../../../common/foot4.wxml" />
+<!-- import with if -->
+<import wx:if="{{a ==0}}" src="../../../common/head2.wxml" />
 
-<!-- include with if else -->
-<include wx:if="{{a == 1}}" src="../../../common/foot5.wxml" />
-<include wx:elif="{{a == 2 }}" src="../../../common/foot6.wxml" />
-<include wx:else src="../../../common/foot7.wxml" />
+<import src="../../../common/head3.wxml" />
+
+<div wx:for="kjljlj">
+    <import src="../../../common/head{{item}}.wxml" />
+</div>
+
+<!-- normal template -->
+<!-- <template is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" /> -->
+
+<!-- template with if-->
+<!-- <template wx:if="{{a == 2}}" is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" /> -->
+
+<!-- template in if -->
+<!-- <div wx:if="{{a == 2}}">
+    <template  is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" />
+</div> -->
+
+<!--<block wx:for="{{[1, 2, 3, 4, 5]}}">
+    <template is="{{item % 2 == 0 ? 'even' : 'odd'}}"/>
+</block> -->
+
+

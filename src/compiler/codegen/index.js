@@ -65,36 +65,49 @@ export function genElement (el: ASTElement, state: CodegenState): string {
   } else if (el.if && !el.ifProcessed) {
     return genIf(el, state)
   } else if (el.tag === 'template' && !el.slotTarget) {
-    return genChildren(el, state) || 'void 0'
+    return genChildren(el, state) || 'GenChild Error'
   } else if (el.tag === 'slot') {
     return genSlot(el, state)
   } else if(el.tag === 'include' ){
     return genInclude(el, state)
-  }else {
+  }else if(el.tag === 'import' ){
+    return genImport(el, state)
+  } else {
     // component or element
     let code
     if (el.component) {
       code = genComponent(el.component, el, state)
     } else {
       const data = el.plain ? undefined : genData(el, state)
-      if(el.tag == 'Program') el.newName = 'r'
 
       if(el.tag == 'Program') {
-        const tmplIc = getTmplInfo().ic
+        el.newName = 'r'
+        const tiName = el.tiName = generateId()
+const tmplInfo = getTmplInfo()
+        const tmplIc = tmplInfo.ic
+        const tmplTi = tmplInfo.ti
         const oldIcLen = tmplIc.length
+        const oldTiLen = tmplTi.length
         const children = el.inlineTemplate ? null : genChildren(el, state, true)
         const newIcLen = tmplIc.length
+        const newTiLen = tmplTi.length
 
         let icTop= ''
         let icBottom= ''
         if (newIcLen > oldIcLen) {
           const icName = generateId()
-          icTop = `var ${icName} = e_["${getTmplInfo().path}"].j;`
+          icTop = `var ${icName} = e_["${tmplInfo.path}"].j;`
           for(var icIdx = newIcLen - 1; icIdx >= oldIcLen; icIdx -- ) {
             icBottom += `${icName}.pop();`
           }
         }
 
+        if (newTiLen > oldTiLen) {
+          icTop = `var ${tiName} = e_["${tmplInfo.path}"].i;${icTop}`
+          for(var icIdx = newTiLen - 1; icIdx >= oldTiLen; icIdx -- ) {
+            icBottom += `${tiName}.pop();`
+          }
+        }
         code = `${icTop}
         ${
           children ? `${children}` : '' // children
@@ -201,19 +214,31 @@ function genIfConditions (
     ? ''
     : `_(${newName || ''}, ${childNewName})`
 
-  const tmplIc = getTmplInfo().ic
+
+  const tiName = condition.block.tiName = generateId()
+  const tmplInfo = getTmplInfo()
+  const tmplIc = tmplInfo.ic
+  const tmplTi = tmplInfo.ti
   const oldIcLen = tmplIc.length
+  const oldTiLen = tmplTi.length
   let childTmpl = genTernaryExp(condition.block)
   const newIcLen = tmplIc.length
+  const newTiLen = tmplTi.length
 
-  let icTop = ''
-  let icBottom = ''
   if (newIcLen > oldIcLen) {
     const icName = generateId()
-    childTmpl = `var ${icName} = e_["${getTmplInfo().path}"].j;${childTmpl};`
+    childTmpl = `var ${icName} = e_["${tmplInfo.path}"].j;${childTmpl};`
     for (var icIdx = newIcLen - 1; icIdx >= oldIcLen; icIdx--) {
       childTmpl += `${icName}.pop();`
       tmplIc.pop()
+    }
+  }
+
+  if (newTiLen > oldTiLen) {
+    childTmpl = `var ${tiName} = e_["${tmplInfo.path}"].i;${childTmpl};`
+    for (var icIdx = newTiLen - 1; icIdx >= oldTiLen; icIdx--) {
+      childTmpl += `${tiName}.pop();`
+      tmplTi.pop()
     }
   }
 
@@ -278,24 +303,38 @@ export function genFor (
   let returnNodeName = generateId()
   el.newName = childNewName
   el.rootName = childNewName
+
   let oldScope = el.scope || 's'
   let newScope = (el.scope = generateId())
   let oldEnv = el.env || 'e'
   let newEnv = (el.env = generateId())
 
-  const tmplIc =getTmplInfo().ic
+  let tiName = el.tiName = generateId()
+
+const tmplInfo =getTmplInfo()
+  const tmplIc =tmplInfo.ic
+  const tmplTi =tmplInfo.ti
   const oldIcLen = tmplIc.length
+const oldTiLen = tmplTi.length
   let children =`${(altGen || genElement)(el, state)}`
   const newIcLen = tmplIc.length
+  const newTiLen =tmplTi.length
 
   let icTop= ''
   let icBottom= ''
   if (newIcLen > oldIcLen) {
     const icName = generateId()
-    icTop = `var ${icName} = e_["${getTmplInfo().path}"].j;`
+    icTop = `var ${icName} = e_["${tmplInfo.path}"].j;`
     for(var icIdx = newIcLen - 1; icIdx >= oldIcLen; icIdx -- ) {
       icBottom += `${icName}.pop();`
       tmplIc.pop()
+    }
+  }
+  if (newTiLen > oldTiLen) {
+    icTop = `var ${tiName} = e_["${tmplInfo.path}"].i;${icTop}`
+    for(var tiIdx = newTiLen - 1; tiIdx >= oldTiLen; tiIdx -- ) {
+      icBottom += `${tiName}.pop();`
+      tmplTi.pop()
     }
   }
 
@@ -513,10 +552,10 @@ export function genChildren (
     const res = children
       .map(c => {
         const newName = generateId()
-        if(c.tag === 'include' && !c.if){
-          return `${gen(c, state, newName, el.env, el.scope, el.newName)}`
+        if((c.tag === 'include' && !c.if) || (c.tag === 'import' && !c.if)){
+          return `${gen(c, state, newName, el.env, el.scope, el.newName, el.tiName)}`
         } else {
-          return `${gen(c, state, newName, el.env, el.scope, el.newName)};_(${el.newName || 'error'},${newName});`
+          return `${gen(c, state, newName, el.env, el.scope, el.newName, el.tiName)};_(${el.newName || 'error'},${newName});`
         }
       })
       .join('')
@@ -560,12 +599,13 @@ function needsNormalization (el: ASTElement): boolean {
   return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
 }
 
-function genNode (node: ASTNode, state: CodegenState, parentName?: string, env?: string, scope?:string, rootName?: string): string {
+function genNode (node: ASTNode, state: CodegenState, parentName?: string, env?: string, scope?:string, rootName?: string, tiName?: string): string {
   if (node.type === 1) {
     node.newName = parentName
     node.env = env
     node.scope = scope
     node.rootName = rootName
+    node.tiName = tiName
     return genElement(node, state)
   } if (node.type === 3 && node.isComment) {
     return genComment(node)
@@ -613,7 +653,18 @@ function genInclude (el: ASTElement, state: CodegenState) {
     tmplInfo.ic.push(el.include)
   }
   return `
-  _ic("${el.include || 'src error'}",e_, "${getTmplInfo().path}",${el.env || 'e'},${el.scope || 's'},${el.rootName||'r'},gg);`
+  _ic("${el.include || 'src error'}",e_, "${tmplInfo.path}",${el.env || 'e'},${el.scope || 's'},${el.rootName||'r'},gg);`
+}
+
+function genImport (el: ASTElement, state: CodegenState) {
+  const tmplInfo = getTmplInfo()
+  if (el.import) {
+    tmplInfo.ti.push(el.import)
+  }
+  console.log(el)
+  return `_ai(${el.tiName || 'import name err'}, '${el.import || 'src error'}', e_, '${tmplInfo.path}', 0, 0);`
+  // return `
+  // _ai("${el.import || 'src error'}",e_, "${getTmplInfo().path}",${el.env || 'e'},${el.scope || 's'},${el.rootName||'r'},gg);`
 }
 
 // componentName is el.component, take it as argument to shun flow's pessimistic refinement

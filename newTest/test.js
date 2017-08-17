@@ -26,8 +26,7 @@ var files = srcFiles.map(path => ({
 const vueRes = compiler.compile(files)
 fs.writeFileSync(vueDist, vueRes.render, 'utf8')
 
-exec(`cd ${__dirname} && ${resolve(__dirname, 'wcc')} -b ${srcFiles.reduce((p, c) => `${p} ${c}`, '')}`, (err, wccRes) => {
-  console.log(`${resolve(__dirname, 'wcc')} -b ${srcFiles.reduce((p, c) => `${p} ${c}`, '')}`)
+exec(`cd ${__dirname} && ${resolve(__dirname, 'wcc')} -b ${srcFiles.join(' ')}`, (err, wccRes) => {
   if(err) throw err
   fs.writeFileSync(wccOriDist, wccRes, 'utf8')
   fs.writeFileSync(wccDist, prettier.format(wccRes, formatRule), 'utf8')
