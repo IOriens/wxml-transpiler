@@ -1,4 +1,3 @@
-
 <!-- normal template -->
 <!-- <template is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" /> -->
 
@@ -6,24 +5,35 @@
 <!-- <template wx:if="{{a == 2}}" is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" /> -->
 
 <!-- template in if -->
-<div wx:if="{{a == 2}}">
-    <template  name="odd">
-        <view> odd </view>
-      </template>
-</div>
+<!-- <div wx:if="{{a == 2}}">
+  <template name="odd">
+    <view> odd </view>
+  </template>
+</div> -->
 
 
-<template wx:if="{{true}}" name="odd">
+<template wx:if="{{a === 2}}" name="odd">
   <view> odd </view>
 </template>
 
 
-<block wx:for="{{[1, 2, 3, 4, 5]}}">
-    <template is="{{item % 2 == 0 ? 'even' : 'odd'}}"/>
+<!-- <block wx:for="{{[1, 2, 3, 4, 5]}}">
+  <template is="{{item % 2 == 0 ? 'even' : 'odd'}}" />
 </block>
-<template name="even">
+
+<template name="even" is="odd">
   <view> even </view>
-</template>
+  <div wx:if="{{type === 'A'}}">A</div>
+  <div wx:elif="{{type === 'B'}}">B</div>
+  <div wx:elif="{{type === 'C'}}">C</div>
+  <div wx:else>
+    not a/b/c
+    <div wx:if="{{type === 'a'}}">a</div>
+    <div wx:elif="{{type === 'b'}}">b</div>
+    <div wx:elif="{{type === 'c'}}">c</div>
+    <div wx:else>not a/b/c</div>
+  </div>
+</template> -->
 <!-- <block wx:for="{{true}}">
   <include wx:for="{{a == 0}}" src="../../../common/head2.wxml" />
 </block> -->
@@ -31,7 +41,7 @@
 
 
 <!-- <view wx:if="{{aaa}}"> -->
-  <!-- <import wx:for="{{aaa}}" src="../../../common/foot4.wxml" /> -->
+<!-- <import wx:for="{{aaa}}" src="../../../common/foot4.wxml" /> -->
 <!-- </view> -->
 <!-- <import wx:if="{{a ==0}}" src="../../../common/head2.wxml" /> -->
-  <!-- <import wx:if="{{a ==0}}" src="../../../common/head2.wxml" /> -->
+<!-- <import wx:if="{{a ==0}}" src="../../../common/head2.wxml" /> -->

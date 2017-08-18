@@ -371,7 +371,7 @@ function processRef (el) {
 }
 
 function processFor (el) {
-  if(el.tag === 'import') {
+  if (el.tag === 'import') {
     getAndRemoveAttr(el, 'wx:for')
     return
   }
@@ -404,6 +404,7 @@ function processFor (el) {
 function processIf (el) {
   const exp = getAndRemoveAttr(el, 'wx:if')
   if (exp) {
+    // if (el.tag == 'template' && el.name) return
     const inMatch = exp.match(tplBracket)
     if (!inMatch) {
       process.env.NODE_ENV !== 'production' &&
@@ -421,10 +422,12 @@ function processIf (el) {
     })
   } else {
     if (getAndRemoveAttr(el, 'wx:else') != null) {
+      // if (el.tag == 'template' && el.name) return
       el.else = true
     }
     const elseif = getAndRemoveAttr(el, 'wx:elif')
     if (elseif) {
+      // if (el.tag == 'template' && el.name) return
       const inMatch = elseif.match(tplBracket)
       if (!inMatch) {
         process.env.NODE_ENV !== 'production' &&
@@ -529,12 +532,17 @@ function processImport (el) {
 
 function processComponent (el) {
   let binding, data
-  if (el.tag === 'template'&&(binding = getAndRemoveAttr(el, 'is'))) {
-    el.component = binding
-    pushProp(binding)
+  if (el.tag === 'template') {
+    if ((binding = getAndRemoveAttr(el, 'name'))) {
+      el.name = binding
+      getCurrentCodeInfo().templates.push({ path: binding, tmpl: el })
+    }
+    if ((binding = getAndRemoveAttr(el, 'is'))) {
+      el.component = binding
+      pushProp(binding)
+    }
   }
-  console.log(el)
-  if (data = getAndRemoveAttr(el, 'data')) {
+  if ((data = getAndRemoveAttr(el, 'data'))) {
     el.data = data
     pushProp(data)
   }
@@ -711,4 +719,8 @@ function pushProp (exp: string, optExp?: string) {
     propStore.map[exp] = propStore.props.length
     propStore.props.push(parseText(optExp || exp))
   }
+}
+
+function getCurrentCodeInfo (): TemplateInfo {
+  return propStore.tmplMap.slice(-1)[0]
 }

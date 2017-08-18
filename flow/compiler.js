@@ -151,6 +151,11 @@ declare type ASTElement = {
   // 2.4 ssr optimization
   ssrOptimizability?: number;
 
+  // template name
+  name?: string;
+
+  tmplProcessed?: bool;
+
   // weex specific
   appendAsTree?: boolean;
 };
@@ -210,5 +215,10 @@ declare type TemplateInfo = {
   path: string;
   ti: Array<string>;
   ic: Array<string>;
+  templates: Array<template>;
 }
 
+declare type template = {
+  path: string;
+  tmpl: ASTElement;
+}

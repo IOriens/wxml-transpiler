@@ -29,7 +29,8 @@ export const createCompiler = createCompilerCreator(function baseCompile (
       p.store.tmplMap.push({
         path: c.path,
         ti: [],
-        ic: []
+        ic: [],
+        templates: []
       })
       const ast = parse(c.template, p.store, options)
       return {
@@ -58,11 +59,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   const code = program.asts
     .map(
       (ast, idx) =>
-        `d_["${ast.path}"] = {};
-      var m${idx}=function(e,s,r,gg){
-        ${generate(ast.ast, program.store, options).render}
-        return r;
-      };
+        `${generate(ast.ast, program.store, idx, options).render}
       e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[${program.store.tmplMap[idx].ti
           .map(ti => `"${ti}"`)
           .join(
