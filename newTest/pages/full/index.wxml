@@ -83,6 +83,20 @@
   <include wx:else src="../../../common/foot7.wxml" />
 </view>
 
+<!-- import -->
+<view>
+  <!-- normal import -->
+  <import src="../../../common/head1.wxml" />
+
+  <!-- import with if -->
+  <import wx:if="{{a ==0}}" src="../../../common/head2.wxml" />
+
+  <!-- import in for -->
+  <div wx:for="kjljlj">
+    <import src="../../../common/head{{item}}.wxml" />
+  </div>
+</view>
+
 <!-- template, obj in attrs-->
 <import src="../../../common/head.wxml" />
 <template is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" />

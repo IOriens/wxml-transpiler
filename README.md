@@ -33,6 +33,7 @@ nodemon newTest/test -w packages/vue-template-compiler -w newTest/test.js -w new
 ### must
 
 - template
+- block
 - dataset & event binding
 
 ### perf & ux

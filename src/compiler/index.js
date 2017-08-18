@@ -50,7 +50,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   (function(z){
     var a = 11;
     function Z(ops){z.push(ops)};
-    ${program.store.props.map(prop => `Z(${prop});`).join('\n')}
+    ${program.store.props.map(prop => `Z(${prop});`).join('')}
   })(z);`
 
   program.asts.map(ast => optimize(ast.ast, options))
@@ -61,7 +61,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
         `d_["${ast.path}"] = {};
       var m${idx}=function(e,s,r,gg){
         ${generate(ast.ast, program.store, options).render}
-        return r
+        return r;
       };
       e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[${program.store.tmplMap[idx].ti
           .map(ti => `"${ti}"`)
@@ -69,9 +69,9 @@ export const createCompiler = createCompilerCreator(function baseCompile (
             ','
           )}],ic:[${program.store.tmplMap[idx].ic
           .map(ic => `"${ic}"`)
-          .join(',')}]}`
+          .join(',')}]};`
     )
-    .join('\n')
+    .join('')
 
   return {
     program,

@@ -371,6 +371,10 @@ function processRef (el) {
 }
 
 function processFor (el) {
+  if(el.tag === 'import') {
+    getAndRemoveAttr(el, 'wx:for')
+    return
+  }
   let exp
   if ((exp = getAndRemoveAttr(el, 'wx:for'))) {
     const inMatch = exp.match(tplBracket)
@@ -524,12 +528,15 @@ function processImport (el) {
 }
 
 function processComponent (el) {
-  let binding
-  if ((binding = getBindingAttr(el, 'is'))) {
+  let binding, data
+  if (el.tag === 'template'&&(binding = getAndRemoveAttr(el, 'is'))) {
     el.component = binding
+    pushProp(binding)
   }
-  if (getAndRemoveAttr(el, 'inline-template') != null) {
-    el.inlineTemplate = true
+  console.log(el)
+  if (data = getAndRemoveAttr(el, 'data')) {
+    el.data = data
+    pushProp(data)
   }
 }
 

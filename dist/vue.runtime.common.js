@@ -11,6 +11,7 @@
 // explicitness and function inlining
 function isUndef (v) {
   return v === undefined || v === null
+  
 }
 
 function isDef (v) {

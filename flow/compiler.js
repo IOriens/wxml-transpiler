@@ -73,7 +73,7 @@ declare type ASTElement = {
   attrsMap: { [key: string]: string | null };
   parent: ASTElement | void;
   children: Array<ASTNode>;
-  newName?: string;
+  nodeFuncName?: string;
 
   env?:string;
   scope?:string;
@@ -137,10 +137,11 @@ declare type ASTElement = {
 
   import?: string;
 
-  rootName?: string;
+  blockFuncName?: string;
 
-  tiName?: string;
+  importFuncName?: string;
 
+  data?:string;
   forbidden?: true;
   once?: true;
   onceProcessed?: boolean;
