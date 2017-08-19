@@ -63,7 +63,7 @@ export function generate (
   let code = ast ? genElement(ast, state) : '_m("div")'
 
   // compose above codes
-  code = `${templateImpls}d_["${codeInfo.path}"] = {};
+  code = `d_["${codeInfo.path}"] = {};${templateImpls}
   var m${templateIdx}=function(e,s,r,gg){
     ${code}
     return r;
@@ -78,6 +78,7 @@ function genTemplate (tmpl: template, state: CodegenState) {
   const codeInfo = getCurrentCodeInfo()
   const children = genElement(tmpl.tmpl, state)
   tmpl.tmpl.tmplProcessed = true
+  tmpl.tmpl.children = []
   // console.log(666, tmpl.tmpl)
   return `d_["${codeInfo.path}"]["${tmpl.path}"]=function(e,s,r,gg){
     var b='${codeInfo.path}:${tmpl.path}'
@@ -258,7 +259,7 @@ function genIfConditions (
     'import'
   ])
     ? ''
-    : `_fuck4(${nodeFuncName || ''}, ${childnodeFuncName});`
+    : `_(${nodeFuncName || ''}, ${childnodeFuncName});`
 
   const importFuncName = (condition.block.importFuncName = generateId())
   const codeInfo = getCurrentCodeInfo()
@@ -382,7 +383,7 @@ export function genFor (
 
   const cantainEle = isOneOf(el.tag, ['block', 'include'])
     ? ''
-    : `_fuck1(${returnNodeName}, ${childnodeFuncName});`
+    : `_(${returnNodeName}, ${childnodeFuncName});`
 
   let code = `var ${parentnodeFuncName} = _v();
   var ${forFuncId} = function (${newEnv},${newScope},${returnNodeName},gg) {
@@ -605,16 +606,17 @@ export function genChildren (
         const nodeFuncName = generateId()
         if (
           (child.tag === 'include' && !child.if && !child.for) ||
-          (child.tag === 'import' && !child.if)
+          (child.tag === 'import' && !child.if) ||
+          child.tag === 'template'&& child.name && child.tmplProcessed
         ) {
           console.log(11)
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}`
         } else if (parent.tag === 'block') {
           console.log(22)
-          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_fuck2(${parent.blockFuncName || 'error'},${nodeFuncName || 'error'});`
+          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_(${parent.blockFuncName || 'error'},${nodeFuncName || 'error'});`
         } else {
           console.log(33)
-          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_fuck3(${parent.nodeFuncName || 'error'},${nodeFuncName});`
+          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_(${parent.nodeFuncName || 'error'},${nodeFuncName});`
         }
       })
       .join('')

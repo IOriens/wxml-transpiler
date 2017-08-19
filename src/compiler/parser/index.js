@@ -373,10 +373,12 @@ function processRef (el) {
 function processFor (el) {
   if (el.tag === 'import') {
     getAndRemoveAttr(el, 'wx:for')
+    getAndRemoveAttr(el, 'wx:for-items')
     return
   }
-  let exp
-  if ((exp = getAndRemoveAttr(el, 'wx:for'))) {
+  let expTmp = getAndRemoveAttr(el, 'wx:for') || getAndRemoveAttr(el, 'wx:for-items')
+  let exp = expTmp
+  if (exp) {
     const inMatch = exp.match(tplBracket)
     if (!inMatch) {
       process.env.NODE_ENV !== 'production' &&
@@ -536,8 +538,7 @@ function processComponent (el) {
     if ((binding = getAndRemoveAttr(el, 'name'))) {
       el.name = binding
       getCurrentCodeInfo().templates.push({ path: binding, tmpl: el })
-    }
-    if ((binding = getAndRemoveAttr(el, 'is'))) {
+    } else if ((binding = getAndRemoveAttr(el, 'is'))) {
       el.component = binding
       pushProp(binding)
     }
