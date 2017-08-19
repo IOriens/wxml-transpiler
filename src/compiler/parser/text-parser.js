@@ -49,17 +49,22 @@ export function parseText (
 }
 
 export function walk (node: AcornNode | void, inMember?: boolean): string {
-  let res = 'Unknown Type'
+  // console.log(6663, node)
   if (node) {
+    let res = 'Unknown Type'
     switch (node.type) {
       case 'LogicalExpression':
         if (node.operator && node.left) {
           res = `[[2, "${node.operator}"],${walk(node.left)},${walk(node.right)}]`
+        } else {
+          res = `Prop Lost in ${node.type}`
         }
         break
       case 'BinaryExpression':
         if (node.operator) {
           res = `[[2, "${node.operator}"], ${walk(node.left)}, ${walk(node.right)}]`
+        } else {
+          res = `Prop Lost in ${node.type}`
         }
         break
       case 'Identifier':
@@ -69,11 +74,15 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
           } else {
             res = `[[7],[3, "${node.name}"]]`
           }
+        } else {
+          res = `Prop Lost in ${node.type}`
         }
         break
       case 'UnaryExpression':
         if (node.operator) {
           res = `[[2, "${node.operator}"], ${walk(node.argument)}]`
+        } else {
+          res = `Prop Lost in ${node.type}`
         }
         break
       case 'Literal':
@@ -82,34 +91,49 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
       case 'ArrayExpression':
         if (node.elements) {
           res = `[[4], ${node.elements.reduce((p, c) => `[[5], ${p} ${p && ','} ${walk(c)}]`, '')}]`
+        } else {
+          res = `Prop Lost in ${node.type}`
         }
         break
       case 'ConditionalExpression':
         res = `[[2,'?:'],${walk(node.test)},${walk(node.consequent)},${walk(node.alternate)}]`
         break
       case 'MemberExpression':
+
         res = `[[6],${walk(node.object)},${walk(node.property, true)}]`
         break
       case 'ObjectExpression':
         if (node.properties) {
           res = `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]`
+        } else {
+          res = `Prop Lost in ${node.type}`
         }
+        break
+      case 'LabeledStatement':
+        if(node.label && node.body)
+        res = `[[8],"${node.label.name || 'no name error'}", ${walk(node.body.expression)}]`
         break
       case 'Property':
         if (node.key) {
           res = `[[8], "${node.key.name || 'no name error'}", ${walk(node.value)}]`
+        } else {
+          res = `Prop Lost in ${node.type}`
         }
         break
       default:
-        console.log(`${res}: ${node.type}`)
+        console.log((res = `${res}: ${node.type}`))
     }
+    return res
+  } else {
+    // console.log(666, node)
+    return ''
   }
-  return res
 }
 
 export function walkExp (ast: Object, type: number): string {
   if (type === 0) {
-    return walk(ast.body[0].expression)
+    if (ast.body[0].expression) return walk(ast.body[0].expression)
+    else if (ast.body[0]) return walk(ast.body[0])
   } else if (type === 1) {
     return walk(ast.body[0].expression.right)
   }
@@ -122,11 +146,13 @@ export function parseExp (text: string): string | void {
   try {
     // normal exporession
     ast = parse(text)
+    // console.log(6661, text)
     return walkExp(ast, 0)
   } catch (e) {
     try {
       // object expression
       ast = parse(`x={${text}}`)
+      // console.log(6662, ast)
       return walkExp(ast, 1)
     } catch (e) {
       throw new Error(`${text} contains syntax errs`)

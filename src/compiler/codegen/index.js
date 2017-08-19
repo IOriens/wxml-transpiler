@@ -157,14 +157,16 @@ export function genElement (el: ASTElement, state: CodegenState): string {
       } else {
         const children = el.inlineTemplate ? null : genChildren(el, state, true)
         const dataLen = el.attrsList.length
+        const env = el.env || 'e'
+        const scope = el.scope || 's'
         if (dataLen == 0) {
           code = `var ${el.nodeFuncName || 'nodeFuncName error'} = _n("${el.tag}");${children ? `${children}` : ''}`
         } else if (dataLen == 1) {
           const attr = el.attrsList[0]
           code = `var ${el.nodeFuncName || 'nodeFuncName error2'} = _n("${el.tag}");
-          _r(${el.nodeFuncName || 'nodeFuncName error3'}, '${attr.name}', ${propStore.map[attr.value]}, e, s, gg);${children ? `${children}` : ''}`
+          _r(${el.nodeFuncName || 'nodeFuncName error3'}, '${attr.name}', ${propStore.map[attr.value]}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
         } else {
-          code = `var ${el.nodeFuncName || 'nodeFuncName error4'} = _m( "${el.tag}", ${data || 'data error'}, e, s, gg);${children ? `${children}` : ''}`
+          code = `var ${el.nodeFuncName || 'nodeFuncName error4'} = _m( "${el.tag}", ${data || 'data error'}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
         }
       }
     }
@@ -609,13 +611,13 @@ export function genChildren (
           (child.tag === 'import' && !child.if) ||
           child.tag === 'template'&& child.name && child.tmplProcessed
         ) {
-          console.log(11)
+          // console.log(11)
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}`
         } else if (parent.tag === 'block') {
-          console.log(22)
+          // console.log(22)
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_(${parent.blockFuncName || 'error'},${nodeFuncName || 'error'});`
         } else {
-          console.log(33)
+          // console.log(33)
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_(${parent.nodeFuncName || 'error'},${nodeFuncName});`
         }
       })
@@ -751,6 +753,7 @@ function genComponent (
 function genProps (props: Array<{ name: string, value: string }>): string {
   let res = '['
   let initIdx
+  props = props.sort((a,b) => propStore.map[a.value] - propStore.map[b.value])
   for (let i = 0; i < props.length; i++) {
     const prop = props[i]
     if (!initIdx) {

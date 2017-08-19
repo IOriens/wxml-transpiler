@@ -112,5 +112,12 @@ declare type AcornNode = {
   // Property
   key?: AcornNode;
   value?: AcornNode;
+
+  // label
+  label?: AcornNode;
+  body?: AcornNode;
+
+  // expression
+  expression?: AcornNode;
 };
 
