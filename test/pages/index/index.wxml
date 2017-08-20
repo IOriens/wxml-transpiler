@@ -1,10 +1,10 @@
-<import src="../../../common/head.wxml" />
+<!-- <import src="../../../common/head.wxml" />
 <import src="../../../common/foot.wxml" />
 
 <view class="container">
   <template is="head" data="{{title: 'createContext'}}"/>
 
-  <view class="page-body">
+  <view class="page-body"> -->
     <view class="page-section">
       <canvas class="canvas-element" canvas-id="canvas"></canvas>
       <scroll-view class="canvas-buttons" scroll-y="true">
@@ -14,7 +14,7 @@
         <button class="canvas-button" bindtap="toTempFilePath" type="primary">toTempFilePath</button>
       </scroll-view>
     </view>
-  </view>
+  <!-- </view>
 
   <template is="foot" />
-</view>
+</view> -->

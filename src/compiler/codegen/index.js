@@ -164,7 +164,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
         } else if (dataLen == 1) {
           const attr = el.attrsList[0]
           code = `var ${el.nodeFuncName || 'nodeFuncName error2'} = _n("${el.tag}");
-          _r(${el.nodeFuncName || 'nodeFuncName error3'}, '${attr.name}', ${propStore.map[attr.value]}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
+          _r(${el.nodeFuncName || 'nodeFuncName error3'}, '${camelize(attr.name)}', ${propStore.map[attr.value]}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
         } else {
           code = `var ${el.nodeFuncName || 'nodeFuncName error4'} = _m( "${el.tag}", ${data || 'data error'}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
         }
@@ -758,9 +758,9 @@ function genProps (props: Array<{ name: string, value: string }>): string {
     const prop = props[i]
     if (!initIdx) {
       initIdx = propStore.map[prop.value]
-      res += `"${prop.name}", ${initIdx},`
+      res += `"${camelize(prop.name)}", ${initIdx},`
     } else {
-      res += `"${prop.name}", ${propStore.map[prop.value] - initIdx},`
+      res += `"${camelize(prop.name)}", ${propStore.map[prop.value] - initIdx},`
     }
   }
   return res.slice(0, -1) + ']'
