@@ -17,6 +17,7 @@ export const mustUseProp = (tag: string, type: ?string, attr: string): boolean =
   )
 }
 
+
 export const isEnumeratedAttr = makeMap('contenteditable,draggable,spellcheck')
 
 export const isBooleanAttr = makeMap(

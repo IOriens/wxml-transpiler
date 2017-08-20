@@ -1,10 +1,8 @@
 {
-  "name": "vue",
-  "version": "2.4.2",
-  "description": "Reactive, component-oriented view layer for modern web interfaces.",
-  "main": "dist/vue.runtime.common.js",
-  "module": "dist/vue.runtime.esm.js",
-  "unpkg": "dist/vue.js",
+  "name": "wxml-transpiler",
+  "version": "0.1.1",
+  "description": "wxml transpiler",
+  "main": "packages/wxml-transpiler/index.js",
   "typings": "types/index.d.ts",
   "files": [
     "src",
@@ -12,48 +10,35 @@
     "types/*.d.ts"
   ],
   "scripts": {
-    "dev": "rollup -w -c build/config.js --environment TARGET:web-full-dev",
-    "dev:cjs": "rollup -w -c build/config.js --environment TARGET:web-runtime-cjs",
-    "dev:esm": "rollup -w -c build/config.js --environment TARGET:web-runtime-esm",
+    "dev": "rollup -w -c build/config.js --environment TARGET:web-compiler ",
     "dev:test": "karma start test/unit/karma.dev.config.js",
-    "dev:ssr": "rollup -w -c build/config.js --environment TARGET:web-server-renderer",
     "dev:compiler": "rollup -w -c build/config.js --environment TARGET:web-compiler ",
-    "dev:weex": "rollup -w -c build/config.js --environment TARGET:weex-framework ",
-    "dev:weex:compiler": "rollup -w -c build/config.js --environment TARGET:weex-compiler ",
     "build": "node build/build.js",
-    "build:ssr": "npm run build -- vue.runtime.common.js,vue-server-renderer",
-    "build:weex": "npm run build -- weex-vue-framework,weex-template-compiler",
-    "test": "npm run lint && flow check && npm run test:types && npm run test:cover && npm run test:e2e -- --env phantomjs && npm run test:ssr && npm run test:weex",
-    "test:unit": "karma start test/unit/karma.unit.config.js",
-    "test:cover": "karma start test/unit/karma.cover.config.js",
-    "test:e2e": "npm run build -- vue.min.js && node test/e2e/runner.js",
-    "test:weex": "npm run build:weex && jasmine JASMINE_CONFIG_PATH=test/weex/jasmine.json",
-    "test:ssr": "npm run build:ssr && jasmine JASMINE_CONFIG_PATH=test/ssr/jasmine.json",
-    "test:sauce": "npm run sauce -- 0 && npm run sauce -- 1 && npm run sauce -- 2",
+    "test": "node test/test.js",
     "test:types": "tsc -p ./types/test/tsconfig.json",
     "lint": "eslint src build test",
     "flow": "flow check",
     "sauce": "karma start test/unit/karma.sauce.config.js",
     "bench:ssr": "npm run build:ssr && node benchmarks/ssr/renderToString.js && node benchmarks/ssr/renderToStream.js",
     "release": "bash build/release.sh",
-    "release:weex": "bash build/release-weex.sh",
     "release:note": "node build/gen-release-note.js",
     "setup": "node build/install-hooks.js",
     "commit": "git-cz"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vuejs/vue.git"
+    "url": "git+https://github.com/IOriens/wxml-transpiler.git"
   },
   "keywords": [
-    "vue"
+    "wxml",
+    "transpiler"
   ],
-  "author": "Evan You",
+  "author": "Junjie Ding",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vuejs/vue/issues"
+    "url": "https://github.com/IOriens/wxml-transpiler/issues"
   },
-  "homepage": "https://github.com/vuejs/vue#readme",
+  "homepage": "https://github.com/IOriens/wxml-transpiler",
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
@@ -121,9 +106,7 @@
     "shelljs": "^0.7.8",
     "typescript": "^2.3.4",
     "uglify-js": "^3.0.15",
-    "webpack": "^2.6.1",
-    "weex-js-runtime": "^0.20.5",
-    "weex-vdom-tester": "^0.2.0"
+    "webpack": "^2.6.1"
   },
   "config": {
     "commitizen": {

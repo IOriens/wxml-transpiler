@@ -4,7 +4,7 @@
 
 ## Intro
 
-Use compiler carried with Vue.js to transpile wxml ([Grammers to Support](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/)).
+Port of wcc.cpp/wcc/wcc.exe to JavaScript: use compiler carried with Vue.js to transpile wxml ([Grammers to Support](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/)).
 
 ## Give it a Try
 
@@ -16,7 +16,7 @@ yarn
 # build dep
 yarn run dev:compiler
 # run
-node newTest/test
+node test/test
 ```
 
 > Dev Opts
@@ -25,7 +25,7 @@ node newTest/test
 # autorestart type check
 watch -t flow
 # autorestart test
-nodemon newTest/test -w packages/vue-template-compiler -w newTest/test.js -w newTest/pages -e js,wxml
+nodemon test/test -w packages/wxml-transpiler -w test/test.js -w test/pages -e js,wxml
 ```
 
 ## Todo

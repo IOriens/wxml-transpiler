@@ -29,7 +29,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   VERSION=$VERSION npm run build
 
   # update packages
-  cd packages/vue-template-compiler
+  cd packages/wxml-transpiler
   npm version $VERSION
   if [[ -z $RELEASE_TAG ]]; then
     npm publish
@@ -38,24 +38,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   fi
   cd -
 
-  cd packages/vue-server-renderer
-  npm version $VERSION
-  if [[ -z $RELEASE_TAG ]]; then
-    npm publish
-  else
-    npm publish --tag $RELEASE_TAG
-  fi
-  cd -
 
   # commit
   git add -A
   git add -f \
-    dist/*.js \
-    packages/vue-server-renderer/basic.js \
-    packages/vue-server-renderer/build.js \
-    packages/vue-server-renderer/server-plugin.js \
-    packages/vue-server-renderer/client-plugin.js \
-    packages/vue-template-compiler/build.js
+    packages/wxml-transpiler/build.js
   git commit -m "build: build $VERSION"
   npm version $VERSION --message "build: release $VERSION"
 
