@@ -32,8 +32,7 @@ nodemon test/test -w packages/wxml-transpiler -w test/test.js -w test/pages -e j
 
 ### must
 
-- template
-- block
+- add more doc, remove more useless files, reorange directories
 - dataset & event binding
 
 ### perf & ux
