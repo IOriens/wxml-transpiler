@@ -1,33 +1,19 @@
-<import src="../../../common/head.wxml" />
-<import src="../../../common/foot.wxml" />
+<import src="../../../common/head.wxml"/>
+<import src="../../../common/foot.wxml"/>
 
 <view class="container">
-  <template is="head" data="{{title: 'view'}}"/>
+  <template is="head" data="{{title: 'request'}}"/>
 
   <view class="page-body">
-    <view class="page-section">
-      <view class="page-section-title">
-        <text>flex-direction: row\n横向布局</text>
-      </view>
-      <view class="page-section-spacing">
-        <view class="flex-wrp" style="flex-direction:row;">
-          <view class="flex-item demo-text-1"></view>
-          <view class="flex-item demo-text-2"></view>
-          <view class="flex-item demo-text-3"></view>
-        </view>
-      </view>
+    <view class="page-body-wording">
+      <text class="page-body-text">
+        点击向服务器发起请求 jjkjkj
+      </text>
     </view>
-    <view class="page-section">
-      <view class="page-section-title">
-        <text>flex'-direction: \\"\tcolu`~?,/.,.;':"{}[]-+=m!@#$%^&*()_n\\n纵{{"jkjkjk\\n\'jkj"}}向布局</text>
-      </view>
-      <view class="flex-wrp" style="flex-direction:column;">
-        <view class="flex-item flex-item-V demo-text-1"></view>
-        <view class="flex-item flex-item-V demo-text-2"></view>
-        <view class="flex-item flex-item-V demo-text-3"></view>
-      </view>
+    <view class="btn-area">
+      <button bindtap="makeRequest" type="primary" disabled="{{buttonDisabled}}" loading="{{loading}}">request</button>
     </view>
   </view>
 
-  <template is="foot" />
+  <template is="foot"/>
 </view>

@@ -19,7 +19,8 @@ const escapeTxt = function (str) {
     { ori: /"/g, n: '\\x22' },
     { ori: /'/g, n: '\\x27' },
     { ori: /&/g, n: '\\x26' },
-    { ori: /=/g, n: '\\x3d' }
+    { ori: /=/g, n: '\\x3d' },
+    { ori: /\n/g, n: '\\n' }
   ]
   map.forEach(v => (str = str.replace(v.ori, v.n)))
   return str
