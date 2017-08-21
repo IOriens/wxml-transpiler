@@ -609,7 +609,7 @@ export function genChildren (
         if (
           (child.tag === 'include' && !child.if && !child.for) ||
           (child.tag === 'import' && !child.if) ||
-          child.tag === 'template'&& child.name && child.tmplProcessed
+          (child.tag === 'template' && child.name && child.tmplProcessed)
         ) {
           // console.log(11)
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}`
@@ -753,12 +753,13 @@ function genComponent (
 function genProps (props: Array<{ name: string, value: string }>): string {
   let res = '['
   let initIdx
-  props = props.sort((a,b) => propStore.map[a.value] - propStore.map[b.value])
+  props = props.sort((a, b) => propStore.map[a.value] - propStore.map[b.value])
   for (let i = 0; i < props.length; i++) {
     const prop = props[i]
     if (!initIdx) {
-      initIdx = propStore.map[prop.value]
-      res += `"${camelize(prop.name)}", ${initIdx},`
+      const idx = propStore.map[prop.value]
+      res += `"${camelize(prop.name)}", ${idx},`
+      if (idx >= 0) initIdx = idx
     } else {
       res += `"${camelize(prop.name)}", ${propStore.map[prop.value] - initIdx},`
     }
