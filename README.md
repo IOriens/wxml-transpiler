@@ -25,7 +25,7 @@ node test/test
 # autorestart type check
 watch -t flow
 # autorestart test
-nodemon test/test -w packages/wxml-transpiler -w test/test.js -w test/pages -e js,wxml
+nodemon test/test -w packages/wxml-transpiler -w test/test.js -w test/pages -e js,wxml -V -d 4000ms
 ```
 
 ## Todo

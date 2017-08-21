@@ -14,14 +14,26 @@ const buildRegex = cached(delimiters => {
   return new RegExp(open + '((?:.|\\n)+?)' + close, 'g')
 })
 
+const escapeTxt = function (str) {
+  const map = [
+    { ori: /"/g, n: '\\x22' },
+    { ori: /'/g, n: '\\x27' },
+    { ori: /&/g, n: '\\x26' },
+    { ori: /=/g, n: '\\x3d' }
+  ]
+  map.forEach(v => (str = str.replace(v.ori, v.n)))
+  return str
+}
+
 export function parseText (
   text: string,
   delimiters?: [string, string]
 ): string | void {
   // const tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE
   const tagRE = delimiters ? buildRegex(delimiters) : bracketInBracketTagRE
+
   if (!tagRE.test(text)) {
-    return `[3, ${JSON.stringify(text)}]`
+    return `[3, '${escapeTxt(text)}']`
   }
   const tokens = []
   let lastIndex = (tagRE.lastIndex = 0)
@@ -30,7 +42,7 @@ export function parseText (
     index = match.index
     // push text token
     if (index > lastIndex) {
-      tokens.push(`[3, ${JSON.stringify(text.slice(lastIndex, index))}]`)
+      tokens.push(`[3, '${escapeTxt(text.slice(lastIndex, index))}']`)
     }
     // tag token
     const exp = parseExp(match[1].trim()) || ''
@@ -38,7 +50,7 @@ export function parseText (
     lastIndex = index + match[0].length
   }
   if (lastIndex < text.length) {
-    tokens.push(`[3, ${JSON.stringify(text.slice(lastIndex))}]`)
+    tokens.push(`[3, '${escapeTxt(text.slice(lastIndex))}']`)
   }
 
   if (tokens.length > 1) {
@@ -99,7 +111,6 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
         res = `[[2,'?:'],${walk(node.test)},${walk(node.consequent)},${walk(node.alternate)}]`
         break
       case 'MemberExpression':
-
         res = `[[6],${walk(node.object)},${walk(node.property, true)}]`
         break
       case 'ObjectExpression':
@@ -110,8 +121,9 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
         }
         break
       case 'LabeledStatement':
-        if(node.label && node.body)
-        res = `[[8],"${node.label.name || 'no name error'}", ${walk(node.body.expression)}]`
+        if (node.label && node.body) {
+          res = `[[8],"${node.label.name || 'no name error'}", ${walk(node.body.expression)}]`
+        }
         break
       case 'Property':
         if (node.key) {
