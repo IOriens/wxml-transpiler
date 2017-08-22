@@ -1,22 +1,24 @@
 {
   "name": "wxml-transpiler",
-  "version": "2.4.2",
-  "description": "template compiler for Vue 2.0",
+  "version": "0.0.1",
+  "description": "template compiler for wxml",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vuejs/vue.git"
+    "url": "git+https://github.com/IOriens/wxml-transpiler.git"
   },
   "keywords": [
-    "vue",
+    "wxml",
+    "wcc",
+    "transpiler",
     "compiler"
   ],
-  "author": "Evan You",
+  "author": "Junjie Ding",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vuejs/vue/issues"
+    "url": "https://github.com/IOriens/wxml-transpiler/issues"
   },
-  "homepage": "https://github.com/vuejs/vue/tree/dev/packages/wxml-transpiler#readme",
+  "homepage": "https://github.com/IOriens/wxml-transpiler/tree/master/packages/wxml-transpiler",
   "dependencies": {
     "he": "^1.1.0",
     "de-indent": "^1.0.2",

@@ -1,13 +1,15 @@
 # wxml-transpiler
 
-> This package is auto-generated. For pull requests please see [src/entries/web-compiler.js](https://github.com/vuejs/vue/tree/dev/src/platforms/web/compiler).
-
-This package can be used to pre-compile wxml templates.
+This package can be used to compile wxml templates.
 
 ## Usage
 
+```sh
+npm i wxml-transpiler
+```
+
 ``` js
-const compiler = require('./wxml-transpiler')
+const compiler = require('wxml-transpiler')
 
 const fileList = [
     './pages/index/index.wxml',
