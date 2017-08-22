@@ -1,6 +1,6 @@
 /* @flow */
 
-import { genHandlers } from './events'
+// import { genHandlers } from './events'
 import baseDirectives from '../directives/index'
 import { camelize, no, extend } from 'shared/util'
 import { baseWarn, pluckModuleFunction, generateId } from '../helpers'
@@ -96,11 +96,9 @@ function genTemplate (tmpl: template, state: CodegenState) {
 }
 
 export function genElement (el: ASTElement, state: CodegenState): string {
-  const isTemplateWithName = el.tag == 'template' && el.name
+  const isTemplateWithName = el.tag === 'template' && el.name
   if (el.staticRoot && !el.staticProcessed) {
     return genStatic(el, state)
-  } else if (el.once && !el.onceProcessed) {
-    return genOnce(el, state)
   } else if (el.for && !el.forProcessed) {
     return genFor(el, state)
   } else if (el.if && !el.ifProcessed && !isTemplateWithName) {
@@ -111,8 +109,6 @@ export function genElement (el: ASTElement, state: CodegenState): string {
     return genTemplateCaller(el, state)
   } else if (el.tag === 'block') {
     return genChildren(el, state) || 'GenChild Error'
-  } else if (el.tag === 'slot') {
-    return genSlot(el, state)
   } else if (el.tag === 'include') {
     return genInclude(el, state)
   } else if (el.tag === 'import') {
@@ -124,7 +120,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
       code = genComponent(el.component, el, state)
     } else {
       const data = el.plain ? undefined : genData(el, state)
-      if (el.tag == 'Program' || isTemplateWithName) {
+      if (el.tag === 'Program' || isTemplateWithName) {
         el.nodeFuncName = 'r'
         const importFuncName = (el.importFuncName = generateId())
         const codeInfo = getCurrentCodeInfo()
@@ -141,14 +137,14 @@ export function genElement (el: ASTElement, state: CodegenState): string {
         if (newIcLen > oldIcLen) {
           const icName = generateId()
           icTop = `var ${icName} = e_["${codeInfo.path}"].j;`
-          for (var icIdx = newIcLen - 1; icIdx >= oldIcLen; icIdx--) {
+          for (let icIdx = newIcLen - 1; icIdx >= oldIcLen; icIdx--) {
             icBottom += `${icName}.pop();`
           }
         }
 
         if (newTiLen > oldTiLen) {
           icTop = `var ${importFuncName} = e_["${codeInfo.path}"].i;${icTop}`
-          for (var icIdx = newTiLen - 1; icIdx >= oldTiLen; icIdx--) {
+          for (let icIdx = newTiLen - 1; icIdx >= oldTiLen; icIdx--) {
             icBottom += `${importFuncName}.pop();`
           }
         }
@@ -158,9 +154,9 @@ export function genElement (el: ASTElement, state: CodegenState): string {
         const dataLen = el.attributeList.length
         const env = el.env || 'e'
         const scope = el.scope || 's'
-        if (dataLen == 0) {
+        if (dataLen === 0) {
           code = `var ${el.nodeFuncName || 'nodeFuncName error'} = _n("${el.tag}");${children ? `${children}` : ''}`
-        } else if (dataLen == 1) {
+        } else if (dataLen === 1) {
           const attr = el.attributeList[0]
           code = `var ${el.nodeFuncName || 'nodeFuncName error2'} = _n("${el.tag}");
           _r(${el.nodeFuncName || 'nodeFuncName error3'}, '${camelize(attr.name)}', ${propStore.map[attr.value]}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
@@ -184,31 +180,31 @@ function genStatic (el: ASTElement, state: CodegenState): string {
   return `_m(${state.staticRenderFns.length - 1}${el.staticInFor ? ',true' : ''})`
 }
 
-// v-once
-function genOnce (el: ASTElement, state: CodegenState): string {
-  el.onceProcessed = true
-  if (el.if && !el.ifProcessed) {
-    return genIf(el, state)
-  } else if (el.staticInFor) {
-    let key = ''
-    let parent = el.parent
-    while (parent) {
-      if (parent.for) {
-        key = parent.key
-        break
-      }
-      parent = parent.parent
-    }
-    if (!key) {
-      process.env.NODE_ENV !== 'production' &&
-        state.warn(`v-once can only be used inside v-for that is keyed. `)
-      return genElement(el, state)
-    }
-    return `_o(${genElement(el, state)},${state.onceId++}${key ? `,${key}` : ``})`
-  } else {
-    return genStatic(el, state)
-  }
-}
+// // v-once
+// function genOnce (el: ASTElement, state: CodegenState): string {
+//   el.onceProcessed = true
+//   if (el.if && !el.ifProcessed) {
+//     return genIf(el, state)
+//   } else if (el.staticInFor) {
+//     let key = ''
+//     let parent = el.parent
+//     while (parent) {
+//       if (parent.for) {
+//         key = parent.key
+//         break
+//       }
+//       parent = parent.parent
+//     }
+//     if (!key) {
+//       process.env.NODE_ENV !== 'production' &&
+//         state.warn(`v-once can only be used inside v-for that is keyed. `)
+//       return genElement(el, state)
+//     }
+//     return `_o(${genElement(el, state)},${state.onceId++}${key ? `,${key}` : ``})`
+//   } else {
+//     return genStatic(el, state)
+//   }
+// }
 
 export function genIf (
   el: any,
@@ -275,7 +271,7 @@ function genIfConditions (
   if (newIcLen > oldIcLen) {
     const icName = generateId()
     childTmpl = `var ${icName} = e_["${codeInfo.path}"].j;${childTmpl};`
-    for (var icIdx = newIcLen - 1; icIdx >= oldIcLen; icIdx--) {
+    for (let icIdx = newIcLen - 1; icIdx >= oldIcLen; icIdx--) {
       childTmpl += `${icName}.pop();`
       includeVector.pop()
     }
@@ -283,7 +279,7 @@ function genIfConditions (
 
   if (newTiLen > oldTiLen) {
     childTmpl = `var ${importFuncName} = e_["${codeInfo.path}"].i;${childTmpl};`
-    for (var icIdx = newTiLen - 1; icIdx >= oldTiLen; icIdx--) {
+    for (let icIdx = newTiLen - 1; icIdx >= oldTiLen; icIdx--) {
       childTmpl += `${importFuncName}.pop();`
       importVector.pop()
     }
@@ -308,7 +304,7 @@ function genIfConditions (
   function genTernaryExp (el) {
     return altGen
       ? altGen(el, state)
-      : el.once ? genOnce(el, state) : genElement(el, state)
+      : genElement(el, state)
   }
 }
 
@@ -320,8 +316,8 @@ export function genFor (
 ): string {
   const exp = el.for
   const alias = el.alias
-  const iterator1 = el.iterator1 ? `,${el.iterator1}` : ''
-  const iterator2 = el.iterator2 ? `,${el.iterator2}` : ''
+  // const iterator1 = el.iterator1 ? `,${el.iterator1}` : ''
+  // const iterator2 = el.iterator2 ? `,${el.iterator2}` : ''
 
   if (
     process.env.NODE_ENV !== 'production' &&
@@ -338,28 +334,28 @@ export function genFor (
     )
   }
   el.forProcessed = true // avoid recursion
-  let parentnodeFuncName = el.nodeFuncName
-  let forFuncId = generateId()
-  let childnodeFuncName = generateId()
-  let returnNodeName = generateId()
+  const parentnodeFuncName = el.nodeFuncName
+  const forFuncId = generateId()
+  const childnodeFuncName = generateId()
+  const returnNodeName = generateId()
   el.nodeFuncName = childnodeFuncName
-  el.blockFuncName = el.tag == 'block' || el.tag == 'include'
+  el.blockFuncName = el.tag === 'block' || el.tag === 'include'
     ? returnNodeName
     : childnodeFuncName
 
-  let oldScope = el.scope || 's'
-  let newScope = (el.scope = generateId())
-  let oldEnv = el.env || 'e'
-  let newEnv = (el.env = generateId())
+  const oldScope = el.scope || 's'
+  const newScope = (el.scope = generateId())
+  const oldEnv = el.env || 'e'
+  const newEnv = (el.env = generateId())
 
-  let importFuncName = (el.importFuncName = generateId())
+  const importFuncName = (el.importFuncName = generateId())
 
   const codeInfo = getCurrentCodeInfo()
   const includeVector = codeInfo.ic
   const importVector = codeInfo.ti
   const oldIcLen = includeVector.length
   const oldTiLen = importVector.length
-  let children = `${(altGen || genElement)(el, state)}`
+  const children = `${(altGen || genElement)(el, state)}`
   const newIcLen = includeVector.length
   const newTiLen = importVector.length
 
@@ -368,14 +364,14 @@ export function genFor (
   if (newIcLen > oldIcLen) {
     const icName = generateId()
     icTop = `var ${icName} = e_["${codeInfo.path}"].j;`
-    for (var icIdx = newIcLen - 1; icIdx >= oldIcLen; icIdx--) {
+    for (let icIdx = newIcLen - 1; icIdx >= oldIcLen; icIdx--) {
       icBottom += `${icName}.pop();`
       includeVector.pop()
     }
   }
   if (newTiLen > oldTiLen) {
     icTop = `var ${importFuncName} = e_["${codeInfo.path}"].i;${icTop}`
-    for (var tiIdx = newTiLen - 1; tiIdx >= oldTiLen; tiIdx--) {
+    for (let tiIdx = newTiLen - 1; tiIdx >= oldTiLen; tiIdx--) {
       icBottom += `${importFuncName}.pop();`
       importVector.pop()
     }
@@ -385,7 +381,7 @@ export function genFor (
     ? ''
     : `_(${returnNodeName}, ${childnodeFuncName});`
 
-  let code = `var ${parentnodeFuncName} = _v();
+  const code = `var ${parentnodeFuncName} = _v();
   var ${forFuncId} = function (${newEnv},${newScope},${returnNodeName},gg) {
     ${icTop}${children}${icBottom}${cantainEle}
     return ${returnNodeName};
@@ -471,30 +467,30 @@ export function genData (el: ASTElement, state: CodegenState): string {
   return data
 }
 
-function genDirectives (el: ASTElement, state: CodegenState): string | void {
-  const dirs = el.directives
-  if (!dirs) return
-  let res = 'directives:['
-  let hasRuntime = false
-  let i, l, dir, needRuntime
-  for ((i = 0), (l = dirs.length); i < l; i++) {
-    dir = dirs[i]
-    needRuntime = true
-    const gen: DirectiveFunction = state.directives[dir.name]
-    if (gen) {
-      // compile-time directive that manipulates AST.
-      // returns true if it also needs a runtime counterpart.
-      needRuntime = !!gen(el, dir, state.warn)
-    }
-    if (needRuntime) {
-      hasRuntime = true
-      res += `{name:"${dir.name}",rawName:"${dir.rawName}"${dir.value ? `,value:(${dir.value}),expression:${JSON.stringify(dir.value)}` : ''}${dir.arg ? `,arg:"${dir.arg}"` : ''}${dir.modifiers ? `,modifiers:${JSON.stringify(dir.modifiers)}` : ''}},`
-    }
-  }
-  if (hasRuntime) {
-    return res.slice(0, -1) + ']'
-  }
-}
+// function genDirectives (el: ASTElement, state: CodegenState): string | void {
+//   const dirs = el.directives
+//   if (!dirs) return
+//   let res = 'directives:['
+//   let hasRuntime = false
+//   let i, l, dir, needRuntime
+//   for ((i = 0), (l = dirs.length); i < l; i++) {
+//     dir = dirs[i]
+//     needRuntime = true
+//     const gen: DirectiveFunction = state.directives[dir.name]
+//     if (gen) {
+//       // compile-time directive that manipulates AST.
+//       // returns true if it also needs a runtime counterpart.
+//       needRuntime = !!gen(el, dir, state.warn)
+//     }
+//     if (needRuntime) {
+//       hasRuntime = true
+//       res += `{name:"${dir.name}",rawName:"${dir.rawName}"${dir.value ? `,value:(${dir.value}),expression:${JSON.stringify(dir.value)}` : ''}${dir.arg ? `,arg:"${dir.arg}"` : ''}${dir.modifiers ? `,modifiers:${JSON.stringify(dir.modifiers)}` : ''}},`
+//     }
+//   }
+//   if (hasRuntime) {
+//     return res.slice(0, -1) + ']'
+//   }
+// }
 
 function genTemplateCaller (el: ASTElement, state: CodegenState): string {
   // console.log(el)
@@ -517,34 +513,34 @@ function genTemplateCaller (el: ASTElement, state: CodegenState): string {
        } else _w(${isFunc}, '${tmplName}', 0, 0);`
 }
 
-function genInlineTemplate (el: ASTElement, state: CodegenState): ?string {
-  const ast = el.children[0]
-  if (
-    process.env.NODE_ENV !== 'production' &&
-    (el.children.length > 1 || ast.type !== 1)
-  ) {
-    state.warn(
-      'Inline-template components must have exactly one child element.'
-    )
-  }
-  if (ast.type === 1) {
-    const inlineRenderFns = generate(ast, propStore, templateIdx, state.options)
-    return `inlineTemplate:{render:function(){${inlineRenderFns.render}},staticRenderFns:[${inlineRenderFns.staticRenderFns
-      .map(code => `function(){${code}}`)
-      .join(',')}]}`
-  }
-}
-
-function genScopedSlots (
-  slots: { [key: string]: ASTElement },
-  state: CodegenState
-): string {
-  return `scopedSlots:_u([${Object.keys(slots)
-    .map(key => {
-      return genScopedSlot(key, slots[key], state)
-    })
-    .join(',')}])`
-}
+// function genInlineTemplate (el: ASTElement, state: CodegenState): ?string {
+//   const ast = el.children[0]
+//   if (
+//     process.env.NODE_ENV !== 'production' &&
+//     (el.children.length > 1 || ast.type !== 1)
+//   ) {
+//     state.warn(
+//       'Inline-template components must have exactly one child element.'
+//     )
+//   }
+//   if (ast.type === 1) {
+//     const inlineRenderFns = generate(ast, propStore, templateIdx, state.options)
+//     return `inlineTemplate:{render:function(){${inlineRenderFns.render}},staticRenderFns:[${inlineRenderFns.staticRenderFns
+//       .map(code => `function(){${code}}`)
+//       .join(',')}]}`
+//   }
+// }
+//
+// function genScopedSlots (
+//   slots: { [key: string]: ASTElement },
+//   state: CodegenState
+// ): string {
+//   return `scopedSlots:_u([${Object.keys(slots)
+//     .map(key => {
+//       return genScopedSlot(key, slots[key], state)
+//     })
+//     .join(',')}])`
+// }
 
 function genScopedSlot (
   key: string,
@@ -584,22 +580,22 @@ export function genChildren (
   const children = parent.children
 
   if (children.length) {
-    const firstEl: any = children[0]
+    // const firstEl: any = children[0]
     // optimize single v-for
-    if (
-      children.length === 1 &&
-      firstEl.for &&
-      firstEl.tag !== 'template' &&
-      firstEl.tag !== 'slot'
-    ) {
-      // return (altGenElement || genElement)(firstEl, state)
-    }
-    const normalizationType = checkSkip
-      ? getNormalizationType(children, state.maybeComponent)
-      : 0
+    // if (
+    //   children.length === 1 &&
+    //   firstEl.for &&
+    //   firstEl.tag !== 'template' &&
+    //   firstEl.tag !== 'slot'
+    // ) {
+    //   // return (altGenElement || genElement)(firstEl, state)
+    // }
+    // const normalizationType = checkSkip
+    //   ? getNormalizationType(children, state.maybeComponent)
+    //   : 0
     const gen = altGenNode || genNode
 
-    const res = children
+    return children
       .map(child => {
         const nodeFuncName = generateId()
         if (
@@ -607,22 +603,14 @@ export function genChildren (
           (child.tag === 'import' && !child.if) ||
           (child.tag === 'template' && child.name && child.tmplProcessed)
         ) {
-          // console.log(11)
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}`
         } else if (parent.tag === 'block') {
-          // console.log(22)
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_(${parent.blockFuncName || 'error'},${nodeFuncName || 'error'});`
         } else {
-          // console.log(33)
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_(${parent.nodeFuncName || 'error'},${nodeFuncName});`
         }
       })
       .join('')
-
-    // return `[${children.map(c => gen(c, state)).join(',')}]${
-    //   normalizationType ? `,${normalizationType}` : ''
-    // }`
-    return res
   }
 }
 
@@ -653,37 +641,37 @@ function genNode (
 // 0: no normalization needed
 // 1: simple normalization needed (possible 1-level deep nested array)
 // 2: full normalization needed
-function getNormalizationType (
-  children: Array<ASTNode>,
-  maybeComponent: (el: ASTElement) => boolean
-): number {
-  let res = 0
-  for (let i = 0; i < children.length; i++) {
-    const el: ASTNode = children[i]
-    if (el.type !== 1) {
-      continue
-    }
-    if (
-      needsNormalization(el) ||
-      (el.ifConditions &&
-        el.ifConditions.some(c => needsNormalization(c.block)))
-    ) {
-      res = 2
-      break
-    }
-    if (
-      maybeComponent(el) ||
-      (el.ifConditions && el.ifConditions.some(c => maybeComponent(c.block)))
-    ) {
-      res = 1
-    }
-  }
-  return res
-}
+// function getNormalizationType (
+//   children: Array<ASTNode>,
+//   maybeComponent: (el: ASTElement) => boolean
+// ): number {
+//   let res = 0
+//   for (let i = 0; i < children.length; i++) {
+//     const el: ASTNode = children[i]
+//     if (el.type !== 1) {
+//       continue
+//     }
+//     if (
+//       needsNormalization(el) ||
+//       (el.ifConditions &&
+//         el.ifConditions.some(c => needsNormalization(c.block)))
+//     ) {
+//       res = 2
+//       break
+//     }
+//     if (
+//       maybeComponent(el) ||
+//       (el.ifConditions && el.ifConditions.some(c => maybeComponent(c.block)))
+//     ) {
+//       res = 1
+//     }
+//   }
+//   return res
+// }
 
-function needsNormalization (el: ASTElement): boolean {
-  return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
-}
+// function needsNormalization (el: ASTElement): boolean {
+//   return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
+// }
 
 export function genText (
   text: ASTText | ASTExpression,
@@ -691,7 +679,7 @@ export function genText (
   env?: string,
   scope?: string
 ): string {
-  const nodeFuncName = generateId()
+  // const nodeFuncName = generateId()
   return `var ${parentName || 'error'} = _o(${propStore.map[text.text || 'error']}, ${env || 'e'}, ${scope || 's'}, gg);`
 }
 
@@ -699,25 +687,25 @@ export function genComment (comment: ASTText): string {
   return `_e(${JSON.stringify(comment.text)})`
 }
 
-function genSlot (el: ASTElement, state: CodegenState): string {
-  const slotName = el.slotName || '"default"'
-  const children = genChildren(el, state)
-  let res = `_t(${slotName}${children ? `,${children}` : ''}`
-  const attrs =
-    el.attrs &&
-    `{${el.attrs.map(a => `${camelize(a.name)}:${a.value}`).join(',')}}`
-  const bind = el.attributeMap['v-bind']
-  if ((attrs || bind) && !children) {
-    res += `,null`
-  }
-  if (attrs) {
-    res += `,${attrs}`
-  }
-  if (bind) {
-    res += `${attrs ? '' : ',null'},${bind}`
-  }
-  return res + ')'
-}
+// function genSlot (el: ASTElement, state: CodegenState): string {
+//   const slotName = el.slotName || '"default"'
+//   const children = genChildren(el, state)
+//   let res = `_t(${slotName}${children ? `,${children}` : ''}`
+//   const attrs =
+//     el.attrs &&
+//     `{${el.attrs.map(a => `${camelize(a.name)}:${a.value}`).join(',')}}`
+//   const bind = el.attributeMap['v-bind']
+//   if ((attrs || bind) && !children) {
+//     res += `,null`
+//   }
+//   if (attrs) {
+//     res += `,${attrs}`
+//   }
+//   if (bind) {
+//     res += `${attrs ? '' : ',null'},${bind}`
+//   }
+//   return res + ')'
+// }
 
 function genInclude (el: ASTElement, state: CodegenState) {
   const codeInfo = getCurrentCodeInfo()
@@ -764,14 +752,14 @@ function genProps (props: Array<{ name: string, value: string }>): string {
 }
 
 // #3895, #4268
-function transformSpecialNewlines (text: string): string {
-  return text.replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
-}
+// function transformSpecialNewlines (text: string): string {
+//   return text.replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
+// }
 
 function getCurrentCodeInfo (): TemplateInfo {
   return propStore.codeInfoMap[templateIdx]
 }
 
 function isOneOf (obj: any, targets: Array<mixed>) {
-  return targets.indexOf(obj) != -1
+  return targets.indexOf(obj) !== -1
 }

@@ -15,9 +15,7 @@ function _s(scope,env,key){return typeof(scope[key])!='undefined'?scope[key]:env
 $gwl=console.log;
 function $gwh()
 {
-function x()
-{
-}
+function x(){}
 x.prototype =
 {
 hn: function( obj )
@@ -530,11 +528,7 @@ if(has_old_index)
 {
 scope[indexname]=old_index;
 }
-else
-{
-delete scope[indexname];
-}
-}
+else{delete scope[indexname];}}
 
 
 function _r( node, attrname, opindex, env, scope, global )
@@ -564,8 +558,6 @@ function _gv( )
 if( typeof(window.__webview_engine_version__) == 'undefined' ) return 0.0;
 return window.__webview_engine_version__;
 }
-
-
 function _m(tag,attrs,env,scope,global)
 {
 var tmp=_n(tag);
@@ -573,17 +565,8 @@ var base=0;
 for(var i = 0 ; i < attrs.length ; i+=2 )
 {
 if(attrs[i+1]<0)
-{
-tmp.attr[attrs[i]]=true;
-}
-else
-{
-_r(tmp,attrs[i],base+attrs[i+1],env,scope,global);
-if(base===0)base=attrs[i+1];
-}
-}
-return tmp;
-}
+{tmp.attr[attrs[i]]=true;}else{_r(tmp,attrs[i],base+attrs[i+1],env,scope,global);
+if(base===0)base=attrs[i+1];}}return tmp;}
 
 ` +
 
@@ -603,18 +586,9 @@ window.__wxml_comp_version__=0.02
 return function(env,dd,global){$gwxc=0;var root={"tag":"wx-page"};root.children=[]
 var main=e_[path].f
 if(typeof(window.__webview_engine_version__)!='undefined'&&window.__webview_engine_version__+1e-6>=0.02+1e-6&&window.__mergeData__)
-{
-env=window.__mergeData__(env,dd);
-}
+{env=window.__mergeData__(env,dd);}
 try{
 main(env,{},root,global);
-if(typeof(window.__webview_engine_version__)=='undefined'||window.__webview_engine_version__+1e-6<0.01+1e-6){return _ev(root);}
-}catch(err){
-console.log(err)
-}
-return root;
-}
-}
-}`
+if(typeof(window.__webview_engine_version__)=='undefined'||window.__webview_engine_version__+1e-6<0.01+1e-6){return _ev(root);}}catch(err){console.log(err)}return root;}}}`
   )
 }

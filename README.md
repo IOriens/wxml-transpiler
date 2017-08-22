@@ -13,8 +13,10 @@ Port of wcc.cpp/wcc/wcc.exe to JavaScript: use compiler carried with Vue.js to t
 ```sh
 # install deps
 yarn
+
 # build dep
-yarn run dev:compiler
+yarn run build
+
 # run
 node test/test
 ```
@@ -22,10 +24,16 @@ node test/test
 > Dev Opts
 
 ```sh
-# autorestart type check
+# auto rebuild
+yarn run dev
+
+# autorestart type check system
+## brew install watch
 watch -t flow
+
 # autorestart test
-nodemon test/test -w packages/wxml-transpiler -w test/test.js -w test/pages -e js,wxml -V -d 4000ms
+## yarn global add nodemon
+nodemon test/test -w packages/wxml-transpiler -w test/test.js -w test/pages -e js,wxml -V -d 2000ms
 ```
 
 ## Todo
@@ -33,7 +41,7 @@ nodemon test/test -w packages/wxml-transpiler -w test/test.js -w test/pages -e j
 ### must
 
 - add more doc, remove more useless files, reorange directories
-- dataset & event binding
+- dataset
 
 ### perf & ux
 
