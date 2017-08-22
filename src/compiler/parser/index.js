@@ -3,17 +3,14 @@
 import he from 'he'
 import { parseHTML } from './html-parser'
 import { parseText } from './text-parser'
-import { parseFilters } from './filter-parser'
-import { cached, no, camelize } from 'shared/util'
-import { genAssignmentCode } from '../directives/model'
+// import { parseFilters } from './filter-parser'
+import { cached, no } from 'shared/util'
+// import { genAssignmentCode } from '../directives/model'
 import { isIE, isEdge, isServerRendering } from 'core/util/env'
 
 import {
-  addProp,
   addAttr,
   baseWarn,
-  addHandler,
-  addDirective,
   getBindingAttr,
   getAndRemoveAttr,
   pluckModuleFunction
@@ -26,23 +23,23 @@ export const dirRE = /^v-|^@|^:/
 // ({{object name|array|expression}})|string
 export const tplBracket = /(?:{{\s*(.+)\s*}}|(.+))/
 
-export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
-export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
+// export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
+// export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
 
-const argRE = /:(.*)$/
-const bindRE = /^:|^v-bind:/
-const modifierRE = /\.[^.]+/g
+// const argRE = /:(.*)$/
+// const bindRE = /^:|^v-bind:/
+// const modifierRE = /\.[^.]+/g
 
 const decodeHTMLCached = cached(he.decode)
 
 // configurable state
 export let warn
 let delimiters
-let transforms
+// let transforms
 let preTransforms
 let postTransforms
 let platformIsPreTag
-let platformMustUseProp
+// let platformMustUseProp
 let platformGetTagNamespace
 let propStore
 /**
@@ -56,10 +53,10 @@ export function parse (
   warn = options.warn || baseWarn
 
   platformIsPreTag = options.isPreTag || no
-  platformMustUseProp = options.mustUseProp || no
+  // platformMustUseProp = options.mustUseProp || no
   platformGetTagNamespace = options.getTagNamespace || no
 
-  transforms = pluckModuleFunction(options.modules, 'transformNode')
+  // transforms = pluckModuleFunction(options.modules, 'transformNode')
   preTransforms = pluckModuleFunction(options.modules, 'preTransformNode')
   postTransforms = pluckModuleFunction(options.modules, 'postTransformNode')
 
@@ -69,11 +66,11 @@ export function parse (
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
 
-  let root: ASTElement = {
+  const root: ASTElement = {
     type: 1,
     tag: 'Program',
-    attrsList: [],
-    attrsMap: makeAttrsMap([]),
+    attributeList: [],
+    attributeMap: makeAttrsMap([]),
     parent: void 0,
     children: []
   }
@@ -123,8 +120,8 @@ export function parse (
       const element: ASTElement = {
         type: 1,
         tag,
-        attrsList: attrs,
-        attrsMap: makeAttrsMap(attrs),
+        attributeList: attrs,
+        attributeMap: makeAttrsMap(attrs),
         parent: currentParent,
         children: []
       }
@@ -169,34 +166,33 @@ export function parse (
         // removing structural attributes
         element.plain = !element.key && !attrs.length
 
-        processRef(element)
-        processSlot(element)
+        // processRef(element)
+        // processSlot(element)
         processInclude(element)
         processImport(element)
         processComponent(element)
-        debugger
-        for (let i = 0; i < transforms.length; i++) {
-          // transforms[i](element, options)
-        }
+        // for (let i = 0; i < transforms.length; i++) {
+        //   // transforms[i](element, options)
+        // }
         processAttrs(element)
       }
 
-      function checkRootConstraints (el) {
-        if (process.env.NODE_ENV !== 'production') {
-          if (el.tag === 'slot' || el.tag === 'template') {
-            warnOnce(
-              `Cannot use <${el.tag}> as component root element because it may ` +
-                'contain multiple nodes.'
-            )
-          }
-          if (el.attrsMap.hasOwnProperty('v-for')) {
-            warnOnce(
-              'Cannot use v-for on stateful component root element because ' +
-                'it renders multiple elements.'
-            )
-          }
-        }
-      }
+      // function checkRootConstraints (el) {
+      //   if (process.env.NODE_ENV !== 'production') {
+      //     if (el.tag === 'slot' || el.tag === 'template') {
+      //       warnOnce(
+      //         `Cannot use <${el.tag}> as component root element because it may ` +
+      //           'contain multiple nodes.'
+      //       )
+      //     }
+      //     if (el.attributeMap.hasOwnProperty('v-for')) {
+      //       warnOnce(
+      //         'Cannot use v-for on stateful component root element because ' +
+      //           'it renders multiple elements.'
+      //       )
+      //     }
+      //   }
+      // }
 
       // tree management
       if (!root.children.length) {
@@ -281,15 +277,15 @@ export function parse (
       if (
         isIE &&
         currentParent.tag === 'textarea' &&
-        currentParent.attrsMap.placeholder === text
+        currentParent.attributeMap.placeholder === text
       ) {
         return
       }
       const children = currentParent.children
+      // only preserve whitespace if its not right after a starting tag
       text = inPre || text.trim()
         ? isTextTag(currentParent) ? text : decodeHTMLCached(text)
-        : // only preserve whitespace if its not right after a starting tag
-          preserveWhitespace && children.length ? ' ' : ''
+        : preserveWhitespace && children.length ? ' ' : ''
       if (text) {
         let expression
         if (
@@ -304,17 +300,18 @@ export function parse (
             expression,
             text
           })
-        } else if (
-          text !== ' ' ||
-          !children.length ||
-          children[children.length - 1].text !== ' '
-        ) {
-          // pushProp(text)
-          // children.push({
-          //   type: 3,
-          //   text
-          // })
         }
+        // else if (
+        //   text !== ' ' ||
+        //   !children.length ||
+        //   children[children.length - 1].text !== ' '
+        // ) {
+        //   // pushProp(text)
+        //   // children.push({
+        //   //   type: 3,
+        //   //   text
+        //   // })
+        // }
       }
     },
     comment (text: string) {
@@ -335,13 +332,13 @@ function processPre (el) {
 }
 
 function processRawAttrs (el) {
-  const l = el.attrsList.length
+  const l = el.attributeList.length
   if (l) {
     const attrs = (el.attrs = new Array(l))
     for (let i = 0; i < l; i++) {
       attrs[i] = {
-        name: el.attrsList[i].name,
-        value: JSON.stringify(el.attrsList[i].value)
+        name: el.attributeList[i].name,
+        value: JSON.stringify(el.attributeList[i].value)
       }
     }
   } else if (!el.pre) {
@@ -362,13 +359,13 @@ function processKey (el) {
   }
 }
 
-function processRef (el) {
-  const ref = getBindingAttr(el, 'ref')
-  if (ref) {
-    el.ref = ref
-    el.refInFor = checkInFor(el)
-  }
-}
+// function processRef (el) {
+//   const ref = getBindingAttr(el, 'ref')
+//   if (ref) {
+//     el.ref = ref
+//     el.refInFor = checkInFor(el)
+//   }
+// }
 
 function processFor (el) {
   if (el.tag === 'import') {
@@ -376,9 +373,7 @@ function processFor (el) {
     getAndRemoveAttr(el, 'wx:for-items')
     return
   }
-  let expTmp =
-    getAndRemoveAttr(el, 'wx:for') || getAndRemoveAttr(el, 'wx:for-items')
-  let exp = expTmp
+  let exp = getAndRemoveAttr(el, 'wx:for') || getAndRemoveAttr(el, 'wx:for-items')
   if (exp) {
     const inMatch = exp.match(tplBracket)
     if (!inMatch) {
@@ -490,29 +485,29 @@ function processOnce (el) {
   }
 }
 
-function processSlot (el) {
-  if (el.tag === 'slot') {
-    el.slotName = getBindingAttr(el, 'name')
-    if (process.env.NODE_ENV !== 'production' && el.key) {
-      warn(
-        `\`key\` does not work on <slot> because slots are abstract outlets ` +
-          `and can possibly expand into multiple elements. ` +
-          `Use the key on a wrapping element instead.`
-      )
-    }
-  } else {
-    const slotTarget = getBindingAttr(el, 'slot')
-    if (slotTarget) {
-      el.slotTarget = slotTarget === '""' ? '"default"' : slotTarget
-    }
-    if (el.tag === 'template') {
-      el.slotScope = getAndRemoveAttr(el, 'scope')
-    }
-  }
-}
+// function processSlot (el) {
+//   if (el.tag === 'slot') {
+//     el.slotName = getBindingAttr(el, 'name')
+//     if (process.env.NODE_ENV !== 'production' && el.key) {
+//       warn(
+//         `\`key\` does not work on <slot> because slots are abstract outlets ` +
+//           `and can possibly expand into multiple elements. ` +
+//           `Use the key on a wrapping element instead.`
+//       )
+//     }
+//   } else {
+//     const slotTarget = getBindingAttr(el, 'slot')
+//     if (slotTarget) {
+//       el.slotTarget = slotTarget === '""' ? '"default"' : slotTarget
+//     }
+//     if (el.tag === 'template') {
+//       el.slotScope = getAndRemoveAttr(el, 'scope')
+//     }
+//   }
+// }
 
 function processInclude (el) {
-  if (el.tag == 'include') {
+  if (el.tag === 'include') {
     const src = getAndRemoveAttr(el, 'src')
     if (src) {
       el.include = src
@@ -523,7 +518,7 @@ function processInclude (el) {
 }
 
 function processImport (el) {
-  if (el.tag == 'import') {
+  if (el.tag === 'import') {
     const src = getAndRemoveAttr(el, 'src')
     if (src) {
       el.import = src
@@ -551,10 +546,10 @@ function processComponent (el) {
 }
 
 function processAttrs (el) {
-  const list = el.attrsList.sort((a, b) => (a.name > b.name ? 1 : -1))
-  let i, l, name, rawName, value, modifiers, isProp
+  const list = el.attributeList.sort((a, b) => (a.name > b.name ? 1 : -1))
+  let i, l, name, value
   for ((i = 0), (l = list.length); i < l; i++) {
-    name = rawName = list[i].name
+    name = list[i].name
     value = list[i].value
     // if (dirRE.test(name)) {
     //   // mark element as dynamic
@@ -588,7 +583,7 @@ function processAttrs (el) {
     //     }
     //     if (
     //       isProp ||
-    //       (!el.component && platformMustUseProp(el.tag, el.attrsMap.type, name))
+    //       (!el.component && platformMustUseProp(el.tag, el.attributeMap.type, name))
     //     ) {
     //       addProp(el, name, value)
     //     } else {
@@ -616,7 +611,7 @@ function processAttrs (el) {
     // literal attribute
     // if (process.env.NODE_ENV !== 'production') {
 
-    const expression = parseText(value, delimiters)
+    // const expression = parseText(value, delimiters)
     pushProp(value)
 
     // if (expression) {
@@ -633,27 +628,27 @@ function processAttrs (el) {
   }
 }
 
-function checkInFor (el: ASTElement): boolean {
-  let parent = el
-  while (parent) {
-    if (parent.for !== undefined) {
-      return true
-    }
-    parent = parent.parent
-  }
-  return false
-}
+// function checkInFor (el: ASTElement): boolean {
+//   let parent = el
+//   while (parent) {
+//     if (parent.for !== undefined) {
+//       return true
+//     }
+//     parent = parent.parent
+//   }
+//   return false
+// }
 
-function parseModifiers (name: string): Object | void {
-  const match = name.match(modifierRE)
-  if (match) {
-    const ret = {}
-    match.forEach(m => {
-      ret[m.slice(1)] = true
-    })
-    return ret
-  }
-}
+// function parseModifiers (name: string): Object | void {
+//   const match = name.match(modifierRE)
+//   if (match) {
+//     const ret = {}
+//     match.forEach(m => {
+//       ret[m.slice(1)] = true
+//     })
+//     return ret
+//   }
+// }
 
 function makeAttrsMap (attrs: Array<Object>): Object {
   const map = {}
@@ -680,7 +675,7 @@ function isForbiddenTag (el): boolean {
   return (
     el.tag === 'style' ||
     (el.tag === 'script' &&
-      (!el.attrsMap.type || el.attrsMap.type === 'text/javascript'))
+      (!el.attributeMap.type || el.attributeMap.type === 'text/javascript'))
   )
 }
 
@@ -700,25 +695,25 @@ function guardIESVGBug (attrs) {
   return res
 }
 
-function checkForAliasModel (el, value) {
-  let _el = el
-  while (_el) {
-    if (_el.for && _el.alias === value) {
-      warn(
-        `<${el.tag} v-model="${value}">: ` +
-          `You are binding v-model directly to a v-for iteration alias. ` +
-          `This will not be able to modify the v-for source array because ` +
-          `writing to the alias is like modifying a function local variable. ` +
-          `Consider using an array of objects and use v-model on an object property instead.`
-      )
-    }
-    _el = _el.parent
-  }
-}
+// function checkForAliasModel (el, value) {
+//   let _el = el
+//   while (_el) {
+//     if (_el.for && _el.alias === value) {
+//       warn(
+//         `<${el.tag} v-model="${value}">: ` +
+//           `You are binding v-model directly to a v-for iteration alias. ` +
+//           `This will not be able to modify the v-for source array because ` +
+//           `writing to the alias is like modifying a function local variable. ` +
+//           `Consider using an array of objects and use v-model on an object property instead.`
+//       )
+//     }
+//     _el = _el.parent
+//   }
+// }
 
 function pushProp (exp: string, optExp?: string) {
   if (propStore.map[exp] == null) {
-    if(exp) {
+    if (exp) {
       propStore.map[exp] = propStore.props.length
       propStore.props.push(parseText(optExp || exp))
     } else {
@@ -728,5 +723,5 @@ function pushProp (exp: string, optExp?: string) {
 }
 
 function getCurrentCodeInfo (): TemplateInfo {
-  return propStore.tmplMap.slice(-1)[0]
+  return propStore.codeInfoMap.slice(-1)[0]
 }

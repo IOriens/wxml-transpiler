@@ -32,9 +32,9 @@ export function detectErrors (ast: ?ASTNode): Array<string> {
 
 function checkNode (node: ASTNode, errors: Array<string>) {
   if (node.type === 1) {
-    for (const name in node.attrsMap) {
+    for (const name in node.attributeMap) {
       if (dirRE.test(name)) {
-        const value = node.attrsMap[name]
+        const value = node.attributeMap[name]
         if (value) {
           if (name === 'v-for') {
             checkFor(node, `v-for="${value}"`, errors)

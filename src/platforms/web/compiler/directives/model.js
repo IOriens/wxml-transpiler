@@ -20,10 +20,10 @@ export default function model (
   const value = dir.value
   const modifiers = dir.modifiers
   const tag = el.tag
-  const type = el.attrsMap.type
+  const type = el.attributeMap.type
 
   if (process.env.NODE_ENV !== 'production') {
-    const dynamicType = el.attrsMap['v-bind:type'] || el.attrsMap[':type']
+    const dynamicType = el.attributeMap['v-bind:type'] || el.attributeMap[':type']
     if (tag === 'input' && dynamicType) {
       warn(
         `<input :type="${dynamicType}" v-model="${value}">:\n` +
@@ -134,7 +134,7 @@ function genDefaultModel (
   value: string,
   modifiers: ?ASTModifiers
 ): ?boolean {
-  const type = el.attrsMap.type
+  const type = el.attributeMap.type
   const { lazy, number, trim } = modifiers || {}
   const needCompositionGuard = !lazy && type !== 'range'
   const event = lazy

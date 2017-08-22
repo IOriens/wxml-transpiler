@@ -41,7 +41,7 @@ function build (builds) {
 }
 
 function buildEntry (config) {
-  const isProd = /min\.js$/.test(config.dest)
+  const isProd = true || /min\.js$/.test(config.dest)
   return rollup.rollup(config)
     .then(bundle => bundle.generate(config))
     .then(({ code }) => {

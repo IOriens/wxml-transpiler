@@ -79,7 +79,6 @@ function genTemplate (tmpl: template, state: CodegenState) {
   const children = genElement(tmpl.tmpl, state)
   tmpl.tmpl.tmplProcessed = true
   tmpl.tmpl.children = []
-  // console.log(666, tmpl.tmpl)
   return `d_["${codeInfo.path}"]["${tmpl.path}"]=function(e,s,r,gg){
     var b='${codeInfo.path}:${tmpl.path}'
     r.wxVkey=b
@@ -156,13 +155,13 @@ export function genElement (el: ASTElement, state: CodegenState): string {
         code = `${icTop}${children ? `${children}` : ''}${icBottom}`
       } else {
         const children = el.inlineTemplate ? null : genChildren(el, state, true)
-        const dataLen = el.attrsList.length
+        const dataLen = el.attributeList.length
         const env = el.env || 'e'
         const scope = el.scope || 's'
         if (dataLen == 0) {
           code = `var ${el.nodeFuncName || 'nodeFuncName error'} = _n("${el.tag}");${children ? `${children}` : ''}`
         } else if (dataLen == 1) {
-          const attr = el.attrsList[0]
+          const attr = el.attributeList[0]
           code = `var ${el.nodeFuncName || 'nodeFuncName error2'} = _n("${el.tag}");
           _r(${el.nodeFuncName || 'nodeFuncName error3'}, '${camelize(attr.name)}', ${propStore.map[attr.value]}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
         } else {
@@ -338,7 +337,6 @@ export function genFor (
       true /* tip */
     )
   }
-  // console.log(666, el)
   el.forProcessed = true // avoid recursion
   let parentnodeFuncName = el.nodeFuncName
   let forFuncId = generateId()
@@ -393,84 +391,83 @@ export function genFor (
     return ${returnNodeName};
   };
   _2(${propStore.map[exp]}, ${forFuncId}, ${oldEnv}, ${oldScope}, gg, ${parentnodeFuncName}, "${el.alias}", "${el.iterator1}", '');`
-  // console.log(666, el)
   return code
 }
 
 export function genData (el: ASTElement, state: CodegenState): string {
   let data = ''
 
-  // directives first.
-  // directives may mutate the el's other properties before they are generated.
-  const dirs = genDirectives(el, state)
-  if (dirs) data += dirs + ','
+  // // directives first.
+  // // directives may mutate the el's other properties before they are generated.
+  // const dirs = genDirectives(el, state)
+  // if (dirs) data += dirs + ','
 
-  // key
-  if (el.key) {
-    data += `key:${el.key},`
-  }
-  // ref
-  if (el.ref) {
-    data += `ref:${el.ref},`
-  }
-  if (el.refInFor) {
-    data += `refInFor:true,`
-  }
-  // pre
-  if (el.pre) {
-    data += `pre:true,`
-  }
-  // record original tag name for components using "is" attribute
-  if (el.component) {
-    // data += `tag:"${el.tag}",`
-  }
-  // module data generation functions
-  for (let i = 0; i < state.dataGenFns.length; i++) {
-    data += state.dataGenFns[i](el)
-  }
+  // // key
+  // if (el.key) {
+  //   data += `key:${el.key},`
+  // }
+  // // ref
+  // if (el.ref) {
+  //   data += `ref:${el.ref},`
+  // }
+  // if (el.refInFor) {
+  //   data += `refInFor:true,`
+  // }
+  // // pre
+  // if (el.pre) {
+  //   data += `pre:true,`
+  // }
+  // // record original tag name for components using "is" attribute
+  // if (el.component) {
+  //   // data += `tag:"${el.tag}",`
+  // }
+  // // module data generation functions
+  // for (let i = 0; i < state.dataGenFns.length; i++) {
+  //   data += state.dataGenFns[i](el)
+  // }
   // attributes
   if (el.attrs) {
     data += `${genProps(el.attrs)},`
   }
-  // DOM props
-  if (el.props) {
-    data += `domProps:{${genProps(el.props)}},`
-  }
-  // event handlers
-  if (el.events) {
-    data += `${genHandlers(el.events, false, state.warn)},`
-  }
-  if (el.nativeEvents) {
-    data += `${genHandlers(el.nativeEvents, true, state.warn)},`
-  }
-  // slot target
-  if (el.slotTarget) {
-    data += `slot:${el.slotTarget},`
-  }
-  // scoped slots
-  if (el.scopedSlots) {
-    data += `${genScopedSlots(el.scopedSlots, state)},`
-  }
-  // component v-model
-  if (el.model) {
-    data += `model:{value:${el.model.value},callback:${el.model.callback},expression:${el.model.expression}},`
-  }
-  // inline-template
-  if (el.inlineTemplate) {
-    const inlineTemplate = genInlineTemplate(el, state)
-    if (inlineTemplate) {
-      data += `${inlineTemplate},`
-    }
-  }
+  // // DOM props
+  // if (el.props) {
+  //   data += `domProps:{${genProps(el.props)}},`
+  // }
+  // // event handlers
+  // if (el.events) {
+  //   data += `${genHandlers(el.events, false, state.warn)},`
+  // }
+  // if (el.nativeEvents) {
+  //   data += `${genHandlers(el.nativeEvents, true, state.warn)},`
+  // }
+  // // slot target
+  // if (el.slotTarget) {
+  //   data += `slot:${el.slotTarget},`
+  // }
+  // // scoped slots
+  // if (el.scopedSlots) {
+  //   data += `${genScopedSlots(el.scopedSlots, state)},`
+  // }
+  // // component v-model
+  // if (el.model) {
+  //   data += `model:{value:${el.model.value},callback:${el.model.callback},expression:${el.model.expression}},`
+  // }
+  // // inline-template
+  // if (el.inlineTemplate) {
+  //   const inlineTemplate = genInlineTemplate(el, state)
+  //   if (inlineTemplate) {
+  //     data += `${inlineTemplate},`
+  //   }
+  // }
   data = data.replace(/,$/, '') + ''
-  // v-bind data wrap
-  if (el.wrapData) {
-    data = el.wrapData(data)
-  }
-  // v-on data wrap
-  if (el.wrapListeners) {
-    data = el.wrapListeners(data)
-  }
+  // // v-bind data wrap
+  // if (el.wrapData) {
+  //   data = el.wrapData(data)
+  // }
+  // // v-on data wrap
+  // if (el.wrapListeners) {
+  //   data = el.wrapListeners(data)
+  // }
   return data
 }
 
@@ -509,7 +506,6 @@ function genTemplateCaller (el: ASTElement, state: CodegenState): string {
   const env = el.env || 'e'
   const scope = el.scope || 's'
   const isProp = propStore.map[el.component]
-  // console.log(666, el.data)
   const dataProp = propStore.map[el.data]
   const data = dataProp ? `_1(${dataProp},${env},${scope},gg);` : `{};`
   return `var ${container} = _v();
@@ -559,7 +555,7 @@ function genScopedSlot (
     return genForScopedSlot(key, el, state)
   }
   return (
-    `{key:${key},fn:function(${String(el.attrsMap.scope)}){` +
+    `{key:${key},fn:function(${String(el.attributeMap.scope)}){` +
     `return ${el.tag === 'template' ? genChildren(el, state) || 'void 0' : genElement(el, state)}}}`
   )
 }
@@ -710,7 +706,7 @@ function genSlot (el: ASTElement, state: CodegenState): string {
   const attrs =
     el.attrs &&
     `{${el.attrs.map(a => `${camelize(a.name)}:${a.value}`).join(',')}}`
-  const bind = el.attrsMap['v-bind']
+  const bind = el.attributeMap['v-bind']
   if ((attrs || bind) && !children) {
     res += `,null`
   }
@@ -773,7 +769,7 @@ function transformSpecialNewlines (text: string): string {
 }
 
 function getCurrentCodeInfo (): TemplateInfo {
-  return propStore.tmplMap[templateIdx]
+  return propStore.codeInfoMap[templateIdx]
 }
 
 function isOneOf (obj: any, targets: Array<mixed>) {

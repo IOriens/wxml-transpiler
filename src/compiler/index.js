@@ -17,7 +17,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
 ): CompiledResult | any {
   const initStore = {
     map: Object.create(null),
-    tmplMap: [],
+    codeInfoMap: [],
     props: []
   }
 
@@ -26,7 +26,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
     store: Store,
   } = templates.reduce(
     (p, c) => {
-      p.store.tmplMap.push({
+      p.store.codeInfoMap.push({
         path: c.path,
         ti: [],
         ic: [],
@@ -60,11 +60,11 @@ export const createCompiler = createCompilerCreator(function baseCompile (
     .map(
       (ast, idx) =>
         `${generate(ast.ast, program.store, idx, options).render}
-      e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[${program.store.tmplMap[idx].ti
+      e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[${program.store.codeInfoMap[idx].ti
           .map(ti => `"${ti}"`)
           .join(
             ','
-          )}],ic:[${program.store.tmplMap[idx].ic
+          )}],ic:[${program.store.codeInfoMap[idx].ic
           .map(ic => `"${ic}"`)
           .join(',')}]};`
     )

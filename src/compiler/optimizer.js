@@ -30,7 +30,7 @@ export function optimize (root: ?ASTElement, options: CompilerOptions) {
 
 function genStaticKeys (keys: string): Function {
   return makeMap(
-    'type,tag,attrsList,attrsMap,plain,parent,children,attrs' +
+    'type,tag,attributeList,attributeMap,plain,parent,children,attrs' +
     (keys ? ',' + keys : '')
   )
 }
@@ -44,7 +44,7 @@ function markStatic (node: ASTNode) {
     if (
       !isPlatformReservedTag(node.tag) &&
       node.tag !== 'slot' &&
-      node.attrsMap['inline-template'] == null
+      node.attributeMap['inline-template'] == null
     ) {
       return
     }

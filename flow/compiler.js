@@ -69,8 +69,8 @@ declare type ASTNode = ASTElement | ASTText | ASTExpression;
 declare type ASTElement = {
   type: 1;
   tag: string;
-  attrsList: Array<{ name: string; value: string }>;
-  attrsMap: { [key: string]: string | null };
+  attributeList: Array<{ name: string; value: string }>;
+  attributeMap: { [key: string]: string | null };
   parent: ASTElement | void;
   children: Array<ASTNode>;
   nodeFuncName?: string;
@@ -209,7 +209,7 @@ declare type SFCBlock = {
 };
 
 
-declare type Store = { tmplMap:Array<TemplateInfo>; map: Object; props: Array<string>; };
+declare type Store = { codeInfoMap:Array<TemplateInfo>; map: Object; props: Array<string>; };
 
 declare type TemplateInfo = {
   path: string;

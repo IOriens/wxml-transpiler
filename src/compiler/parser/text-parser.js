@@ -1,10 +1,10 @@
 /* @flow */
 
 import { cached } from 'shared/util'
-import { parseFilters } from './filter-parser'
+// import { parseFilters } from './filter-parser'
 import { parse } from 'acorn'
 
-const defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g
+// const defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g
 const bracketInBracketTagRE = /\{\{((['"][^'"]+['"]|[^{}]+)+)\}\}/g
 const regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g
 
@@ -18,9 +18,9 @@ const escapeTxt = function (str) {
   const map = [
     { ori: /"/g, n: '\\x22' },
     { ori: /'/g, n: '\\x27' },
-    { ori: /&/g, n: '\\x26' },
+    { ori: /\n/g, n: '\\n' },
     { ori: /=/g, n: '\\x3d' },
-    { ori: /\n/g, n: '\\n' }
+    { ori: /&/g, n: '\\x26' }
   ]
   map.forEach(v => (str = str.replace(v.ori, v.n)))
   return str
@@ -62,24 +62,9 @@ export function parseText (
 }
 
 export function walk (node: AcornNode | void, inMember?: boolean): string {
-  // console.log(6663, node)
   if (node) {
     let res = 'Unknown Type'
     switch (node.type) {
-      case 'LogicalExpression':
-        if (node.operator && node.left) {
-          res = `[[2, "${node.operator}"],${walk(node.left)},${walk(node.right)}]`
-        } else {
-          res = `Prop Lost in ${node.type}`
-        }
-        break
-      case 'BinaryExpression':
-        if (node.operator) {
-          res = `[[2, "${node.operator}"], ${walk(node.left)}, ${walk(node.right)}]`
-        } else {
-          res = `Prop Lost in ${node.type}`
-        }
-        break
       case 'Identifier':
         if (node.name) {
           if (inMember) {
@@ -91,15 +76,37 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
           res = `Prop Lost in ${node.type}`
         }
         break
+      case 'Literal':
+        if (node.raw) res = `[1, ${node.raw}]`
+        break
+      case 'LabeledStatement':
+        if (node.label && node.body) {
+          res = `[[8],"${node.label.name || 'no name error'}", ${walk(node.body.expression)}]`
+        }
+        break
+      case 'MemberExpression':
+        res = `[[6],${walk(node.object)},${walk(node.property, true)}]`
+        break
+      case 'BinaryExpression':
+        if (node.operator) {
+          res = `[[2, "${node.operator}"], ${walk(node.left)}, ${walk(node.right)}]`
+        } else {
+          res = `Prop Lost in ${node.type}`
+        }
+        break
+      case 'LogicalExpression':
+        if (node.operator && node.left) {
+          res = `[[2, "${node.operator}"],${walk(node.left)},${walk(node.right)}]`
+        } else {
+          res = `Prop Lost in ${node.type}`
+        }
+        break
       case 'UnaryExpression':
         if (node.operator) {
           res = `[[2, "${node.operator}"], ${walk(node.argument)}]`
         } else {
           res = `Prop Lost in ${node.type}`
         }
-        break
-      case 'Literal':
-        if (node.raw) res = `[1, ${node.raw}]`
         break
       case 'ArrayExpression':
         if (node.elements) {
@@ -111,19 +118,11 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
       case 'ConditionalExpression':
         res = `[[2,'?:'],${walk(node.test)},${walk(node.consequent)},${walk(node.alternate)}]`
         break
-      case 'MemberExpression':
-        res = `[[6],${walk(node.object)},${walk(node.property, true)}]`
-        break
       case 'ObjectExpression':
         if (node.properties) {
           res = `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]`
         } else {
           res = `Prop Lost in ${node.type}`
-        }
-        break
-      case 'LabeledStatement':
-        if (node.label && node.body) {
-          res = `[[8],"${node.label.name || 'no name error'}", ${walk(node.body.expression)}]`
         }
         break
       case 'Property':
@@ -138,7 +137,6 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
     }
     return res
   } else {
-    // console.log(666, node)
     return ''
   }
 }
@@ -157,15 +155,13 @@ export function walkExp (ast: Object, type: number): string {
 export function parseExp (text: string): string | void {
   let ast: AcornNode
   try {
-    // normal exporession
+    // normal expression
     ast = parse(text)
-    // console.log(6661, text)
     return walkExp(ast, 0)
   } catch (e) {
     try {
       // object expression
       ast = parse(`x={${text}}`)
-      // console.log(6662, ast)
       return walkExp(ast, 1)
     } catch (e) {
       throw new Error(`${text} contains syntax errs`)
