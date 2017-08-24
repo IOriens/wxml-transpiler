@@ -6,7 +6,6 @@ import { generate } from './codegen/index'
 import { genTemplate } from './codegen/template'
 import { createCompilerCreator } from './create-compiler'
 
-// import { stringify } from 'circular-json'
 
 // `createCompilerCreator` allows creating compilers that use alternative
 // parser/optimizer/codegen, e.g the SSR optimizing compiler.

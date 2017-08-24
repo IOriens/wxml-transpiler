@@ -373,7 +373,8 @@ function processFor (el) {
     getAndRemoveAttr(el, 'wx:for-items')
     return
   }
-  let exp = getAndRemoveAttr(el, 'wx:for') || getAndRemoveAttr(el, 'wx:for-items')
+  let exp =
+    getAndRemoveAttr(el, 'wx:for') || getAndRemoveAttr(el, 'wx:for-items')
   if (exp) {
     const inMatch = exp.match(tplBracket)
     if (!inMatch) {

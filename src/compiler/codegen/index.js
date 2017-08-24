@@ -158,8 +158,13 @@ export function genElement (el: ASTElement, state: CodegenState): string {
           code = `var ${el.nodeFuncName || 'nodeFuncName error'} = _n("${el.tag}");${children ? `${children}` : ''}`
         } else if (dataLen === 1) {
           const attr = el.attributeList[0]
-          code = `var ${el.nodeFuncName || 'nodeFuncName error2'} = _n("${el.tag}");
-          _r(${el.nodeFuncName || 'nodeFuncName error3'}, '${camelize(attr.name)}', ${propStore.map[attr.value]}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
+          code = `var ${el.nodeFuncName || 'nodeFuncName error2'} = _n("${el.tag}");`
+          const propPos = propStore.map[attr.value]
+          if (propPos < 0) {
+            code += `${el.nodeFuncName || 'nodeFuncName error3'}.attr['${camelize(attr.name)}'] = true`
+          } else {
+            code += `_r(${el.nodeFuncName || 'nodeFuncName error3'}, '${camelize(attr.name)}', ${propStore.map[attr.value]}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
+          }
         } else {
           code = `var ${el.nodeFuncName || 'nodeFuncName error4'} = _m( "${el.tag}", ${data || 'data error'}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
         }
@@ -302,9 +307,7 @@ function genIfConditions (
 
   // v-if with v-once should generate code like (a)?_m(0):_m(1)
   function genTernaryExp (el) {
-    return altGen
-      ? altGen(el, state)
-      : genElement(el, state)
+    return altGen ? altGen(el, state) : genElement(el, state)
   }
 }
 
