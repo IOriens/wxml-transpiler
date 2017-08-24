@@ -397,6 +397,12 @@ function processFor (el) {
     } else {
       el.iterator1 = 'index'
     }
+    if ((exp = getAndRemoveAttr(el, 'wx:key'))) {
+      el.key = exp
+      pushProp(exp)
+    } else {
+      el.key = 'index'
+    }
   }
 }
 

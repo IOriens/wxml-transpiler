@@ -1,6 +1,6 @@
 # wxml-transpiler
 
-This package can be used to compile wxml templates.
+This package can be used to compile wxml templates.([view source code here](https://github.com/IOriens/wxml-transpiler)). It works just like wcc.exe, wcc.
 
 ## Usage
 
@@ -19,3 +19,7 @@ const fileList = [
 
 const res = compiler.wxmlCompile(fileList)
 ```
+
+## Liscense
+
+MIT

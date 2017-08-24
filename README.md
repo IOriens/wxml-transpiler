@@ -1,7 +1,5 @@
 # wxml-transpiler
 
-**Under development now...**
-
 ## Intro
 
 Port of wcc.cpp/wcc/wcc.exe to JavaScript: use compiler carried with Vue.js to transpile wxml ([Grammers to Support](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/)).
@@ -37,13 +35,6 @@ nodemon test/test -w packages/wxml-transpiler -w test/test.js -w test/pages -e j
 ```
 
 ## Todo
-
-### must
-
-- add more doc, remove more useless files, reorange directories
-- dataset
-
-### perf & ux
 
 - error position feedback
 - `propStore` should better not be global

@@ -389,7 +389,7 @@ export function genFor (
     ${icTop}${children}${icBottom}${cantainEle}
     return ${returnNodeName};
   };
-  _2(${propStore.map[exp]}, ${forFuncId}, ${oldEnv}, ${oldScope}, gg, ${parentnodeFuncName}, "${el.alias}", "${el.iterator1}", '');`
+  _2(${propStore.map[exp]}, ${forFuncId}, ${oldEnv}, ${oldScope}, gg, ${parentnodeFuncName}, "${el.alias}", "${el.iterator1}", '${el.key || ''}');`
   return code
 }
 
