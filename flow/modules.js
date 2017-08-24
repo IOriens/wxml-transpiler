@@ -43,6 +43,6 @@ declare module 'lodash.template' {
   }
 }
 
-declare module 'acorn' {
-  declare function parse(input: string,options?:Object): AcornNode;
+declare module 'babylon' {
+  declare function parse(input: string,options?:Object): BabylonNode;
 }

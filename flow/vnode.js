@@ -77,47 +77,47 @@ declare type VNodeDirective = {
 
 declare type ScopedSlotsData = Array<{ key: string, fn: Function } | ScopedSlotsData>;
 
-declare type AcornNode = {
+declare type BabylonNode = {
   type: string;
 
   // BinaryExpression|LogicalExpression
-  left?: AcornNode;
-  right?: AcornNode;
+  left?: BabylonNode;
+  right?: BabylonNode;
 
   // Identifier
   name?: string;
 
   // UnaryExpression
   operator?: string;
-  argument?: AcornNode;
+  argument?: BabylonNode;
 
   // Literal
   raw?: string;
 
   // ArrayExpression
-  elements?: Array<AcornNode>;
+  elements?: Array<BabylonNode>;
 
   // ConditionalExpression: test?cons:alt
-  test?:AcornNode;
-  consequent?: AcornNode;
-  alternate?: AcornNode;
+  test?:BabylonNode;
+  consequent?: BabylonNode;
+  alternate?: BabylonNode;
 
   // MemberExpression
-  property?: AcornNode;
-  object?: AcornNode;
+  property?: BabylonNode;
+  object?: BabylonNode;
 
   // Object
-  properties?: Array<AcornNode>;
+  properties?: Array<BabylonNode>;
 
   // Property
-  key?: AcornNode;
-  value?: AcornNode;
+  key?: BabylonNode;
+  value?: any;
 
   // label
-  label?: AcornNode;
-  body?: AcornNode;
+  label?: BabylonNode;
+  body?: BabylonNode;
 
   // expression
-  expression?: AcornNode;
+  expression?: BabylonNode;
 };
 

@@ -23,12 +23,6 @@ export const dirRE = /^v-|^@|^:/
 // ({{object name|array|expression}})|string
 export const tplBracket = /(?:{{\s*(.+)\s*}}|(.+))/
 
-// export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
-// export const forIteratorRE = /\((\{[^}]*\}|[^,]*),([^,]*)(?:,([^,]*))?\)/
-
-// const argRE = /:(.*)$/
-// const bindRE = /^:|^v-bind:/
-// const modifierRE = /\.[^.]+/g
 
 const decodeHTMLCached = cached(he.decode)
 
@@ -161,38 +155,15 @@ export function parse (
         processIf(element)
         processOnce(element)
         processKey(element)
-
         // determine whether this is a plain element after
         // removing structural attributes
         element.plain = !element.key && !attrs.length
-
-        // processRef(element)
-        // processSlot(element)
         processInclude(element)
         processImport(element)
         processComponent(element)
-        // for (let i = 0; i < transforms.length; i++) {
-        //   // transforms[i](element, options)
-        // }
         processAttrs(element)
       }
 
-      // function checkRootConstraints (el) {
-      //   if (process.env.NODE_ENV !== 'production') {
-      //     if (el.tag === 'slot' || el.tag === 'template') {
-      //       warnOnce(
-      //         `Cannot use <${el.tag}> as component root element because it may ` +
-      //           'contain multiple nodes.'
-      //       )
-      //     }
-      //     if (el.attributeMap.hasOwnProperty('v-for')) {
-      //       warnOnce(
-      //         'Cannot use v-for on stateful component root element because ' +
-      //           'it renders multiple elements.'
-      //       )
-      //     }
-      //   }
-      // }
 
       // tree management
       if (!root.children.length) {
@@ -211,13 +182,7 @@ export function parse (
           root.children.push(element)
           currRoot = element
         }
-        // if (process.env.NODE_ENV !== 'production') {
-        //   warnOnce(
-        //     `Component template should contain exactly one root element. ` +
-        //     `If you are using v-if on multiple elements, ` +
-        //     `use v-else-if to chain them instead.`
-        //   )
-        // }
+
       }
       if (currentParent && !element.forbidden) {
         if (element.elseif || element.else) {
@@ -359,13 +324,6 @@ function processKey (el) {
   }
 }
 
-// function processRef (el) {
-//   const ref = getBindingAttr(el, 'ref')
-//   if (ref) {
-//     el.ref = ref
-//     el.refInFor = checkInFor(el)
-//   }
-// }
 
 function processFor (el) {
   if (el.tag === 'import') {
@@ -409,7 +367,6 @@ function processFor (el) {
 function processIf (el) {
   const exp = getAndRemoveAttr(el, 'wx:if')
   if (exp) {
-    // if (el.tag == 'template' && el.name) return
     const inMatch = exp.match(tplBracket)
     if (!inMatch) {
       process.env.NODE_ENV !== 'production' &&
@@ -417,9 +374,9 @@ function processIf (el) {
       return
     }
 
-    const ifExp = inMatch[1].trim()
+    const ifExp = inMatch[0]
     el.if = ifExp
-    pushProp(ifExp, inMatch[0])
+    pushProp(ifExp)
 
     addIfCondition(el, {
       exp: ifExp,
@@ -427,21 +384,19 @@ function processIf (el) {
     })
   } else {
     if (getAndRemoveAttr(el, 'wx:else') != null) {
-      // if (el.tag == 'template' && el.name) return
       el.else = true
     }
     const elseif = getAndRemoveAttr(el, 'wx:elif')
     if (elseif) {
-      // if (el.tag == 'template' && el.name) return
       const inMatch = elseif.match(tplBracket)
       if (!inMatch) {
         process.env.NODE_ENV !== 'production' &&
           warn(`Invalid wx:if expression: ${elseif}`)
         return
       }
-      const elifExp = inMatch[1].trim()
+      const elifExp = inMatch[0]
       el.elseif = elifExp
-      pushProp(elifExp, inMatch[0])
+      pushProp(elifExp)
     }
   }
 }
@@ -548,7 +503,7 @@ function processComponent (el) {
   }
   if ((data = getAndRemoveAttr(el, 'data'))) {
     el.data = data
-    pushProp(data)
+    pushProp(data, '', true)
   }
 }
 
@@ -558,104 +513,14 @@ function processAttrs (el) {
   for ((i = 0), (l = list.length); i < l; i++) {
     name = list[i].name
     value = list[i].value
-    // if (dirRE.test(name)) {
-    //   // mark element as dynamic
-    //   el.hasBindings = true
-    //   // modifiers
-    //   modifiers = parseModifiers(name)
-    //   if (modifiers) {
-    //     name = name.replace(modifierRE, '')
-    //   }
-    //   if (bindRE.test(name)) {
-    //     // v-bind
-    //     name = name.replace(bindRE, '')
-    //     value = parseFilters(value)
-    //     isProp = false
-    //     if (modifiers) {
-    //       if (modifiers.prop) {
-    //         isProp = true
-    //         name = camelize(name)
-    //         if (name === 'innerHtml') name = 'innerHTML'
-    //       }
-    //       if (modifiers.camel) {
-    //         name = camelize(name)
-    //       }
-    //       if (modifiers.sync) {
-    //         addHandler(
-    //           el,
-    //           `update:${camelize(name)}`,
-    //           genAssignmentCode(value, `$event`)
-    //         )
-    //       }
-    //     }
-    //     if (
-    //       isProp ||
-    //       (!el.component && platformMustUseProp(el.tag, el.attributeMap.type, name))
-    //     ) {
-    //       addProp(el, name, value)
-    //     } else {
-    //       addAttr(el, name, value)
-    //     }
-    //   } else if (onRE.test(name)) {
-    //     // v-on
-    //     name = name.replace(onRE, '')
-    //     addHandler(el, name, value, modifiers, false, warn)
-    //   } else {
-    //     // normal directives
-    //     name = name.replace(dirRE, '')
-    //     // parse arg
-    //     const argMatch = name.match(argRE)
-    //     const arg = argMatch && argMatch[1]
-    //     if (arg) {
-    //       name = name.slice(0, -(arg.length + 1))
-    //     }
-    //     addDirective(el, name, rawName, value, arg, modifiers)
-    //     if (process.env.NODE_ENV !== 'production' && name === 'model') {
-    //       checkForAliasModel(el, value)
-    //     }
-    //   }
-    // } else {
-    // literal attribute
-    // if (process.env.NODE_ENV !== 'production') {
 
-    // const expression = parseText(value, delimiters)
     pushProp(value)
 
-    // if (expression) {
-    //   warn(
-    //     `${name}="${value}": ` +
-    //       'Interpolation inside attributes has been removed. ' +
-    //       'Use v-bind or the colon shorthand instead. For example, ' +
-    //       'instead of <div id="{{ val }}">, use <div :id="val">.'
-    //   )
-    // }
-    // }
     addAttr(el, name, value)
-    // }
+
   }
 }
 
-// function checkInFor (el: ASTElement): boolean {
-//   let parent = el
-//   while (parent) {
-//     if (parent.for !== undefined) {
-//       return true
-//     }
-//     parent = parent.parent
-//   }
-//   return false
-// }
-
-// function parseModifiers (name: string): Object | void {
-//   const match = name.match(modifierRE)
-//   if (match) {
-//     const ret = {}
-//     match.forEach(m => {
-//       ret[m.slice(1)] = true
-//     })
-//     return ret
-//   }
-// }
 
 function makeAttrsMap (attrs: Array<Object>): Object {
   const map = {}
@@ -702,27 +567,12 @@ function guardIESVGBug (attrs) {
   return res
 }
 
-// function checkForAliasModel (el, value) {
-//   let _el = el
-//   while (_el) {
-//     if (_el.for && _el.alias === value) {
-//       warn(
-//         `<${el.tag} v-model="${value}">: ` +
-//           `You are binding v-model directly to a v-for iteration alias. ` +
-//           `This will not be able to modify the v-for source array because ` +
-//           `writing to the alias is like modifying a function local variable. ` +
-//           `Consider using an array of objects and use v-model on an object property instead.`
-//       )
-//     }
-//     _el = _el.parent
-//   }
-// }
+function pushProp (exp: string, optExp?: string, wrapBracket?: boolean) {
 
-function pushProp (exp: string, optExp?: string) {
   if (propStore.map[exp] == null) {
     if (exp) {
       propStore.map[exp] = propStore.props.length
-      propStore.props.push(parseText(optExp || exp))
+      propStore.props.push(parseText(optExp || exp, void 0, wrapBracket))
     } else {
       propStore.map[exp] = -1
     }

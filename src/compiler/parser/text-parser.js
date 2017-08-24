@@ -2,7 +2,7 @@
 
 import { cached } from 'shared/util'
 // import { parseFilters } from './filter-parser'
-import { parse } from 'acorn'
+import { parse } from 'babylon'
 
 // const defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g
 const bracketInBracketTagRE = /\{\{((['"][^'"]+['"]|[^{}]+)+)\}\}/g
@@ -28,7 +28,8 @@ const escapeTxt = function (str) {
 
 export function parseText (
   text: string,
-  delimiters?: [string, string]
+  delimiters?: [string, string],
+  wrapBracket?: boolean
 ): string | void {
   // const tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE
   const tagRE = delimiters ? buildRegex(delimiters) : bracketInBracketTagRE
@@ -46,7 +47,8 @@ export function parseText (
       tokens.push(`[3, '${escapeTxt(text.slice(lastIndex, index))}']`)
     }
     // tag token
-    const exp = parseExp(match[1].trim()) || ''
+    const txt = match[1].trim()
+    const exp = parseExp(txt, wrapBracket) || ''
     tokens.push(exp)
     lastIndex = index + match[0].length
   }
@@ -61,7 +63,7 @@ export function parseText (
   }
 }
 
-export function walk (node: AcornNode | void, inMember?: boolean): string {
+export function walk (node: BabylonNode | void, inMember?: boolean): string {
   if (node) {
     let res = 'Unknown Type'
     switch (node.type) {
@@ -72,68 +74,98 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
           } else {
             res = `[[7],[3, "${node.name}"]]`
           }
+          break
         } else {
           res = `Prop Lost in ${node.type}`
         }
-        break
-      case 'Literal':
-        if (node.raw) res = `[1, ${node.raw}]`
+      // case 'Literal':
+      //   if (node.raw) res = `[1, ${node.raw}]`
+      //   break
+      case 'NumericLiteral':
+      case 'BooleanLiteral':
+      case 'RegExpLiteral':
+        if (node.value) {
+          res = `[1, ${node.value}]`
+          break
+        } else {
+          res = `Prop Lost in ${node.type}`
+        }
+      case 'StringLiteral':
+        if (node.value) {
+          res = `[1, "${node.value}"]`
+          break
+        } else {
+          res = `Prop Lost in ${node.type}`
+        }
+      case 'NullLiteral':
+        res = `[1, null]`
         break
       case 'LabeledStatement':
         if (node.label && node.body) {
           res = `[[8],"${node.label.name || 'no name error'}", ${walk(node.body.expression)}]`
+          break
         }
-        break
       case 'MemberExpression':
         res = `[[6],${walk(node.object)},${walk(node.property, true)}]`
         break
       case 'BinaryExpression':
         if (node.operator) {
           res = `[[2, "${node.operator}"], ${walk(node.left)}, ${walk(node.right)}]`
+          break
         } else {
           res = `Prop Lost in ${node.type}`
         }
-        break
       case 'LogicalExpression':
         if (node.operator && node.left) {
           res = `[[2, "${node.operator}"],${walk(node.left)},${walk(node.right)}]`
+          break
         } else {
           res = `Prop Lost in ${node.type}`
         }
-        break
       case 'UnaryExpression':
         if (node.operator) {
           res = `[[2, "${node.operator}"], ${walk(node.argument)}]`
+          break
         } else {
           res = `Prop Lost in ${node.type}`
         }
-        break
       case 'ArrayExpression':
         if (node.elements) {
           res = `[[4], ${node.elements.reduce((p, c) => `[[5], ${p} ${p && ','} ${walk(c)}]`, '')}]`
+          break
         } else {
           res = `Prop Lost in ${node.type}`
         }
+      case 'SpreadProperty':
+        res = `[[10], ${walk(node.argument)}]`
         break
       case 'ConditionalExpression':
         res = `[[2,'?:'],${walk(node.test)},${walk(node.consequent)},${walk(node.alternate)}]`
         break
       case 'ObjectExpression':
         if (node.properties) {
-          res = `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]`
+          if (node.properties.length === 1) {
+            return node.properties.map(prop => walk(prop)).join(',')
+          } else {
+            res = `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]`
+          }
+          break
         } else {
           res = `Prop Lost in ${node.type}`
         }
-        break
-      case 'Property':
+
+      case 'ObjectProperty':
+        // case 'Property':
         if (node.key) {
-          res = `[[8], "${node.key.name || 'no name error'}", ${walk(node.value)}]`
+          if (node.value && typeof node.value === 'object') {
+            res = `[[8], "${node.key.name || 'no name error'}", ${walk(node.value)}]`
+            break
+          }
         } else {
           res = `Prop Lost in ${node.type}`
         }
-        break
       default:
-        console.log((res = `${res}: ${node.type}`))
+        throw new Error((res = `${res}: ${node.type}`))
     }
     return res
   } else {
@@ -143,28 +175,28 @@ export function walk (node: AcornNode | void, inMember?: boolean): string {
 
 export function walkExp (ast: Object, type: number): string {
   if (type === 0) {
-    if (ast.body[0].expression) return walk(ast.body[0].expression)
-    else if (ast.body[0]) return walk(ast.body[0])
+    if (ast.program.body[0].expression) {
+      return walk(ast.program.body[0].expression)
+    } else if (ast.program.body[0]) return walk(ast.program.body[0])
   } else if (type === 1) {
-    return walk(ast.body[0].expression.right)
+    return walk(ast.program.body[0].expression.right)
   }
-
   return JSON.stringify(ast)
 }
 
-export function parseExp (text: string): string | void {
-  let ast: AcornNode
+export function parseExp (txt: string, wrapBracket?: boolean): string | void {
+  let ast: BabylonNode
+  const text = wrapBracket ? `x={${txt}}` : txt
   try {
-    // normal expression
-    ast = parse(text)
-    return walkExp(ast, 0)
-  } catch (e) {
-    try {
-      // object expression
-      ast = parse(`x={${text}}`)
+    ast = parse(text, {
+      plugins: ['objectRestSpread']
+    })
+    if (wrapBracket) {
       return walkExp(ast, 1)
-    } catch (e) {
-      throw new Error(`${text} contains syntax errs`)
+    } else {
+      return walkExp(ast, 0)
     }
+  } catch (e) {
+    throw e
   }
 }
