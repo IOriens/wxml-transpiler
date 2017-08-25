@@ -98,7 +98,7 @@ Racket
 
 当然，以上只是简述，各部分具体的实现都有很多值得研究的地方。
 
-## 本项目整体转译译流程
+## 本项目整体转译流程
 
 - 根据输入的列表，读取所有文件
 - 调用VUE的HTML Parser，解析输入的标签及属性，生成一颗DOM树
@@ -159,7 +159,7 @@ export function genTemplate(slot) {
 }
 
 === 目标 数组形式 ===
-[[2, "+"], [1, 3], [1 4]]
+[[2, "+"], [1, 3], [1, 4]]
 ```
 
 从目标语言可以推测出，BinaryExpression 可以解析为如下形式：
@@ -191,29 +191,46 @@ function walk (node) {
 const code = walk(ast.expression)
 ```
 
-## 结尾部分：wxml标签的处理
-
-尾部标签的处理与上面类似，先使用HTML Parser将HTML标签转换为一颗AST，再遍历AST来生成JS代码（[点我在线运行](https://babeljs.io/repl/#?babili=false&evaluate=true&lineWrap=true&presets=stage-3&targets=&browsers=&builtIns=false&debug=false&code_lz=MYewdgzgLgBAhtGBeGBvAUDLMBEUCeADgKY4BcuUcA5jgDSbY5hwC2pFOARgK5RTh6jLDmAALAJYAbACYAnYmHIwA2sOwZsW3DLhVlOGAEEZMmAPNjiMAGZzwsIdqYESBqMQAeUHOqwBfdQBddED0dBseMGAoCXAYakViOT1iADk2YgAKAEo0RgUoHjkwGAByAH1PMpgAahgAWT0xADoUsBkQVlyWgQBlKDkJMGosgGYANhyWiB4uaDksgCY6GDGcgG5Q8Mjo2PiAdzgpAGsYLLAQGWJVwjgFMCgM9jzNGFBIWF3gZ-sURLAyVSv1yjAgBwkUHEFyuxF6RGIr3UwAQ1jKVGoZQofhghWKpQABjisAA3e4wAAkqG-v38yBgFWAClSABUaFkcFTLtcWix2P4cDliZTUNy4eJpPJFC1WHBCFkJbJkAA-GBHU4KySyVY0zI5aYAKxAwyyZTKOUCziwFUIPAgYgAwlqZFkqXcHk9MnS6FTdfyhc4iVoURA0R5vFiYDi8SUYEGrWS5CK_cQ6ShGcyPCyvE9YRyubCWroqAKA1abXbHc7Xah3YpPfyYD7qVEfl6y1p44Ewh9EKBrvT1ScsggoKsyvYQFBzeheyApHCpCBRv3EUA&prettier=false&showSidebar=true)）
+转换后的属性值会被PUSH到数组z中，以供尾部的代码使用，为了方便的找寻其在数组中的位置，我们需要用到哈希表来记录属性值与其解析后的表达式之间的关系：
 
 ```js
 === 输入 HTML===
-<button> Add to the front </button>
+<button bindtap="addNumberToFront"> Add to the front </button>
+
+=== 存放数据的结构 ===
+{
+  // 简析前后的映射（key为属性值，value为属性值在属性值列表中的位置）
+  map: { 'addNumberToFront': 0, ' Add to the front ': 1 },
+  // 解析后的数据
+  props: [ '[3, \'addNumberToFront\']', '[3, \' Add to the front \']' ]
+}
+```
+
+## 结尾部分：wxml标签的处理
+
+尾部标签的处理与上面类似，先使用HTML Parser将HTML标签转换为一颗AST，再遍历AST来生成JS代码（[点我在线运行](https://babeljs.io/repl/#?babili=false&evaluate=true&lineWrap=true&presets=stage-3&targets=&browsers=&builtIns=false&debug=false&code_lz=MYewdgzgLgBAhtGBeGBvAUDGUCeAHAUwC4YByKOAc1IBpMYw4BbYsgIwFcopxb65uAJwCWbCCQDaqGAGsCOEqTbCwAEwp5aMAG5wANh1ak4q1QDkOTNgUEAVEADFB4KKRgBfALp0swABbCeqqCBGCS9FgYWNEwqgJwijAAgqbYINh-BDAAZs5gsHwxWLiEilAEAB6uER70nuju6OigkLB4zngAsnB4yGj0TD0k0ibmltZ2jnlQJAAMNGTJqTwZWbkuZCQAjB4-MO0geOIwEgBEEgDMC8amFlY29k4upJ6nC-dXiymqaas502RXvVGuhshwwMAoMJwDBKKEbAICGZmFkABQASn6WBCUA4gjAZAA-hU3ABqGDdKB-AB0gjgahATAx1J4AGUoCIwJRURcAGzo6kQDhiDmogBMCwu6IaTTBEKhMLhYFsBCYeD0iJgqIORwWED0ICgmKiMBaiB13Tw7MEfR1EGpgzw2o6yAAfDAAAYAL2peA4ED8qIAJKgde50R6BQArEAqVGkAA6YFI0uxBFx-M9NV0Nq9fQk9RiIYtPWtjRiNTlkOhBMJAgo_iSQlRYBAqgIC3rgmRLAWeBAEGNNSwrfb1K7Ei7PYInj6oDVXAIADV9IZUV6JP2IJ5U9Fy9FK-DqzD537yiuDARUbpL0OijAIAB3YRQfzX1cECSzHdY--mhBZKQFykEQw5FDieIEjehgSFshZFPuWCITANQhvqhr7h6MqgkeCoEo--gyFqo4dvscAhPk053qa4CIFW059EqCLlNOGL0E-L7-MRbYECy-AENRvgAWQFDUKB95mrAXYOEefQkeOQiiBAYFYA6PSoip0Rdm6mkxB6dbcHAjbNiG9Eou4NCnCGXbUnIODuG8xYdJaal4JOQjUtBM7hlhf4wLu97UjGcaJsmAXRBBma-X-OYwKZR7Tu4fSEsAISIrYVColZqDyYwLAOeFRaoNJR7IUV8n-IEwShK5qKVUEbowARegyHVARBAsZksOi0axmA8YpmV0SEn6AYAMLtaowahuRoRQIlMA0PFEKJYVWYxMAwnkJUrjieB6aQetMXkXFqBdQQSUoClaXlCqVRmDx00lngrkSPJcQUJ44aaSN_p-BNVVPbNlHmYty3AKtYHRY0IKSTR7Z9M1rUIFA1zOIaKbNLRIB6LxBrckqKpqhq5TOocLl2gsoDtj16BAA&prettier=false&showSidebar=true&#%3Fbabili=false&%23?babili=false)）
+
+```js
+=== 输入 HTML===
+<button bindtap="addNumberToFront"> Add to the front </button>
 
 === 输出 AST===
 const ast = {
-    "type": "tag",
-    "name": "button",
-    "children": [
-      {
-        "data": " Add to the front ",
-        "type": "text"
-      }
-    ]
+  type: 'tag',
+  name: 'button',
+  attribs: [{ key: 'bindtap', value: 'addNumberToFront' }],
+  children: [
+    {
+      data: ' Add to the front ',
+      type: 'text'
+    }
+  ]
 }
 
 === 目标 JS代码 ===
 var A = _createTag("button")
-var B = _createTextNode(" Add to the front ")
-_pushChild(A ,B)
-_pushChild(root ,A)
+_attachAttr(A,"bindtap",0)
+var A = _createTextNode(1)
+_pushChild(A ,A)
+_pushChild(root ,A))
 ```
