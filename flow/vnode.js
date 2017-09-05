@@ -105,6 +105,7 @@ declare type BabylonNode = {
   // MemberExpression
   property?: BabylonNode;
   object?: BabylonNode;
+  computed?: boolean;
 
   // Object
   properties?: Array<BabylonNode>;

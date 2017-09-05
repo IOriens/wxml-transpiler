@@ -63,13 +63,13 @@ export function parseText (
   }
 }
 
-export function walk (node: BabylonNode | void, inMember?: boolean): string {
+export function walk (node: BabylonNode | void, isStatic?: boolean): string {
   if (node) {
     let res = 'Unknown Type'
     switch (node.type) {
       case 'Identifier':
         if (node.name) {
-          if (inMember) {
+          if (isStatic) {
             res = `[3, "${node.name}"]`
           } else {
             res = `[[7],[3, "${node.name}"]]`
@@ -106,7 +106,7 @@ export function walk (node: BabylonNode | void, inMember?: boolean): string {
           break
         }
       case 'MemberExpression':
-        res = `[[6],${walk(node.object)},${walk(node.property, true)}]`
+        res = `[[6],${walk(node.object)},${walk(node.property, !node.computed)}]`
         break
       case 'BinaryExpression':
         if (node.operator) {
