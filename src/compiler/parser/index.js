@@ -119,6 +119,7 @@ export function parse (
         parent: currentParent,
         children: []
       }
+      propStore.tags.push(tag)
       if (ns) {
         element.ns = ns
       }

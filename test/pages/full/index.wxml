@@ -62,7 +62,7 @@
 <input class="weui-input a b c" bindinput="keychange"></input>
 
 <!-- bracket in bracket -->
-<text>fff{{text}}\{{'ffff{{fff2}}'}}</text>
+<text>fff{{text}}/\\\{{'ffff{{fff2}}'}}</text>
 
 <!-- children -->
 <modal title="{{dialog.title}}" hidden="{{dialog.hidden}}" bindconfirm="confirm">{{dialog.content}}</modal>

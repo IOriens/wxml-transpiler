@@ -33,6 +33,7 @@ declare type CompiledResult = {
   stringRenderFns?: Array<string>;
   errors?: Array<string>;
   tips?: Array<string>;
+  tags?: Array<string>;
 };
 
 declare type ModuleOptions = {
@@ -209,7 +210,12 @@ declare type SFCBlock = {
 };
 
 
-declare type Store = { codeInfoMap:Array<TemplateInfo>; map: Object; props: Array<string>; };
+declare type Store = {
+  codeInfoMap:Array<TemplateInfo>;
+  map: Object;
+  props: Array<string>;
+  tags: Array<string>;
+};
 
 declare type TemplateInfo = {
   path: string;

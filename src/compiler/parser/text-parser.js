@@ -18,6 +18,7 @@ const escapeTxt = function (str) {
   const map = [
     { ori: /"/g, n: '\\x22' },
     { ori: /'/g, n: '\\x27' },
+    { ori: /\\/g, n: '\\x5c' },
     { ori: /\n/g, n: '\\n' },
     { ori: /=/g, n: '\\x3d' },
     { ori: /&/g, n: '\\x26' }
@@ -67,6 +68,24 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
   if (node) {
     let res = 'Unknown Type'
     switch (node.type) {
+      case 'File':
+        res = walk(node.program)
+        break
+      case 'Program':
+        if (node.directives && node.directives.length === 1) {
+          // directive string
+          res = walk(node.directives[0])
+          break
+        } else if (node.body && node.body.length === 1) {
+          // normal expresiions
+          res = walk(node.body[0])
+          break
+        } else {
+          res = `Error in ${node.type}`
+        }
+      case 'ExpressionStatement':
+        res = walk(node.expression)
+        break
       case 'Identifier':
         if (node.name) {
           if (isStatic) {
@@ -90,6 +109,7 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
         } else {
           res = `Prop Lost in ${node.type}`
         }
+      case 'DirectiveLiteral':
       case 'StringLiteral':
         if (node.value) {
           res = `[1, "${node.value}"]`
@@ -98,7 +118,7 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
           res = `Prop Lost in ${node.type}`
         }
       case 'NullLiteral':
-        res = `[1, null]`
+        res = `[1, false]`
         break
       case 'LabeledStatement':
         if (node.label && node.body) {
@@ -153,7 +173,9 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
         } else {
           res = `Prop Lost in ${node.type}`
         }
-
+      case 'Directive':
+        res = walk(node.value)
+        break
       case 'ObjectProperty':
         // case 'Property':
         if (node.key) {
@@ -164,6 +186,9 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
         } else {
           res = `Prop Lost in ${node.type}`
         }
+      case 'AssignmentExpression':
+        console.log(node)
+        res = `assignment in wrong place`
       default:
         throw new Error((res = `${res}: ${node.type}`))
     }
@@ -175,9 +200,10 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
 
 export function walkExp (ast: Object, type: number): string {
   if (type === 0) {
-    if (ast.program.body[0].expression) {
-      return walk(ast.program.body[0].expression)
-    } else if (ast.program.body[0]) return walk(ast.program.body[0])
+    // if (ast.program.body[0].expression) {
+    //   return walk(ast.program.body[0].expression)
+    // } else if (ast.program.body[0]) return walk(ast.program.body[0])
+    return walk(ast)
   } else if (type === 1) {
     return walk(ast.program.body[0].expression.right)
   }
@@ -197,6 +223,7 @@ export function parseExp (txt: string, wrapBracket?: boolean): string | void {
       return walkExp(ast, 0)
     }
   } catch (e) {
+    e.name += ` parsing statement => ${txt} <= `
     throw e
   }
 }

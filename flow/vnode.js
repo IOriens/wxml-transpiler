@@ -80,6 +80,12 @@ declare type ScopedSlotsData = Array<{ key: string, fn: Function } | ScopedSlots
 declare type BabylonNode = {
   type: string;
 
+  // file
+  program?: BabylonNode;
+
+  // body
+  directives?: Array<BabylonNode>;
+
   // BinaryExpression|LogicalExpression
   left?: BabylonNode;
   right?: BabylonNode;

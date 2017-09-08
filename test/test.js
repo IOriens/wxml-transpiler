@@ -29,6 +29,7 @@ if (!fs.existsSync(distDir)){
 }
 
 const vueRes = compiler.compile(files)
+console.log(vueRes.tags)
 fs.writeFileSync(vueDist, vueRes.render, 'utf8')
 
 exec(

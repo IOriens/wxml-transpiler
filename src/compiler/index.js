@@ -17,7 +17,8 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   const initStore = {
     map: Object.create(null),
     codeInfoMap: [],
-    props: []
+    props: [],
+    tags: []
   }
 
   const program: {
@@ -71,7 +72,8 @@ export const createCompiler = createCompilerCreator(function baseCompile (
 
   return {
     program,
-    render: genTemplate(propsCode + code)
+    render: genTemplate(propsCode + code),
+    tags: new Set(initStore.tags)
     // staticRenderFns: code.staticRenderFns
   }
 })
