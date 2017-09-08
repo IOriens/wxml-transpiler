@@ -73,7 +73,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   return {
     program,
     render: genTemplate(propsCode + code),
-    tags: new Set(initStore.tags)
+    tags: Array.from(new Set(initStore.tags))
     // staticRenderFns: code.staticRenderFns
   }
 })
