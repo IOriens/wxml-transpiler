@@ -76,6 +76,7 @@ export function parse (
   let warned = false
 
   function warnOnce (msg) {
+    console.warn(msg)
     if (!warned) {
       warned = true
       warn(msg)

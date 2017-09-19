@@ -133,7 +133,11 @@ export function genElement (el: ASTElement, state: CodegenState): string {
         const importVector = codeInfo.ti
         const oldIcLen = includeVector.length
         const oldTiLen = importVector.length
-        const children = el.inlineTemplate ? null : genChildren(el, state, true)
+        const newChid: any = el.children[0]
+        newChid.nodeFuncName = 'r'
+        const children = el.inlineTemplate
+          ? null
+          : genChildren(newChid, state, true)
         const newIcLen = includeVector.length
         const newTiLen = importVector.length
 
@@ -431,7 +435,7 @@ function genForScopedSlot (key: string, el: any, state: CodegenState): string {
 }
 
 export function genChildren (
-  parent: ASTElement,
+  parent: any,
   state: CodegenState,
   checkSkip?: boolean,
   altGenElement?: Function,

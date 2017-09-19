@@ -32,7 +32,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
         ic: [],
         templates: []
       })
-      const ast = parse(c.template, p.store, options)
+      const ast = parse(`<div>${c.template}</div>`, p.store, options)
       return {
         asts: p.asts.concat({
           ast,
