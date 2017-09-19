@@ -27,7 +27,7 @@ yarn run dev
 
 # autorestart type check system
 ## brew install watch
-watch -t flow
+watch -t npm run flow
 
 # autorestart test
 ## yarn global add nodemon

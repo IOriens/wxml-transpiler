@@ -1,116 +1,12 @@
-<view class="weui-cells weui-cells_after-title">
-  <view class="weui-cell weui-cell_input">
-    <view class="weui-cell__hd">
-      <view class="weui-label">√ÇŒ©√¨√Ç√¢√ß√à√Ñ√¢√ä√£¬©</view>
+<!-- <view class="page-body-info"> -->
+  <!-- <block wx:if="{{src === ''}}">
+    <view class="image-plus image-plus-nb" bindtap="chooseVideo">
+      <view class="image-plus-horizontal"></view>
+      <view class="image-plus-vertical"></view>
     </view>
-    <view class="weui-cell__bd">
-      <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
-          <view class="weui-input">{{array.index1}}</view>
-        <view class="weui-input">{{array[index2]}}</view>
-      </picker>
-    </view>
-  </view>
-</view>
-
-<!-- if elif else -->
-<div wx:if="{{type === 'A'}}">A</div>
-<div wx:elif="{{type === 'B'}}">B</div>
-<div wx:elif="{{type === 'C'}}">C</div>
-<div wx:else>
-  not a/b/c
-  <div wx:if="{{type === 'a'}}">a</div>
-  <div wx:elif="{{type === 'b'}}">b</div>
-  <div wx:elif="{{type === 'c'}}">c</div>
-  <div wx:else>not a/b/c</div>
-</div>
-
-<!-- wx: for -->
-<view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="i">
-  <view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="j">
-    <view wx:if="{{i <= j}}">
-      {{i}} * {{j}} = {{i * j}}
-    </view>
-  </view>
-</view>
-
-
-<!-- Êï∞ÊçÆÁªëÂÆö -->
-<view>
-  <!-- ÁÆÄÂçïÁªëÂÆö -->
-  <view>
-    <!-- ÂÜÖÂÆπ -->
-    <view> {{ message }} </view>
-    <!-- ÁªÑ‰ª∂Â±ûÊÄß(ÈúÄË¶ÅÂú®ÂèåÂºïÂè∑‰πãÂÜÖ) -->
-    <view id="item-{{id}}"> </view>
-    <!-- ÊéßÂà∂Â±ûÊÄß(ÈúÄË¶ÅÂú®ÂèåÂºïÂè∑‰πãÂÜÖ) -->
-    <view wx:if="{{condition}}"> </view>
-    <!-- ÂÖ≥ÈîÆÂ≠ó(ÈúÄË¶ÅÂú®ÂèåÂºïÂè∑‰πãÂÜÖ) -->
-    <checkbox checked="{{false}}"> </checkbox>
-  </view>
-
-  <!-- ËøêÁÆó -->
-  <view>
-    <!-- ‰∏âÂÖÉËøêÁÆó -->
-    <view hidden="{{flag ? true : false}}"> Hidden </view>
-    <!-- ÁÆóÊï∞ËøêÁÆó -->
-    <view> {{a + b}} + {{c}} + d </view>
-    <!-- ÈÄªËæëÂà§Êñ≠ -->
-    <view wx:if="{{length > 5}}"> </view>
-    <!-- Â≠óÁ¨¶‰∏≤ËøêÁÆó -->
-    <view>{{"hello" + name}}</view>
-    <!-- Êï∞ÊçÆË∑ØÂæÑËøêÁÆó -->
-    <view>{{object.key}} {{array[0]}}</view>
-  </view>
-
-  <!-- ÁªÑÂêà -->
-  <view>
-    <!-- Êï∞ÁªÑ -->
-    <view wx:for="{{[zero, 1, 2, 3, 4]}}"> {{item}} </view>
-    <!-- ÂØπË±° -->
-    <template is="objectCombine" data="{{for: a, bar: b}}"></template>
-  </view>
-
-</view>
-
-<!-- class -->
-<input class="weui-input a b c" bindinput="keychange"></input>
-
-<!-- bracket in bracket -->
-<text>fff{{text}}/\{{'ffff{{fff2}}'}}</text>
-
-<!-- children -->
-<modal title="{{dialog.title}}" hidden="{{dialog.hidden}}" bindconfirm="confirm">{{dialog.content}}</modal>
-
-<!-- include -->
-<view>
-  <!-- include in if else -->
-  <view wx:if="{{a == 1}}">
-    <include src="../../../common/foot4.wxml" />
-  </view>
-
-  <!-- normal include -->
-  <include src="../../../common/foot4.wxml" />
-
-  <!-- include with if else -->
-  <include wx:if="{{a == 1 }}" src="../../../common/foot5.wxml" />
-  <include wx:elif="{{a == 2 }}" src="../../../common/foot6.wxml" />
-  <include wx:else src="../../../common/foot7.wxml" />
-</view>
-
-<!-- import -->
-<view>
-  <!-- normal import -->
-  <import src="../../../common/head1.wxml" />
-
-  <!-- import with if -->
-  <import wx:if="{{a ==0}}" src="../../../common/head2.wxml" />
-
-  <!-- import in for -->
-  <div wx:for="kjljlj">
-    <import src="../../../common/head{{item}}.wxml" />
-  </div>
-</view>
-
-<!-- template, obj in attrs-->
-<import src="../../../common/head.wxml" />
-<template is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" />
+    <view class="image-plus-text">添加视频</view>
+  </block> -->
+  <block wx:if="{{src != ''}}">
+    <video src="{{src}}" class="video"></video>
+  </block>
+<!-- </view> -->

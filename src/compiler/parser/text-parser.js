@@ -16,12 +16,30 @@ const buildRegex = cached(delimiters => {
 
 const escapeTxt = function (str) {
   const map = [
-    { ori: /"/g, n: '\\x22' },
-    { ori: /'/g, n: '\\x27' },
-    { ori: /\\/g, n: '\\x5c' },
-    { ori: /\n/g, n: '\\n' },
-    { ori: /=/g, n: '\\x3d' },
-    { ori: /&/g, n: '\\x26' }
+    {
+      ori: /"/g,
+      n: '\\x22'
+    },
+    {
+      ori: /'/g,
+      n: '\\x27'
+    },
+    {
+      ori: /\\/g,
+      n: '\\x5c'
+    },
+    {
+      ori: /\n/g,
+      n: '\\n'
+    },
+    {
+      ori: /=/g,
+      n: '\\x3d'
+    },
+    {
+      ori: /&/g,
+      n: '\\x26'
+    }
   ]
   map.forEach(v => (str = str.replace(v.ori, v.n)))
   return str
@@ -65,134 +83,125 @@ export function parseText (
 }
 
 export function walk (node: BabylonNode | void, isStatic?: boolean): string {
+  function throwErr (node) {
+    throw new Error(`No Match Case in ${node.type}`)
+  }
   if (node) {
-    let res = 'Unknown Type'
     switch (node.type) {
       case 'File':
-        res = walk(node.program)
-        break
+        return walk(node.program)
       case 'Program':
         if (node.directives && node.directives.length === 1) {
           // directive string
-          res = walk(node.directives[0])
-          break
+          return walk(node.directives[0])
         } else if (node.body && node.body.length === 1) {
           // normal expresiions
-          res = walk(node.body[0])
-          break
+          return walk(node.body[0])
         } else {
-          res = `Error in ${node.type}`
+          throwErr(node)
         }
-      case 'ExpressionStatement':
-        res = walk(node.expression)
         break
+      case 'ExpressionStatement':
+        return walk(node.expression)
       case 'Identifier':
-        if (node.name) {
+        if (node.name != null) {
           if (isStatic) {
-            res = `[3, "${node.name}"]`
+            return `[3, "${node.name}"]`
           } else {
-            res = `[[7],[3, "${node.name}"]]`
+            return `[[7],[3, "${node.name}"]]`
           }
-          break
         } else {
-          res = `Prop Lost in ${node.type}`
+          throwErr(node)
         }
-      // case 'Literal':
-      //   if (node.raw) res = `[1, ${node.raw}]`
-      //   break
+        break
       case 'NumericLiteral':
       case 'BooleanLiteral':
       case 'RegExpLiteral':
-        if (node.value) {
-          res = `[1, ${node.value}]`
-          break
+        if (node.value != null) {
+          return `[1, ${node.value}]`
         } else {
-          res = `Prop Lost in ${node.type}`
+          throwErr(node)
         }
+        break
       case 'DirectiveLiteral':
       case 'StringLiteral':
-        if (node.value) {
-          res = `[1, "${node.value}"]`
-          break
+        if (node.value != null) {
+          return `[1, "${node.value}"]`
         } else {
-          res = `Prop Lost in ${node.type}`
+          throwErr(node)
         }
-      case 'NullLiteral':
-        res = `[1, false]`
         break
+      case 'NullLiteral':
+        return `[1, false]`
       case 'LabeledStatement':
         if (node.label && node.body) {
-          res = `[[8],"${node.label.name || 'no name error'}", ${walk(node.body.expression)}]`
-          break
+          return `[[8],"${node.label.name || 'no name error'}", ${walk(node.body.expression)}]`
+        } else {
+          throwErr(node)
         }
-      case 'MemberExpression':
-        res = `[[6],${walk(node.object)},${walk(node.property, !node.computed)}]`
         break
+      case 'MemberExpression':
+        return `[[6],${walk(node.object)},${walk(node.property, !node.computed)}]`
       case 'BinaryExpression':
         if (node.operator) {
-          res = `[[2, "${node.operator}"], ${walk(node.left)}, ${walk(node.right)}]`
-          break
+          return `[[2, "${node.operator}"], ${walk(node.left)}, ${walk(node.right)}]`
         } else {
-          res = `Prop Lost in ${node.type}`
+          throwErr(node)
         }
+        break
       case 'LogicalExpression':
         if (node.operator && node.left) {
-          res = `[[2, "${node.operator}"],${walk(node.left)},${walk(node.right)}]`
-          break
+          return `[[2, "${node.operator}"],${walk(node.left)},${walk(node.right)}]`
         } else {
-          res = `Prop Lost in ${node.type}`
+          throwErr(node)
         }
+        break
       case 'UnaryExpression':
         if (node.operator) {
-          res = `[[2, "${node.operator}"], ${walk(node.argument)}]`
-          break
+          return `[[2, "${node.operator}"], ${walk(node.argument)}]`
         } else {
-          res = `Prop Lost in ${node.type}`
+          throwErr(node)
         }
+        break
       case 'ArrayExpression':
         if (node.elements) {
-          res = `[[4], ${node.elements.reduce((p, c) => `[[5], ${p} ${p && ','} ${walk(c)}]`, '')}]`
-          break
+          return `[[4], ${node.elements.reduce((p, c) => `[[5], ${p} ${p && ','} ${walk(c)}]`, '')}]`
         } else {
-          res = `Prop Lost in ${node.type}`
+          throwErr(node)
         }
+        break
       case 'SpreadProperty':
-        res = `[[10], ${walk(node.argument)}]`
-        break
+        return `[[10], ${walk(node.argument)}]`
       case 'ConditionalExpression':
-        res = `[[2,'?:'],${walk(node.test)},${walk(node.consequent)},${walk(node.alternate)}]`
-        break
+        return `[[2,'?:'],${walk(node.test)},${walk(node.consequent)},${walk(node.alternate)}]`
       case 'ObjectExpression':
-        if (node.properties) {
+        if (node.properties != null) {
           if (node.properties.length === 1) {
             return node.properties.map(prop => walk(prop)).join(',')
           } else {
-            res = `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]`
+            return `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]`
           }
-          break
         } else {
-          res = `Prop Lost in ${node.type}`
+          throwErr(node)
         }
-      case 'Directive':
-        res = walk(node.value)
         break
+      case 'Directive':
+        return walk(node.value)
       case 'ObjectProperty':
-        // case 'Property':
-        if (node.key) {
-          if (node.value && typeof node.value === 'object') {
-            res = `[[8], "${node.key.name || 'no name error'}", ${walk(node.value)}]`
-            break
+        if (node.key != null) {
+          if (node.value != null && typeof node.value === 'object') {
+            return `[[8], "${node.key.name || 'no name error'}", ${walk(node.value)}]`
           }
         } else {
-          res = `Prop Lost in ${node.type}`
+          throwErr(node)
         }
+        break
       case 'AssignmentExpression':
-        console.log(node)
-        res = `assignment in wrong place`
+        return `assignment in wrong place`
       default:
-        throw new Error((res = `${res}: ${node.type}`))
+        throw new Error(`Unknown Type: ${node.type}`)
     }
-    return res
+    return `Unknown Type: ${node.type}`
   } else {
     return ''
   }
@@ -200,9 +209,6 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
 
 export function walkExp (ast: Object, type: number): string {
   if (type === 0) {
-    // if (ast.program.body[0].expression) {
-    //   return walk(ast.program.body[0].expression)
-    // } else if (ast.program.body[0]) return walk(ast.program.body[0])
     return walk(ast)
   } else if (type === 1) {
     return walk(ast.program.body[0].expression.right)
