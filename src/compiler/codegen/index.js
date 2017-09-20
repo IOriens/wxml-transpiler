@@ -133,11 +133,12 @@ export function genElement (el: ASTElement, state: CodegenState): string {
         const importVector = codeInfo.ti
         const oldIcLen = includeVector.length
         const oldTiLen = importVector.length
-        const newChid: any = el.children[0]
-        newChid.nodeFuncName = 'r'
+        const newRootEle: any = el.children[0]
+        newRootEle.nodeFuncName = 'r'
+        newRootEle.importFuncName = importFuncName
         const children = el.inlineTemplate
           ? null
-          : genChildren(newChid, state, true)
+          : genChildren(newRootEle, state, true)
         const newIcLen = includeVector.length
         const newTiLen = importVector.length
 
