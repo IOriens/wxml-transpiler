@@ -32,10 +32,10 @@ const escapeTxt = function (str) {
       ori: /'/g,
       n: '\\x27'
     },
-    // {
-    //   ori: /\n/g,
-    //   n: '\\n'
-    // },
+    {
+      ori: /\n/g, // multiline to oneline
+      n: '\\n'
+    },
     {
       ori: /=/g,
       n: '\\x3d'

@@ -361,7 +361,7 @@ function processFor (el) {
       el.key = exp
       pushProp(exp)
     } else {
-      el.key = 'index'
+      el.key = ''
     }
   }
 }
