@@ -17,6 +17,14 @@ const buildRegex = cached(delimiters => {
 const escapeTxt = function (str) {
   const map = [
     {
+      ori: /(\\)([^nrt])/g,
+      n: '\\x5c$2'
+    },
+    {
+      ori: /\\$/g,
+      n: '\\x5c'
+    },
+    {
       ori: /"/g,
       n: '\\x22'
     },
@@ -24,14 +32,10 @@ const escapeTxt = function (str) {
       ori: /'/g,
       n: '\\x27'
     },
-    {
-      ori: /\\/g,
-      n: '\\x5c'
-    },
-    {
-      ori: /\n/g,
-      n: '\\n'
-    },
+    // {
+    //   ori: /\n/g,
+    //   n: '\\n'
+    // },
     {
       ori: /=/g,
       n: '\\x3d'

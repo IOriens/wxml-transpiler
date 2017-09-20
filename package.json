@@ -1,6 +1,6 @@
 {
   "name": "wxml-transpiler",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "wxml transpiler",
   "main": "packages/wxml-transpiler/index.js",
   "typings": "types/index.d.ts",
@@ -15,6 +15,7 @@
     "dev:compiler": "rollup -w -c build/config.js --environment TARGET:web-compiler ",
     "build": "node build/build.js",
     "test": "node test/test.js",
+    "autotest": "nodemon test/test -w packages/wxml-transpiler -w test/test.js -w test/pages -e js,wxml -V -d 2000ms",
     "test:types": "tsc -p ./types/test/tsconfig.json",
     "lint": "eslint src build test",
     "flow": "flow check",
