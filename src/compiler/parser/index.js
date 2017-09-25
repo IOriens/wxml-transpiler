@@ -23,7 +23,6 @@ export const dirRE = /^v-|^@|^:/
 // ({{object name|array|expression}})|string
 export const tplBracket = /(?:{{\s*(.+)\s*}}|(.+))/
 
-
 const decodeHTMLCached = cached(he.decode)
 
 // configurable state
@@ -166,7 +165,6 @@ export function parse (
         processAttrs(element)
       }
 
-
       // tree management
       if (!root.children.length) {
         root.children.push(element)
@@ -184,7 +182,6 @@ export function parse (
           root.children.push(element)
           currRoot = element
         }
-
       }
       if (currentParent && !element.forbidden) {
         if (element.elseif || element.else) {
@@ -227,6 +224,7 @@ export function parse (
     },
 
     chars (text: string) {
+      // parse text in tags
       if (!currentParent) {
         if (process.env.NODE_ENV !== 'production') {
           if (text === template) {
@@ -258,9 +256,12 @@ export function parse (
         if (
           !inVPre &&
           text !== ' ' &&
-          (expression = parseText(text, delimiters))
+          (expression = parseText(text, {
+            delimiters: delimiters,
+            inTag: true
+          }))
         ) {
-          pushProp(text)
+          pushProp(text, { inTag: true })
 
           children.push({
             type: 2,
@@ -325,7 +326,6 @@ function processKey (el) {
     el.key = exp
   }
 }
-
 
 function processFor (el) {
   if (el.tag === 'import') {
@@ -505,7 +505,7 @@ function processComponent (el) {
   }
   if ((data = getAndRemoveAttr(el, 'data'))) {
     el.data = data
-    pushProp(data, '', true)
+    pushProp(data, { wrapBracket: true })
   }
 }
 
@@ -519,10 +519,8 @@ function processAttrs (el) {
     pushProp(value)
 
     addAttr(el, name, value)
-
   }
 }
-
 
 function makeAttrsMap (attrs: Array<Object>): Object {
   const map = {}
@@ -569,12 +567,24 @@ function guardIESVGBug (attrs) {
   return res
 }
 
-function pushProp (exp: string, optExp?: string, wrapBracket?: boolean) {
-
+function pushProp (
+  exp: string,
+  opt?: { optExp?: string, wrapBracket?: boolean, inTag?: boolean }
+) {
   if (propStore.map[exp] == null) {
     if (exp) {
       propStore.map[exp] = propStore.props.length
-      propStore.props.push(parseText(optExp || exp, void 0, wrapBracket))
+      propStore.props.push(
+        parseText(
+          (opt && opt.optExp) || exp,
+          {
+            wrapBracket: opt && opt.wrapBracket,
+            inTag: opt && opt.inTag
+          }
+          // opt && ,
+          // opt &&
+        )
+      )
     } else {
       propStore.map[exp] = -1
     }

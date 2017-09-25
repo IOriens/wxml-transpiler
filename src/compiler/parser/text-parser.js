@@ -17,7 +17,7 @@ const buildRegex = cached(delimiters => {
 const escapeTxt = function (str) {
   const map = [
     {
-      ori: /(\\)([^nrt])/g,
+      ori: /(\\)([^nrt\\])/g,
       n: '\\x5c$2'
     },
     {
@@ -51,11 +51,15 @@ const escapeTxt = function (str) {
 
 export function parseText (
   text: string,
-  delimiters?: [string, string],
-  wrapBracket?: boolean
+  opt?: {
+    delimiters?: [string, string],
+    wrapBracket?: boolean,
+    inTag?: boolean,
+  }
 ): string | void {
-  // const tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE
-  const tagRE = delimiters ? buildRegex(delimiters) : bracketInBracketTagRE
+  const tagRE = opt && opt.delimiters
+    ? buildRegex(opt.delimiters)
+    : bracketInBracketTagRE
 
   if (!tagRE.test(text)) {
     return `[3, '${escapeTxt(text)}']`
@@ -71,7 +75,7 @@ export function parseText (
     }
     // tag token
     const txt = match[1].trim()
-    const exp = parseExp(txt, wrapBracket) || ''
+    const exp = parseExp(txt, opt && opt.wrapBracket) || ''
     tokens.push(exp)
     lastIndex = index + match[0].length
   }
@@ -79,7 +83,7 @@ export function parseText (
     tokens.push(`[3, '${escapeTxt(text.slice(lastIndex))}']`)
   }
 
-  if (tokens.length > 1) {
+  if (tokens.length > 1 || opt && opt.inTag) {
     return `[a, ${tokens.join(',')}]`
   } else {
     return tokens.join('')

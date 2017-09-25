@@ -1,23 +1,21 @@
 /* @flow */
 
 import { parseText } from 'compiler/parser/text-parser'
-import {
-  getAndRemoveAttr,
-  getBindingAttr,
-  baseWarn
-} from 'compiler/helpers'
+import { getAndRemoveAttr, getBindingAttr, baseWarn } from 'compiler/helpers'
 
 function transformNode (el: ASTElement, options: CompilerOptions) {
   const warn = options.warn || baseWarn
   const staticClass = getAndRemoveAttr(el, 'class')
   if (process.env.NODE_ENV !== 'production' && staticClass) {
-    const expression = parseText(staticClass, options.delimiters)
+    const expression = parseText(staticClass, {
+      delimiters: options.delimiters
+    })
     if (expression) {
       warn(
         `class="${staticClass}": ` +
-        'Interpolation inside attributes has been removed. ' +
-        'Use v-bind or the colon shorthand instead. For example, ' +
-        'instead of <div class="{{ val }}">, use <div :class="val">.'
+          'Interpolation inside attributes has been removed. ' +
+          'Use v-bind or the colon shorthand instead. For example, ' +
+          'instead of <div class="{{ val }}">, use <div :class="val">.'
       )
     }
   }

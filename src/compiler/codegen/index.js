@@ -134,11 +134,11 @@ export function genElement (el: ASTElement, state: CodegenState): string {
         const oldIcLen = includeVector.length
         const oldTiLen = importVector.length
         if (!isTemplateWithName) {
-          var newRootEle:any = el.children[0]
+          var newRootEle: any = el.children[0]
           newRootEle.nodeFuncName = 'r'
           newRootEle.importFuncName = importFuncName
         } else {
-          var newRootEle:any = el
+          var newRootEle: any = el
         }
 
         const children = el.inlineTemplate
@@ -373,12 +373,13 @@ export function genFor (
     ? ''
     : `_(${returnNodeName}, ${childnodeFuncName});`
 
-  const code = `var ${parentnodeFuncName} = _v();
-  var ${forFuncId} = function (${newEnv},${newScope},${returnNodeName},gg) {
-    ${icTop}${children}${icBottom}${cantainEle}
-    return ${returnNodeName};
-  };
-  _2(${propStore.map[exp]}, ${forFuncId}, ${oldEnv}, ${oldScope}, gg, ${parentnodeFuncName}, "${el.alias}", "${el.iterator1}", '${el.key || ''}');`
+  const code =
+    `var ${parentnodeFuncName} = _v();` +
+    `var ${forFuncId} = function(${newEnv},${newScope},${returnNodeName},gg){` +
+    `${icTop}${children}${icBottom}${cantainEle}` +
+    `return ${returnNodeName};` +
+    '};' +
+    `_2(${propStore.map[exp]}, ${forFuncId}, ${oldEnv}, ${oldScope}, gg, ${parentnodeFuncName}, "${el.alias}", "${el.iterator1}", '${el.key || ''}');`
   return code
 }
 
@@ -462,9 +463,9 @@ export function genChildren (
         ) {
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}`
         } else if (parent.tag === 'block') {
-          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_(${parent.blockFuncName || 'error'},${nodeFuncName || 'error'});`
+          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}_(${parent.blockFuncName || 'error'},${nodeFuncName || 'error'});`
         } else {
-          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)};_(${parent.nodeFuncName || 'error'},${nodeFuncName});`
+          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}_(${parent.nodeFuncName || 'error'},${nodeFuncName});`
         }
       })
       .join('')

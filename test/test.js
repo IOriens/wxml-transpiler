@@ -9,6 +9,7 @@ const fileList = ['./pages/index/index.wxml']
 const srcFiles = fileList.reverse()
 const distDir = resolve(__dirname, './dist')
 const vueDist = resolve(distDir, 'test.vue.dist.js')
+const vueOriDist = resolve(distDir, 'test.vue.ori.dist.js')
 const wccDist = resolve(distDir, 'test.wcc.dist.js')
 const wccOriDist = resolve(distDir, 'test.wcc.ori.dist.js')
 const diffDist = resolve(distDir, 'vue-wcc.diff')
@@ -30,7 +31,7 @@ if (!fs.existsSync(distDir)){
 
 const vueRes = compiler.compile(files)
 console.log(vueRes.tags)
-fs.writeFileSync(vueDist, vueRes.render, 'utf8')
+fs.writeFileSync(vueOriDist, vueRes.render, 'utf8')
 
 exec(
   `cd ${__dirname} && ${resolve(__dirname, './lib/wcc')} -b ${srcFiles.join(' ')}`,

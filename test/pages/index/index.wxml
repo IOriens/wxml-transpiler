@@ -1,72 +1,102 @@
-<view class="navbar">
-  <view class="navbar-item" wx:for="{{navbar}}" wx:for-index="idx" data-idx="{{idx}}" bindtap="swichNav">
-    <text class="navbar-text {{currentNavbar==idx ? 'active' : ''}}">{{item}}</text>
+<!-- if elif else -->
+<!-- <div wx:if="{{type === 'A'}}">A</div>
+<div wx:elif="{{type === 'B'}}">B</div>
+<div wx:elif="{{type === 'C'}}">C</div>
+<div wx:else>
+  not a/b/c
+  <div wx:if="{{type === 'a'}}">a</div>
+  <div wx:elif="{{type === 'b'}}">b</div>
+  <div wx:elif="{{type === 'c'}}">c</div>
+  <div wx:else>not a/b/c</div>
+</div> -->
+
+<!-- wx: for -->
+<!-- <view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="i">
+  <view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="j">
+    <view wx:if="{{i <= j}}">
+      {{i}} * {{j}} = {{i * j}}
+    </view>
   </view>
+</view> -->
+
+
+<!-- 数据绑定 -->
+<view>
+  <!-- 简单绑定 -->
+  <view>
+    <!-- 内容 -->
+    <view> {{ message }} </view>
+    <!-- 组件属性(需要在双引号之内) -->
+    <view id="item-{{id}}"> </view>
+    <!-- 控制属性(需要在双引号之内) -->
+    <view wx:if="{{condition}}"> </view>
+    <!-- 关键字(需要在双引号之内) -->
+    <checkbox checked="{{false}}"> </checkbox>
+  </view>
+
+  <!-- 运算 -->
+  <view>
+    <!-- 三元运算 -->
+    <view hidden="{{flag ? true : false}}"> Hidden </view>
+    <!-- 算数运算 -->
+    <view> {{a + b}} + {{c}} + d </view>
+    <!-- 逻辑判断 -->
+    <view wx:if="{{length > 5}}"> </view>
+    <!-- 字符串运算 -->
+    <view>{{"hello" + name}}</view>
+    <!-- 数据路径运算 -->
+    <view>{{object.key}} {{array[0]}}</view>
+  </view>
+
+  <!-- 组合 -->
+  <view>
+    <!-- 数组 -->
+    <view wx:for="{{[zero, 1, 2, 3, 4]}}"> {{item}} </view>
+    <!-- 对象 -->
+    <template is="objectCombine" data="{{for: a, bar: b}}"></template>
+  </view>
+
 </view>
 
-<!-- 推荐 -->
-<scroll-view class="hot-item-container {{currentNavbar==0 ? '' : 'hidden'}}" style="height: {{systemInfo.windowHeight}}px;"
-  scroll-y="true" bindscrolltolower="pullUpLoad">
-  <swiper indicator-dots="true" autoplay="true" interval="4000" duration="600"
-    style="height:{{systemInfo.windowWidth/2}}px">
-    <block wx:for="{{swipers}}">
-      <swiper-item>
-        <image src="{{item.pic}}" class="slide-image" width="750"/>
-      </swiper-item>
-    </block>
-  </swiper>
+<!-- class -->
+<input class="weui-input a b c" bindinput="keychange"></input>
 
-  <view class="line-text">
-    编辑推荐
+<!-- bracket in bracket -->
+<text>fff{{text}}/\\\{{'ffff{{fff2}}'}}</text>
+
+<!-- children -->
+<modal title="{{dialog.title}}" hidden="{{dialog.hidden}}" bindconfirm="confirm">{{dialog.content}}</modal>
+
+<!-- include -->
+<view>
+  <!-- include in if else -->
+  <view wx:if="{{a == 1}}">
+    <include src="../../../common/foot4.wxml" />
   </view>
 
-  <block wx:for="{{list}}">
-    <view class="hot-item">
-      <view class="image-container" data-row-id="{{item.row_id}}" bindtap="onItemClick">
-        <image src="{{_api.HOST_WORK+item.pic.pid}}!app.c540.webp"
-          mode="scaleToFill" class="hot-image"
-          style="width:{{systemInfo.windowWidth}}px;height:{{systemInfo.windowWidth}}px">
-        </image>
-        <view class="item-mask">
-          <text class="hot-item-title">{{item.name}}</text>
-          <text class="hot-item-category">{{item.category}}{{item.size_label?' / '+item.size_label:''}}{{item.times?' / '+item.times:''}}</text>
-        </view>
-      </view>
+  <!-- normal include -->
+  <include src="../../../common/foot4.wxml" />
 
-      <view class="hot-item-desc">
-        <image src="{{_api.HOST_HEAD+item.user.uid}}/180" class="hot-head-image"></image>
-        <view class="hot-item-detail">
-          <text class="hot-item-username">{{item.name}}</text>
-          <view class="hot-location">
-            <image src="../../images/location.png" class="hot-location-icon"></image>
-            {{item.user.city}}
-          </view>
-        </view>
-        <view class="hot-item-like">
-          <image src="../../images/like.png" class="hot-like-icon"></image>
-          {{item.num_liked}}
-        </view>
-      </view>
-    </view>
-  </block>
-</scroll-view>
+  <!-- include with if else -->
+  <include wx:if="{{a == 1 }}" src="../../../common/foot5.wxml" />
+  <include wx:elif="{{a == 2 }}" src="../../../common/foot6.wxml" />
+  <include wx:else src="../../../common/foot7.wxml" />
+</view>
 
-<!-- 最新 -->
-<scroll-view class="latest-item-container {{currentNavbar==1 ? '' : 'hidden'}}" style="height: {{systemInfo.windowHeight}}px;" scroll-y="true" bindscrolltolower="pullUpLoadLatest">
-  <block wx:for="{{latest_list}}" wx:for-index="idx">
-    <view wx:if="{{idx%3===0}}" class="latest-item">
-      <image src="{{_api.HOST_WORK+latest_list[idx].pic.pid}}!app.c360.webp" class="latest-image"
-        data-row-id="{{latest_list[idx].row_id}}" bindtap="onItemClick"
-        style="width:{{(systemInfo.windowWidth-2)/3}}px;height:{{(systemInfo.windowWidth-2)/3}}px;" mode="scaleToFill">
-      </image>
-      <image src="{{_api.HOST_WORK+latest_list[idx+1].pic.pid}}!app.c360.webp" class="latest-image"
-        data-row-id="{{latest_list[idx+1].row_id}}" bindtap="onItemClick"
-        style="width:{{(systemInfo.windowWidth-2)/3}}px;height:{{(systemInfo.windowWidth-2)/3}}px;" mode="scaleToFill">
-      </image>
-      <image src="{{_api.HOST_WORK+latest_list[idx+2].pic.pid}}!app.c360.webp" class="latest-image"
-        data-row-id="{{latest_list[idx+2].row_id}}" bindtap="onItemClick"
-        style="width:{{(systemInfo.windowWidth-2)/3}}px;height:{{(systemInfo.windowWidth-2)/3}}px;" mode="scaleToFill">
-      </image>
-    </view>
-  </block>
-</scroll-view>
+<!-- import -->
+<view>
+  <!-- normal import -->
+  <import src="../../../common/head1.wxml" />
+
+  <!-- import with if -->
+  <import wx:if="{{a ==0}}" src="../../../common/head2.wxml" />
+
+  <!-- import in for -->
+  <div wx:for="kjljlj">
+    <import src="../../../common/head{{item}}.wxml" />
+  </div>
+</view>
+
+<!-- template, obj in attrs-->
+<import src="../../../common/head.wxml" />
+<template is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" />

@@ -2,11 +2,7 @@
 
 import { parseText } from 'compiler/parser/text-parser'
 import { parseStyleText } from 'web/util/style'
-import {
-  getAndRemoveAttr,
-  getBindingAttr,
-  baseWarn
-} from 'compiler/helpers'
+import { getAndRemoveAttr, getBindingAttr, baseWarn } from 'compiler/helpers'
 
 function transformNode (el: ASTElement, options: CompilerOptions) {
   const warn = options.warn || baseWarn
@@ -14,13 +10,15 @@ function transformNode (el: ASTElement, options: CompilerOptions) {
   if (staticStyle) {
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production') {
-      const expression = parseText(staticStyle, options.delimiters)
+      const expression = parseText(staticStyle, {
+        delimiters: options.delimiters
+      })
       if (expression) {
         warn(
           `style="${staticStyle}": ` +
-          'Interpolation inside attributes has been removed. ' +
-          'Use v-bind or the colon shorthand instead. For example, ' +
-          'instead of <div style="{{ val }}">, use <div :style="val">.'
+            'Interpolation inside attributes has been removed. ' +
+            'Use v-bind or the colon shorthand instead. For example, ' +
+            'instead of <div style="{{ val }}">, use <div :style="val">.'
         )
       }
     }

@@ -59,10 +59,10 @@
 </view>
 
 <!-- class -->
-<input class="weui-input a b c" bindinput="keychange"></input>
+<input class="weui-iut a b c" bindinput="keychange"></input>
 
 <!-- bracket in bracket -->
-<text>fff{{text}}/\\\{{'ffff{{fff2}}'}}</text>
+<text>{{text}}</text>
 
 <!-- children -->
 <modal title="{{dialog.title}}" hidden="{{dialog.hidden}}" bindconfirm="confirm">{{dialog.content}}</modal>
@@ -70,7 +70,7 @@
 <!-- include -->
 <view>
   <!-- include in if else -->
-  <view wx:if="{{a = 1}}">
+  <view wx:if="{{a == 1}}">
     <include src="../../../common/foot4.wxml" />
   </view>
 
