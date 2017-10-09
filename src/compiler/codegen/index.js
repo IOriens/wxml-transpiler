@@ -37,7 +37,7 @@ export class CodegenState {
 }
 
 function camelizeAttr (attr) {
-  if (attr.indexOf('data-') == 0) return attr
+  if (attr.substring(0, 5) === 'data-') return attr
   else return camelize(attr)
 }
 
@@ -176,7 +176,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
           code = `var ${el.nodeFuncName || 'nodeFuncName error2'} = _n("${el.tag}");`
           const propPos = propStore.map[attr.value]
           if (propPos < 0) {
-            code += `${el.nodeFuncName || 'nodeFuncName error3'}.attr['${camelizeAttr(attr.name)}'] = true`
+            code += `${el.nodeFuncName || 'nodeFuncName error3'}.attr['${camelizeAttr(attr.name)}'] = true;`
           } else {
             code += `_r(${el.nodeFuncName || 'nodeFuncName error3'}, '${camelizeAttr(attr.name)}', ${propStore.map[attr.value]}, ${env}, ${scope}, gg);${children ? `${children}` : ''}`
           }
