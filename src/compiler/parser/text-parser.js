@@ -83,7 +83,7 @@ export function parseText (
     tokens.push(`[3, '${escapeTxt(text.slice(lastIndex))}']`)
   }
 
-  if (tokens.length > 1 || opt && opt.inTag) {
+  if (tokens.length > 1 || (opt && opt.inTag)) {
     return `[a, ${tokens.join(',')}]`
   } else {
     return tokens.join('')
@@ -187,7 +187,16 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
           if (node.properties.length === 1) {
             return node.properties.map(prop => walk(prop)).join(',')
           } else {
-            return `[[9], ${node.properties.map(prop => walk(prop)).join(',')}]`
+            let res = ''
+            const props = node.properties || []
+            res = `[[9], ${props
+              .slice(0, 2)
+              .map(prop => walk(prop))
+              .join(',')}]`
+            for (let i = 2, len = props.length; i < len; i++) {
+              res = `[[9], ${res}, ${walk(props[i])}]`
+            }
+            return res
           }
         } else {
           throwErr(node)
