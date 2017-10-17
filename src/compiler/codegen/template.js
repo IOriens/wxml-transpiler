@@ -2,6 +2,7 @@ export function genTemplate(slot) {
   return (
     `/*v0.6vv_20170214_fbi*/
 window.__wcc_version__='v0.6vv_20170214_fbi'
+window.__wxml_transpiler_version__='v0.1'
 var $gwxc
 var $gaic={}
 $gwx=function(path,global){

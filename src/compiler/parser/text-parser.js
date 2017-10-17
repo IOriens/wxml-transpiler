@@ -37,6 +37,10 @@ const escapeTxt = function (str) {
       n: '\\n'
     },
     {
+      ori: /\r/g,
+      n: '\\r'
+    },
+    {
       ori: /=/g,
       n: '\\x3d'
     },
