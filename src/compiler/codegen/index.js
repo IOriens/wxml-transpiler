@@ -113,7 +113,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
   } else if (el.tag === 'template' && !el.name) {
     return genTemplateCaller(el, state)
   } else if (el.tag === 'block') {
-    return genChildren(el, state) || 'GenChild Error'
+    return genChildren(el, state) || ''
   } else if (el.tag === 'include') {
     return genInclude(el, state)
   } else if (el.tag === 'import') {
