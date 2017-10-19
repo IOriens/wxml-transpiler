@@ -504,7 +504,7 @@ function processComponent (el) {
     }
   }
   if ((data = getAndRemoveAttr(el, 'data'))) {
-    el.data = data
+    el.data = data + 'is'
     pushProp(data, { wrapBracket: true })
   }
 }
@@ -571,9 +571,10 @@ function pushProp (
   exp: string,
   opt?: { optExp?: string, wrapBracket?: boolean, inTag?: boolean }
 ) {
-  if (propStore.map[exp] == null) {
+  const key = exp + (opt && opt.wrapBracket ? 'is' : '')
+  if (propStore.map[key] == null) {
     if (exp) {
-      propStore.map[exp] = propStore.props.length
+      propStore.map[key] = propStore.props.length
       propStore.props.push(
         parseText(
           (opt && opt.optExp) || exp,
@@ -586,7 +587,7 @@ function pushProp (
         )
       )
     } else {
-      propStore.map[exp] = -1
+      propStore.map[key] = -1
     }
   }
 }
