@@ -25,20 +25,32 @@ export const createCompiler = createCompilerCreator(function baseCompile (
     asts: Array<{ path: string, ast: ASTElement }>,
     store: Store,
   } = templates.reduce(
-    (p, c) => {
-      p.store.codeInfoMap.push({
-        path: c.path,
+    (codeInfos, template) => {
+      codeInfos.store.codeInfoMap.push({
+        path: template.path,
         ti: [],
         ic: [],
         templates: []
       })
-      const ast = parse(`<div>${c.template}</div>`, p.store, options)
-      return {
-        asts: p.asts.concat({
+
+      try {
+        const ast = parse(
+          `<div>${template.template}</div>`,
+          codeInfos.store,
+          options
+        )
+        codeInfos.asts.concat({
           ast,
-          path: c.path
-        }),
-        store: p.store
+          path: template.path
+        })
+      } catch (e) {
+        console.error(e.name, e.message)
+        console.error(`When Parsing: ${template.path}`)
+        process.exit(1)
+      }
+      return {
+        asts: codeInfos.asts,
+        store: codeInfos.store
       }
     },
     {
@@ -57,17 +69,24 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   program.asts.map(ast => optimize(ast.ast, options))
 
   const code = program.asts
-    .map(
-      (ast, idx) =>
-        `${generate(ast.ast, program.store, idx, options).render}
-      e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[${program.store.codeInfoMap[idx].ti
-          .map(ti => `"${ti}"`)
-          .join(
-            ','
-          )}],ic:[${program.store.codeInfoMap[idx].ic
-          .map(ic => `"${ic}"`)
-          .join(',')}]};`
-    )
+    .map((ast, idx) => {
+      let programBody = ''
+      try {
+        programBody = generate(ast.ast, program.store, idx, options).render
+      } catch (e) {
+        console.error(e)
+        console.error(`When Generating: ${ast.path}`)
+        process.exit(1)
+      }
+      const templateImportInfo = program.store.codeInfoMap[idx].ti
+        .map(ti => `"${ti}"`)
+        .join(',')
+      const templateIncludeInfo = program.store.codeInfoMap[idx].ic
+        .map(ic => `"${ic}"`)
+        .join(',')
+      return `${programBody}
+        e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[${templateImportInfo}],ic:[${templateIncludeInfo}]};`
+    })
     .join('')
 
   return {

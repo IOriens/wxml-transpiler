@@ -25,13 +25,9 @@ var files = srcFiles.map(path => ({
   template: fs.readFileSync(resolve(__dirname, path), 'utf-8')
 }))
 
-if (!fs.existsSync(distDir)){
-  fs.mkdirSync(distDir);
+if (!fs.existsSync(distDir)) {
+  fs.mkdirSync(distDir)
 }
-
-const vueRes = compiler.compile(files)
-console.log(vueRes.tags)
-fs.writeFileSync(vueOriDist, vueRes.render, 'utf8')
 
 exec(
   `cd ${__dirname} && ${resolve(__dirname, './lib/wcc')} -b ${srcFiles.join(' ')}`,
@@ -39,6 +35,9 @@ exec(
     if (err) throw err
     fs.writeFileSync(wccOriDist, wccRes, 'utf8')
     fs.writeFileSync(wccDist, prettier.format(wccRes, formatRule), 'utf8')
+    const vueRes = compiler.compile(files)
+    console.log(vueRes.tags)
+    fs.writeFileSync(vueOriDist, vueRes.render, 'utf8')
     fs.writeFileSync(
       vueDist,
       prettier.format(vueRes.render, formatRule),
