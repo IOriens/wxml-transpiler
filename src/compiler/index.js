@@ -66,7 +66,6 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   })(z);`
 
   program.asts.map(ast => optimize(ast.ast, options))
-  console.log(program.asts)
 
   const code = program.asts
     .map((ast, idx) => {
