@@ -1,2 +1,1 @@
-
-    <view wx:for="{{'jjj'}}" wx:ky="this"> {{this}} </view>
+<view wx:for="{{jj}}" wx:ky="{{this}}"> {{this}} </view>

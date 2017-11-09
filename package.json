@@ -1,6 +1,6 @@
 {
   "name": "wxml-transpiler",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "wxml transpiler",
   "main": "packages/wxml-transpiler/index.js",
   "typings": "types/index.d.ts",
@@ -24,7 +24,8 @@
     "release": "bash build/release.sh",
     "release:note": "node build/gen-release-note.js",
     "setup": "node build/install-hooks.js",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "precommit": "lint-staged"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,12 @@
     "wxml",
     "transpiler"
   ],
+  "lint-staged": {
+    "{*.js}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
   "author": "Junjie Ding",
   "license": "MIT",
   "bugs": {
@@ -62,6 +69,9 @@
     "es6-promise": "^4.1.0",
     "eslint": "^3.0.0",
     "eslint-loader": "^1.7.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.3.0",
+    "prettier-standard": "^7.0.3",
     "eslint-plugin-flowtype": "^2.34.0",
     "eslint-plugin-jasmine": "^2.2.0",
     "eslint-plugin-vue-libs": "^1.2.0",

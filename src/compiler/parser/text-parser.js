@@ -208,6 +208,8 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
         break
       case 'Directive':
         return walk(node.value)
+      case 'ThisExpression':
+        return `[[7], [3, 'this']]`
       case 'ObjectProperty':
         if (node.key != null) {
           if (node.value != null && typeof node.value === 'object') {

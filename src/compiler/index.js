@@ -6,7 +6,6 @@ import { generate } from './codegen/index'
 import { genTemplate } from './codegen/template'
 import { createCompilerCreator } from './create-compiler'
 
-
 // `createCompilerCreator` allows creating compilers that use alternative
 // parser/optimizer/codegen, e.g the SSR optimizing compiler.
 // Here we just export a default compiler using the default parts.
@@ -39,7 +38,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
           codeInfos.store,
           options
         )
-        codeInfos.asts.concat({
+        codeInfos.asts.push({
           ast,
           path: template.path
         })
@@ -67,6 +66,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   })(z);`
 
   program.asts.map(ast => optimize(ast.ast, options))
+  console.log(program.asts)
 
   const code = program.asts
     .map((ast, idx) => {
@@ -84,6 +84,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
       const templateIncludeInfo = program.store.codeInfoMap[idx].ic
         .map(ic => `"${ic}"`)
         .join(',')
+
       return `${programBody}
         e_["${ast.path}"]={f:m${idx},j:[],i:[],ti:[${templateImportInfo}],ic:[${templateIncludeInfo}]};`
     })
