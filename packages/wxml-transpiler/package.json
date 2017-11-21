@@ -1,6 +1,6 @@
 {
   "name": "wxml-transpiler",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "template compiler for wxml",
   "main": "index.js",
   "repository": {
@@ -20,8 +20,6 @@
   },
   "homepage": "https://github.com/IOriens/wxml-transpiler/tree/master/packages/wxml-transpiler",
   "dependencies": {
-    "he": "^1.1.0",
-    "de-indent": "^1.0.2",
     "babylon": "^6.18.0"
   }
 }

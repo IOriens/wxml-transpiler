@@ -44,6 +44,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
         })
       } catch (e) {
         console.error(e.name, e.message)
+        console.log(e)
         console.error(`When Parsing: ${template.path}`)
         process.exit(1)
       }

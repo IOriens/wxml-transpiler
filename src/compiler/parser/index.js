@@ -1,10 +1,10 @@
 /* @flow */
 
-import he from 'he'
+// import he from 'he'
 import { parseHTML } from './html-parser'
 import { parseText } from './text-parser'
 // import { parseFilters } from './filter-parser'
-import { cached, no } from 'shared/util'
+import { no } from 'shared/util'
 // import { genAssignmentCode } from '../directives/model'
 import { isIE, isEdge, isServerRendering } from 'core/util/env'
 
@@ -23,7 +23,7 @@ export const dirRE = /^v-|^@|^:/
 // ({{object name|array|expression}})|string
 export const tplBracket = /(?:{{\s*(.+)\s*}}|(.+))/
 
-const decodeHTMLCached = cached(he.decode)
+// const decodeHTMLCached = cached(he.decode)
 
 // configurable state
 export let warn
@@ -249,7 +249,7 @@ export function parse (
       const children = currentParent.children
       // only preserve whitespace if its not right after a starting tag
       text = inPre || text.trim()
-        ? isTextTag(currentParent) ? text : decodeHTMLCached(text)
+        ? text
         : preserveWhitespace && children.length ? ' ' : ''
       if (text) {
         let expression

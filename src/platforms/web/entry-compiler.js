@@ -1,6 +1,6 @@
 /* @flow */
 
-export { parseComponent } from 'sfc/parser'
+// export { parseComponent } from 'sfc/parser'
 import {compile} from './compiler/index'
 
 
