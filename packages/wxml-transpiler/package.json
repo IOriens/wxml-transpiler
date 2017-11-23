@@ -1,6 +1,6 @@
 {
   "name": "wxml-transpiler",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "template compiler for wxml",
   "main": "index.js",
   "repository": {

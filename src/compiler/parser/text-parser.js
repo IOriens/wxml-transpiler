@@ -29,6 +29,14 @@ const escapeTxt = function (str) {
       n: '\\x5c'
     },
     {
+      ori: /</g,
+      n: '\\x3c'
+    },
+    {
+      ori: />/g,
+      n: '\\x3e'
+    },
+    {
       ori: /"/g,
       n: '\\x22'
     },
