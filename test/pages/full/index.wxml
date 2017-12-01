@@ -74,8 +74,25 @@
     <include src="../../../common/foot4.wxml" />
   </view>
 
+  <!-- include in block -->
+  <block wx:if="{{a == 1}}">
+    <include src="../../../common/foot4.wxml" />
+  </block>
+  <block wx:else="{{a == 1}}">
+    <include src="../../../common/foot4.wxml" />
+  </block>
+  <block wx:for="kjljlj">
+    <include src="../../../common/foot4.wxml" />
+  </block>
+
+
   <!-- normal include -->
   <include src="../../../common/foot4.wxml" />
+
+  <!-- include in for -->
+  <div wx:for="kjljlj">
+    <include src="../../../common/foot4.wxml" />
+  </div>
 
   <!-- include with if else -->
   <include wx:if="{{a == 1 }}" src="../../../common/foot5.wxml" />
@@ -90,6 +107,15 @@
 
   <!-- import with if -->
   <import wx:if="{{a ==0}}" src="../../../common/head2.wxml" />
+
+
+  <!-- import in block -->
+  <block wx:if="{{a == 1}}">
+    <import src="../../../common/head1.wxml" />
+  </block>
+  <block wx:else="{{a == 1}}">
+    <import src="../../../common/head1.wxml" />
+  </block>
 
   <!-- import in for -->
   <div wx:for="kjljlj">

@@ -461,7 +461,11 @@ export function genChildren (
           (child.tag === 'import' && !child.if) ||
           (child.tag === 'template' && child.name && child.tmplProcessed)
         ) {
-          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}`
+          if (parent.tag === 'block') {
+            return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.blockFuncName, parent.importFuncName)}`
+          } else {
+            return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}`
+          }
         } else if (parent.tag === 'block') {
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}_(${parent.blockFuncName || 'error'},${nodeFuncName || 'error'});`
         } else {
@@ -507,7 +511,7 @@ export function genText (
 }
 
 export function genComment (comment: ASTText): string {
-  return `_e(${JSON.stringify(comment.text)})`
+  return `_e(${JSON.stringify(comment.text)});`
 }
 
 function genInclude (el: ASTElement, state: CodegenState) {
@@ -515,8 +519,7 @@ function genInclude (el: ASTElement, state: CodegenState) {
   if (el.include) {
     codeInfo.ic.push(el.include)
   }
-  return `
-  _ic("${el.include || 'src error'}",e_, "${codeInfo.path}",${el.env || 'e'},${el.scope || 's'},${el.blockFuncName || 'r'},gg);`
+  return `_ic("${el.include || 'src error'}",e_, "${codeInfo.path}",${el.env || 'e'},${el.scope || 's'},${el.blockFuncName || 'r'},gg);`
 }
 
 function genImport (el: ASTElement, state: CodegenState) {
@@ -534,7 +537,7 @@ function genComponent (
   state: CodegenState
 ): string {
   const children = el.inlineTemplate ? null : genChildren(el, state, true)
-  return `_m(${componentName},${genData(el, state)}${children ? `,${children}` : ''})`
+  return `_m(${componentName},${genData(el, state)}${children ? `,${children}` : ''});`
 }
 
 function genProps (props: Array<{ name: string, value: string }>): string {
