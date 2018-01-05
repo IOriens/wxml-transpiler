@@ -1,6 +1,6 @@
 {
   "name": "wxml-transpiler",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "wxml transpiler",
   "main": "packages/wxml-transpiler/index.js",
   "typings": "types/index.d.ts",

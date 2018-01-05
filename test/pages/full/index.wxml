@@ -126,3 +126,8 @@
 <!-- template, obj in attrs-->
 <import src="../../../common/head.wxml" />
 <template is="head" data="{{title: 'get/set/clearstorage', jkj: jjj}}" />
+
+<!-- block without if\else -->
+<view class="brand_price">参考价格:￥
+  <block>{{price}}</block>
+</view>

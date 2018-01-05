@@ -30,7 +30,7 @@ if (!fs.existsSync(distDir)) {
 }
 
 exec(
-  `cd ${__dirname} && ${resolve(__dirname, './lib/wcc-new')} -b ${srcFiles.join(' ')}`,
+  `cd ${__dirname} && ${resolve(__dirname, './lib/wcc')} -b ${srcFiles.join(' ')}`,
   (err, wccRes) => {
     if (err) throw err
     fs.writeFileSync(wccOriDist, wccRes, 'utf8')

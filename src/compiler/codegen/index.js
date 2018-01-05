@@ -456,6 +456,7 @@ export function genChildren (
     return children
       .map(child => {
         const nodeFuncName = generateId()
+        // console.log(child, nodeFuncName)
         if (
           (child.tag === 'include' && !child.if && !child.for) ||
           (child.tag === 'import' && !child.if) ||
@@ -468,6 +469,8 @@ export function genChildren (
           }
         } else if (parent.tag === 'block') {
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}_(${parent.blockFuncName || 'error'},${nodeFuncName || 'error'});`
+        } else if (child.tag === 'block' && !child.if && !child.for && !child.else && !child.elseif) {
+          return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}`
         } else {
           return `${gen(child, state, nodeFuncName, parent.env, parent.scope, parent.nodeFuncName, parent.importFuncName)}_(${parent.nodeFuncName || 'error'},${nodeFuncName});`
         }

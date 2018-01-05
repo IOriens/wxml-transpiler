@@ -1,1 +1,13 @@
-<rich-text type='text' nodes='<div><div class="div_class" style="line-height: 60px; color: red;">Hello World!</div></div>' bindtap="tap"></rich-text>
+<view class="brand_price">参考价格:￥
+  <block>{{price}}</block>
+</view>
+
+<block wx:if="{{a == 1}}">
+  <include src="../../../common/foot4.wxml" />
+</block>
+<block wx:else="{{a == 1}}">
+  <include src="../../../common/foot4.wxml" />
+</block>
+<block wx:for="kjljlj">
+  <include src="../../../common/foot4.wxml" />
+</block>
