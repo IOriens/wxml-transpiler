@@ -229,6 +229,8 @@ export function walk (node: BabylonNode | void, isStatic?: boolean): string {
         break
       case 'AssignmentExpression':
         return `assignment in wrong place`
+      case 'CallExpression':
+        return `fuck`
       default:
         throw new Error(`Unknown Type: ${node.type}`)
     }

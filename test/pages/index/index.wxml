@@ -1,13 +1,18 @@
-<view class="brand_price">参考价格:￥
-  <block>{{price}}</block>
-</view>
+<!--wxml-->
+<!-- 下面的 getMax 函数，接受一个数组，且返回数组中最大的元素的值 -->
+<wxs module="m1">
+  var getMax = function(array) {
+    var max = undefined;
+    for (var i = 0; i < array.length; ++i) {
+      max = max === undefined ?
+        array[i] :
+        (max >= array[i] ? max : array[i]);
+    }
+    return max;
+  }
 
-<block wx:if="{{a == 1}}">
-  <include src="../../../common/foot4.wxml" />
-</block>
-<block wx:else="{{a == 1}}">
-  <include src="../../../common/foot4.wxml" />
-</block>
-<block wx:for="kjljlj">
-  <include src="../../../common/foot4.wxml" />
-</block>
+  module.exports.getMax = getMax;
+  </wxs>
+
+  <!-- 调用 wxs 里面的 getMax 函数，参数为 page.js 里面的 array -->
+  <view> {{m1.getMax(array)}} </view>

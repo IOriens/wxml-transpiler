@@ -503,6 +503,11 @@ function processComponent (el) {
       pushProp(binding)
     }
   }
+  // else if (el.tag === 'wxs') {
+  //   binding = getAndRemoveAttr(el, 'module')
+  //   el.module = binding
+  //   pushProp(binding)
+  // }
   if ((data = getAndRemoveAttr(el, 'data'))) {
     el.data = data + 'is'
     pushProp(data, { wrapBracket: true })

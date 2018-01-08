@@ -60,11 +60,20 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   )
 
   const propsCode = `var z = [];
-  (function(z){
+  if (typeof global.ops === 'undefined') global.ops = []
+  z = global.ops
+  if (typeof global.total_ops === 'undefined') global.total_ops = 0
+  if (typeof global.idx_st === 'undefined') global.idx_st = {}
+  if (typeof global.idx_st.$gwx === 'undefined') {
+    global.idx_st.$gwx = global.total_ops
+    var idx_st_ = global.idx_st.$gwx
+  ;(function(z){
     var a = 11;
     function Z(ops){z.push(ops)};
     ${program.store.props.map(prop => `Z(${prop});`).join('')}
-  })(z);`
+  })(z);
+  global.total_ops = z.length
+}`
 
   program.asts.map(ast => optimize(ast.ast, options))
 
