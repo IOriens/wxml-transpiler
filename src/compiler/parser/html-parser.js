@@ -46,7 +46,7 @@ let IS_REGEX_CAPTURING_BROKEN = false
 })
 
 // Special Elements (can contain anything)
-export const isPlainTextElement = makeMap('script,style,textarea', true)
+export const isPlainTextElement = makeMap('script,style,textarea,wxs', true)
 const reCache = {}
 
 const decodingMap = {
@@ -74,7 +74,9 @@ export function parseHTML (html, options) {
   const isUnaryTag = options.isUnaryTag || no
   const canBeLeftOpenTag = options.canBeLeftOpenTag || no
   let index = 0
-  let last, lastTag
+
+  let last // 剩余的 html
+  let lastTag
   while (html) {
     last = html
     // Make sure we're not in a plaintext content element like script/style

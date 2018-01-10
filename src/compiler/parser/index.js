@@ -209,7 +209,6 @@ export function parse (
         postTransforms[i](element, options)
       }
     },
-
     end () {
       // remove trailing whitespace
       const element = stack[stack.length - 1]
@@ -222,7 +221,6 @@ export function parse (
       currentParent = stack[stack.length - 1]
       endPre(element)
     },
-
     chars (text: string) {
       // parse text in tags
       if (!currentParent) {
@@ -545,7 +543,7 @@ function makeAttrsMap (attrs: Array<Object>): Object {
 
 // for script (e.g. type="x/template") or style, do not decode content
 function isTextTag (el): boolean {
-  return el.tag === 'script' || el.tag === 'style'
+  return el.tag === 'script' || el.tag === 'style' || el.tag === 'wxs'
 }
 
 function isForbiddenTag (el): boolean {
