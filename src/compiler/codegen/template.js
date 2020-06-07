@@ -8,7 +8,7 @@ var $gaic={}
 $gwx=function(path,global){
 function _(a,b){b&&a.children.push(b);}
 function _v(k){if(typeof(k)!='undefined')return {tag:'virtual','wxKey':k,children:[]};return {tag:'virtual',children:[]};}
-function _n(tag){$gwxc++;if($gwxc>=16000){throw 'Dom limit exceeded, please check if there\\'s any mistake you\\'ve made.'};return {tag:tag.substr(0,3)=='wx-'?tag:'wx-'+tag,attr:{},children:[],n:[]}}
+function _n(tag){$gwxc++;if($gwxc>=16000){throw 'Dom limit exceeded, please check if there\\'s any mistake you\\'ve made.'};return {tag:'wx-'+tag,attr:{},children:[],n:[],raw:{},generics:{}}}
 function _p(a,b){b&&a.properities.push(b);}
 function _s(scope,env,key){return typeof(scope[key])!='undefined'?scope[key]:env[key]}` +
     "function _wl(tname,prefix){console.warn('WXMLRT:'+prefix+':-1:-1:-1: Template `' + tname + '` is being called recursively, will be stop.')}" +
